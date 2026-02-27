@@ -1,0 +1,33 @@
+[gd_scene load_steps=5 format=3 uid="uid://bb3oahwy7pgdk"]
+
+[ext_resource type="PackedScene" uid="uid://blw3xgniwfe0f" path="res://Scenes/Player/Player.tscn" id="1_lh3uc"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_lh3uc"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_lh3uc"]
+size = Vector3(20, 1, 20)
+
+[sub_resource type="BoxMesh" id="BoxMesh_mugxw"]
+size = Vector3(20, 1, 20)
+
+[node name="Node3D" type="Node3D"]
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+physics_material_override = SubResource("PhysicsMaterial_lh3uc")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2, 0)
+shape = SubResource("BoxShape3D_lh3uc")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2, 0)
+mesh = SubResource("BoxMesh_mugxw")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.999468, 0, 0.03261432, 0, 1, 0, -0.03261432, 0, -0.999468, -0.1640873, 0, -8.01128)
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(-0.99994856, 0, -0.010140158, 0, 1, 0, 0.010140158, 0, -0.99994856, 0, 0, -4.8040137)
+
+[node name="CharacterBody3D" parent="." instance=ExtResource("1_lh3uc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.9573765)
