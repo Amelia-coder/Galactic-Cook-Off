@@ -6,7 +6,7 @@ radius = 0.7
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_ytxpm"]
 radius = 0.7
 
-[node name="CharacterBody3D" type="CharacterBody3D"]
+[node name="MeeleEnemy" type="CharacterBody3D"]
 collision_layer = 2
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
