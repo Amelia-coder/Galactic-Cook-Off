@@ -1,6 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://bb3oahwy7pgdk"]
+[gd_scene load_steps=8 format=3 uid="uid://bb3oahwy7pgdk"]
 
 [ext_resource type="PackedScene" uid="uid://blw3xgniwfe0f" path="res://Scenes/Player/Player.tscn" id="1_lh3uc"]
+[ext_resource type="PackedScene" uid="uid://bpu84pqtndpww" path="res://Scenes/Dough/Dough.tscn" id="2_mugxw"]
+[ext_resource type="PackedScene" uid="uid://c2qomyie8px0n" path="res://Scenes/Enemies/MelleEnemy.tscn" id="3_2fwkt"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_lh3uc"]
 
@@ -10,9 +12,13 @@ size = Vector3(20, 1, 20)
 [sub_resource type="BoxMesh" id="BoxMesh_mugxw"]
 size = Vector3(20, 1, 20)
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_2fwkt"]
+size = Vector3(500, 1, 500)
+
 [node name="Node3D" type="Node3D"]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.8592393, 0)
 physics_material_override = SubResource("PhysicsMaterial_lh3uc")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
@@ -24,10 +30,21 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2, 0)
 mesh = SubResource("BoxMesh_mugxw")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(-0.999468, 0, 0.03261432, 0, 1, 0, -0.03261432, 0, -0.999468, -0.1640873, 0, -8.01128)
-
-[node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(-0.99994856, 0, -0.010140158, 0, 1, 0, 0.010140158, 0, -0.99994856, 0, 0, -4.8040137)
+transform = Transform3D(-0.9994681, -0.028532024, 0.015799288, 0, 0.48442793, 0.8748312, -0.03261432, 0.8743658, -0.48417023, -0.1640873, 7.20499, -8.01128)
+light_color = Color(0.52156866, 0.2784314, 1, 1)
 
 [node name="CharacterBody3D" parent="." instance=ExtResource("1_lh3uc")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.9573765)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.6844177, -2.9573765)
+
+[node name="RigidBody3D" parent="." instance=ExtResource("2_mugxw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.1611638, 0)
+
+[node name="CharacterBody3D2" parent="." instance=ExtResource("3_2fwkt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.943378, 2.2070904, 5.09061)
+
+[node name="KillZone" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -7.533375, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="KillZone"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -6.5632133, 0)
+shape = SubResource("BoxShape3D_2fwkt")

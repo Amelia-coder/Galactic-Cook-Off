@@ -1,18 +1,51 @@
-[gd_scene load_steps=4 format=3 uid="uid://blw3xgniwfe0f"]
+[gd_scene load_steps=11 format=3 uid="uid://blw3xgniwfe0f"]
 
 [ext_resource type="Script" uid="uid://dnvesphlqsyh3" path="res://Scripts/Player/Player.cs" id="1_s0eop"]
+[ext_resource type="Script" uid="uid://bvmfjxdcq3pbs" path="res://Scripts/Player/States/MovementStateMachine.cs" id="2_ft8w5"]
+[ext_resource type="Script" uid="uid://dmnx7e82fab0p" path="res://Scripts/Player/States/IdleState.cs" id="3_jmcll"]
+[ext_resource type="Script" uid="uid://clcog8q16if13" path="res://Scripts/Player/States/JumpState.cs" id="4_4wape"]
+[ext_resource type="Script" uid="uid://c1oikewb8u5so" path="res://Scripts/Player/States/RunState.cs" id="5_t26db"]
+[ext_resource type="Script" uid="uid://c8f47o1gu7a1i" path="res://Scripts/Player/States/WalkState.cs" id="6_4wape"]
+[ext_resource type="Script" uid="uid://bu3t6twn63qot" path="res://Scripts/Player/Components/StaminaComponent.cs" id="7_t26db"]
+[ext_resource type="Script" uid="uid://bba76e07qiam8" path="res://Scripts/Player/Components/HealthComponent.cs" id="8_fk5o5"]
 
-[sub_resource type="SphereMesh" id="SphereMesh_l3ax4"]
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_l3ax4"]
 
-[sub_resource type="SphereShape3D" id="SphereShape3D_l3ax4"]
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_s0eop"]
 
 [node name="CharacterBody3D" type="CharacterBody3D"]
 script = ExtResource("1_s0eop")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-mesh = SubResource("SphereMesh_l3ax4")
+mesh = SubResource("CapsuleMesh_l3ax4")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-shape = SubResource("SphereShape3D_l3ax4")
+shape = SubResource("CapsuleShape3D_s0eop")
 
-[node name="Camera3D" type="Camera3D" parent="."]
+[node name="CameraPivot" type="Node3D" parent="."]
+
+[node name="SpringArm3D" type="SpringArm3D" parent="CameraPivot"]
+
+[node name="Camera3D" type="Camera3D" parent="CameraPivot/SpringArm3D"]
+transform = Transform3D(1, 0, 0, 0, 0.9795261, 0.20131727, 0, -0.20131727, 0.9795261, 0, 1.1351224, 2.1114807)
+
+[node name="MovementStateMachine" type="Node" parent="."]
+script = ExtResource("2_ft8w5")
+
+[node name="IdleState" type="Node" parent="MovementStateMachine"]
+script = ExtResource("3_jmcll")
+
+[node name="JumpState" type="Node" parent="MovementStateMachine"]
+script = ExtResource("4_4wape")
+
+[node name="RunState" type="Node" parent="MovementStateMachine"]
+script = ExtResource("5_t26db")
+
+[node name="WalkState" type="Node" parent="MovementStateMachine"]
+script = ExtResource("6_4wape")
+
+[node name="StaminaComponent" type="Node" parent="."]
+script = ExtResource("7_t26db")
+
+[node name="HealthComponent" type="Node" parent="."]
+script = ExtResource("8_fk5o5")
