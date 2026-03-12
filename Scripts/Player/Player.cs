@@ -10,7 +10,7 @@ public partial class Player : CharacterBody3D, IEntity
 	[Export] public float TiltMin = -70f; // градусы
 	[Export] public float TiltMax = 20f;
 
-	[Export] public PackedScene DoughScene;
+	[Export] public PackedScene DoughScene; ///re-consider
 	[Export] public float MinThrowForce = 10f;
 	[Export] public float MaxThrowForce = 25f;
 	[Export] public Node3D ThrowPoint;
@@ -27,9 +27,10 @@ public partial class Player : CharacterBody3D, IEntity
 	
 	private StaminaComponent _staminaComponent;
 
-	public bool IsTouchingFloor => throw new NotImplementedException();
+	private bool _wasOnFloor;
+	public bool IsTouchingFloor => false;
 
-	public bool CanJump => throw new NotImplementedException();
+	public bool CanJump => true;
 
 	public override void _Ready()
 	{
@@ -42,7 +43,7 @@ public partial class Player : CharacterBody3D, IEntity
 		if (IsLocalPlayer)
 		{
 			_camera.MakeCurrent();
-			Input.MouseMode = Input.MouseModeEnum.Captured;
+			//Input.MouseMode = Input.MouseModeEnum.Captured;
 		}
 		else
 		{
@@ -73,22 +74,22 @@ public partial class Player : CharacterBody3D, IEntity
 	public override void _PhysicsProcess(double delta)
 	{
 		//if (!IsLocalPlayer) return;
-//
+
 		//var velocity = Velocity;
-//
+
 		//if (!IsOnFloor())
-			//velocity.Y -= Gravity * (float)delta;
-//
+		//	velocity.Y -= Gravity * (float)delta;
+
 		//if (Input.IsActionJustPressed("ui_accept") && IsOnFloor())
-			//velocity.Y = JumpVelocity;
-//
+		//	velocity.Y = JumpVelocity;
+
 		//// Движение относительно направления игрока (который уже повёрнут мышью)
 		//var dir = Input.GetVector("move_left", "move_right", "move_forward", "move_back");
 		//Vector3 moveDir = (Transform.Basis * new Vector3(dir.X, 0, dir.Y)).Normalized();
-//
+
 		//velocity.X = moveDir.X * Speed;
 		//velocity.Z = moveDir.Z * Speed;
-//
+
 		//Velocity = velocity;
 		//MoveAndSlide();
 		_movementStateMachine._PhysicsProcess(delta);

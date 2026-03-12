@@ -1,5 +1,4 @@
 using Godot;
-using System;
 
 public partial class RunState : MovementState
 {
@@ -10,7 +9,7 @@ public partial class RunState : MovementState
 
 	public override void Enter()
 	{
-		Vector2 inputDir = Input.GetVector("left", "right", "forward", "back");
+		Vector2 inputDir = Input.GetVector("move_left", "move_right", "move_forward", "move_back");
 		Vector3 moveDirection = Entity.GetMovementDirection(inputDir);
 
 		Entity.Velocity = new Vector3(
@@ -32,7 +31,7 @@ public partial class RunState : MovementState
 			TransitionTo("JumpState");
 		}
 
-		Vector2 inputDir = Input.GetVector("left", "right", "forward", "back");
+		Vector2 inputDir = Input.GetVector("move_left", "move_right", "move_forward", "move_back");
 
 		
 		if (inputDir == Vector2.Zero)

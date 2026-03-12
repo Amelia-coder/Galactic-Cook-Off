@@ -3,7 +3,7 @@ using System;
 
 public partial class MovementStateMachine : Node
 {
-	[Export] public MovementState  InitialState { get; set; }
+	public MovementState  InitialState { get; set; }
 
 	public MovementState CurrentState;
 

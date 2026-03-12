@@ -20,13 +20,13 @@ public partial class IdleState : MovementState
 			GD.Print($"We jumped!", Entity.CanJump);
 			TransitionTo("JumpState");
 		}
-		Vector2 inputDir = Input.GetVector("left", "right", "forward", "back");
+		Vector2 inputDir = Input.GetVector("move_left", "move_right", "move_forward", "move_back");
 		if (inputDir != Vector2.Zero)
 		{
 			TransitionTo("WalkState");
 		}
 
-		if (Input.IsActionJustPressed("run"))
+		if (Input.IsActionJustPressed("sprint"))
 		{
 			GD.Print($"We are running!", Entity.CanJump);
 			TransitionTo("RunState");

@@ -15,10 +15,13 @@ size = Vector3(20, 1, 20)
 [sub_resource type="BoxShape3D" id="BoxShape3D_2fwkt"]
 size = Vector3(500, 1, 500)
 
-[node name="Node3D" type="Node3D"]
+[node name="Arena" type="Node3D"]
+
+[node name="Player" parent="." instance=ExtResource("1_lh3uc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.65659, 0)
 
 [node name="StaticBody3D" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.8592393, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.85924, 0)
 physics_material_override = SubResource("PhysicsMaterial_lh3uc")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
@@ -30,21 +33,19 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2, 0)
 mesh = SubResource("BoxMesh_mugxw")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(-0.9994681, -0.028532024, 0.015799288, 0, 0.48442793, 0.8748312, -0.03261432, 0.8743658, -0.48417023, -0.1640873, 7.20499, -8.01128)
-light_color = Color(0.52156866, 0.2784314, 1, 1)
-
-[node name="CharacterBody3D" parent="." instance=ExtResource("1_lh3uc")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.6844177, -2.9573765)
+transform = Transform3D(-0.999468, -0.028532, 0.0157993, 0, 0.484428, 0.874831, -0.0326143, 0.874366, -0.48417, -0.164087, 7.20499, -8.01128)
+light_color = Color(0.521569, 0.278431, 1, 1)
 
 [node name="RigidBody3D" parent="." instance=ExtResource("2_mugxw")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.1611638, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.16116, 0)
+script = null
 
 [node name="CharacterBody3D2" parent="." instance=ExtResource("3_2fwkt")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.943378, 2.2070904, 5.09061)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.94338, 2.20709, 5.09061)
 
 [node name="KillZone" type="Area3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -7.533375, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -7.53337, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="KillZone"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -6.5632133, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -6.56321, 0)
 shape = SubResource("BoxShape3D_2fwkt")
