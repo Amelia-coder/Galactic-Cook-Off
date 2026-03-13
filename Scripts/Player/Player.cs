@@ -28,10 +28,9 @@ public partial class Player : CharacterBody3D, IEntity
 	private StaminaComponent _staminaComponent;
 
 	private bool _wasOnFloor;
-	public bool IsTouchingFloor => false;
+	public bool IsTouchingFloor => IsOnFloor();
 
-	public bool CanJump => true;
-
+	public bool CanJump => IsTouchingFloor ; //||CoyoteTimer.IsActive()
 	public override void _Ready()
 	{
 		_cameraPivot = GetNode<Node3D>("CameraPivot");
@@ -52,6 +51,8 @@ public partial class Player : CharacterBody3D, IEntity
 		}
 	}
 
+	//если при беге камера как-то старнно ведет себ
+	//то это можно исправит, настроив коллизии для SpingArm
 	public override void _UnhandledInput(InputEvent @event)
 	{
 		if (!IsLocalPlayer) return; // только локальный игрок управляет мышью
@@ -158,11 +159,6 @@ public partial class Player : CharacterBody3D, IEntity
 	}
 
 	public void SetLookDirection(Vector3 direction)
-	{
-		throw new NotImplementedException();
-	}
-
-	public Node AsNode()
 	{
 		throw new NotImplementedException();
 	}

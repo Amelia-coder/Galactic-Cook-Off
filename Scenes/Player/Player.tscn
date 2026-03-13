@@ -24,8 +24,11 @@ mesh = SubResource("CapsuleMesh_l3ax4")
 shape = SubResource("CapsuleShape3D_s0eop")
 
 [node name="CameraPivot" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 
 [node name="SpringArm3D" type="SpringArm3D" parent="CameraPivot"]
+collision_mask = 0
+spring_length = 3.0
 
 [node name="Camera3D" type="Camera3D" parent="CameraPivot/SpringArm3D"]
 transform = Transform3D(1, 0, 0, 0, 0.979526, 0.201317, 0, -0.201317, 0.979526, 0, 1.50708, 2.37539)

@@ -1,4 +1,3 @@
-// IEntity.cs
 using Godot;
 
 public interface IEntity
@@ -10,6 +9,4 @@ public interface IEntity
 
     Vector3 GetMovementDirection(Vector2 input);
     void SetLookDirection(Vector3 direction);
-
-    Node AsNode();
 }
