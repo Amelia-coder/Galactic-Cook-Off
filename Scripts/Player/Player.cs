@@ -113,7 +113,8 @@ public partial class Player : CharacterBody3D, IEntity, IPlayerContext
 
 		//Velocity = velocity;
 		//MoveAndSlide();
-		_movementStateMachine._PhysicsProcess(delta);
+		_movementStateMachine.PhysicsUpdate(delta);
+		_combatStateMachine.PhysicsUpdate(delta);
 
 		Velocity += Vector3.Down * Gravity * (float)delta;
 
