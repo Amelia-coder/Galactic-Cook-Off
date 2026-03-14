@@ -37,7 +37,7 @@ public partial class WalkState : MovementState
 			Entity.Velocity.Y,
 			moveDirection.Z * Speed
 		);
-		_staminaComponent.Regen(StaminaRegenPerSecond, (float)delta);
+		Entity.Stamina.Regen(StaminaRegenPerSecond, (float)delta);
 		
 	}
 }

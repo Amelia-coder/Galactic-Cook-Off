@@ -1,15 +1,15 @@
 using Godot;
 using System.Security.Principal;
 
-public abstract partial class State : Node
+public abstract partial class State<T> : Node
 {
 
 
     [Signal] public delegate void FinishedEventHandler(string nextStatePath);
 
-    protected IEntity Entity { get; set; }
+    protected T Entity { get; set; }
 
-    public virtual void Initialize(IEntity entity)
+    public virtual void Initialize(T entity)
     {
         Entity = entity;
     }

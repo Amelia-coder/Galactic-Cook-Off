@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public partial class Dough : RigidBody3D, IInteractable
+public partial class Dough : RigidBody3D, IThrowable
 {
 	[Export] public float Damage = 20f;
 	[Export] public float StunDuration = 1.5f;
@@ -14,7 +14,8 @@ public partial class Dough : RigidBody3D, IInteractable
 
 	public void OnBodyEntered(Node body)
 	{
-		if (body.HasMethod("TakeDamage"))
+		if (body.HasMethod("TakeDamage")) /// сделать разделение: игрока мы оглушаем, моба - дамажим
+		///один из вариантов - по тому, к какой группе принадлежит сущность. Это точно можно натстроить через editor графически
 			body.Call("TakeDamage", Damage);
 		GD.Print("cumTaste? sugar!");
 		// Приземлилось на пол — "прилипает"
@@ -27,13 +28,19 @@ public partial class Dough : RigidBody3D, IInteractable
 		//QueueFree();
 	}
 
-    public bool CanPickup(IEntity actor)
+
+    public bool CanBePickedUpBy(IEntity actor)
     {
-		return true;
+        return actor is Player;
     }
 
-    public void Pickup(IEntity actor)
+    public void PickUp(IEntity actor)
     {
-        return;
+        //// remove form scene, add another object
+    }
+
+    public void Throw(Vector3 impulse)
+    {
+        //player gives it
     }
 }

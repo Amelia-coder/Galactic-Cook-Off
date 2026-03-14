@@ -1,14 +1,14 @@
 using Godot;
-public abstract partial class MovementState : State
+public abstract partial class MovementState : State<IPlayerContext>
 {
 	public virtual float StaminaConsumptionPerSecond => 0f;
 	public virtual float StaminaRegenPerSecond => 0f;
 
 	protected StaminaComponent _staminaComponent;
 
-	public void Initialize(IEntity entity, StaminaComponent stamina)
+	public override void Initialize(IPlayerContext movableObjext)
 	{
-		base.Initialize(entity);
-		_staminaComponent = stamina;
+		base.Initialize(movableObjext);
+		_staminaComponent = movableObjext.Stamina;
 	}
 }

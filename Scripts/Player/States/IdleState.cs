@@ -31,6 +31,6 @@ public partial class IdleState : MovementState
 			GD.Print($"We are running!", Entity.CanJump);
 			TransitionTo("RunState");
 		}
-		_staminaComponent.Regen(StaminaRegenPerSecond, (float)delta);
+		Entity.Stamina.Regen(StaminaRegenPerSecond, (float)delta);
 	}
 }

@@ -3,6 +3,8 @@ public interface IMovable
 {
     Vector3 Velocity { get; set; }
     bool IsTouchingFloor { get; }
+    bool CanJump { get; }
 
-    void Move(Vector3 direction, float speed);
+    Vector3 GetMovementDirection(Vector2 input);
+    ////
 }

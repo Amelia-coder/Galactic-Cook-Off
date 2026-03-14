@@ -12,7 +12,7 @@ public partial class JumpState : MovementState
 	public override void Enter()
 	{
 		Entity.Velocity = Vector3.Up * 5.0f;
-		_staminaComponent.TryConsume(StaminaConsumptionPerSecond);
+		Entity.Stamina.TryConsume(StaminaConsumptionPerSecond);
 	}
 
 	public override void Exit()

@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public partial class Player : CharacterBody3D, IEntity, IMovable
+public partial class Player : CharacterBody3D, IEntity, IPlayerContext
 {
 	[Export] public float Speed = 5f;
 	[Export] public float JumpVelocity = 5f;
@@ -22,15 +22,31 @@ public partial class Player : CharacterBody3D, IEntity, IMovable
 	private Camera3D _camera;
 	private float _chargeTime = 0f;
 	private bool _isCharging = false;
+
+	Vector3 IMovable.Velocity
+	{
+		get => Velocity;
+		set => Velocity = value;
+	}
+
 	
 	private MovementStateMachine _movementStateMachine;
-	
+
 	private StaminaComponent _staminaComponent;
+	//private StaminaComponent _staminaComponent;
 
 	private bool _wasOnFloor;
 	public bool IsTouchingFloor => IsOnFloor();
 
 	public bool CanJump => IsTouchingFloor ; //||CoyoteTimer.IsActive()
+
+	public StaminaComponent Stamina;
+
+	public HealthComponent Health => throw new NotImplementedException();
+
+	StaminaComponent IPlayerContext.Stamina { get => _staminaComponent; }
+	HealthComponent IPlayerContext.Health { get => Health; }
+
 	public override void _Ready()
 	{
 		_cameraPivot = GetNode<Node3D>("CameraPivot");
@@ -38,6 +54,7 @@ public partial class Player : CharacterBody3D, IEntity, IMovable
 		
 		_movementStateMachine = GetNode<MovementStateMachine>("MovementStateMachine");
 		
+		_staminaComponent = GetNode<StaminaComponent>("StaminaComponent");
 
 		if (IsLocalPlayer)
 		{
@@ -158,8 +175,4 @@ public partial class Player : CharacterBody3D, IEntity, IMovable
 		return direction.Normalized();
 	}
 
-	public void SetLookDirection(Vector3 direction)
-	{
-		throw new NotImplementedException();
-	}
 }

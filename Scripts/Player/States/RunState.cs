@@ -45,13 +45,14 @@ public partial class RunState : MovementState
 			TransitionTo("WalkState");
 		}
 
-		_staminaComponent.TryConsume(StaminaConsumptionPerSecond);
+		Entity.Stamina.TryConsume(StaminaConsumptionPerSecond * (float)delta);
 		Vector3 moveDirection = Entity.GetMovementDirection(inputDir);
 
 		Entity.Velocity = new Vector3(
 			moveDirection.X * Speed,
 			Entity.Velocity.Y,
 			moveDirection.Z * Speed
+
 		);
 		//// Rotate player to face direction
 		//if (Entity.AsNode() is Player player)
