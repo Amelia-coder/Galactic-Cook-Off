@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Buffers;
 
 public partial class Player : CharacterBody3D, IEntity, IPlayerContext
 {
@@ -29,8 +30,9 @@ public partial class Player : CharacterBody3D, IEntity, IPlayerContext
 		set => Velocity = value;
 	}
 
-	
-	private MovementStateMachine _movementStateMachine;
+	void OnPickableStateChanged(IThrowable item, bool canPick) { }
+
+    private MovementStateMachine _movementStateMachine;
 
 	private StaminaComponent _staminaComponent;
 	//private StaminaComponent _staminaComponent;
@@ -46,8 +48,15 @@ public partial class Player : CharacterBody3D, IEntity, IPlayerContext
 
 	StaminaComponent IPlayerContext.Stamina { get => _staminaComponent; }
 	HealthComponent IPlayerContext.Health { get => Health; }
+    public void RegisterPickable(Node node)
+    {
+        node.Connect(
+            "CanPickUpChanged",
+            Callable.From<Node, bool>(OnPickableStateChanged)
+        );
+    }
 
-	public override void _Ready()
+    public override void _Ready()
 	{
 		_cameraPivot = GetNode<Node3D>("CameraPivot");
 		_camera = GetNode<Camera3D>("CameraPivot/SpringArm3D/Camera3D");
@@ -91,25 +100,6 @@ public partial class Player : CharacterBody3D, IEntity, IPlayerContext
 
 	public override void _PhysicsProcess(double delta)
 	{
-		//if (!IsLocalPlayer) return;
-
-		//var velocity = Velocity;
-
-		//if (!IsOnFloor())
-		//	velocity.Y -= Gravity * (float)delta;
-
-		//if (Input.IsActionJustPressed("ui_accept") && IsOnFloor())
-		//	velocity.Y = JumpVelocity;
-
-		//// Движение относительно направления игрока (который уже повёрнут мышью)
-		//var dir = Input.GetVector("move_left", "move_right", "move_forward", "move_back");
-		//Vector3 moveDir = (Transform.Basis * new Vector3(dir.X, 0, dir.Y)).Normalized();
-
-		//velocity.X = moveDir.X * Speed;
-		//velocity.Z = moveDir.Z * Speed;
-
-		//Velocity = velocity;
-		//MoveAndSlide();
 		_movementStateMachine._PhysicsProcess(delta);
 
 		Velocity += Vector3.Down * Gravity * (float)delta;
@@ -135,8 +125,17 @@ public partial class Player : CharacterBody3D, IEntity, IPlayerContext
 			_chargeTime = 0f;
 		}
 	}
+    private void OnPickableCanPickUp(bool canPickUp)
+    {
+        if (canPickUp)
+            ShowPickupLabel(true); // UI logic
+        else
+            ShowPickupLabel(false);
+    }
 
-	private void ThrowDough()
+
+
+    private void ThrowDough()
 	{
 		if (DoughScene == null) return;
 
@@ -154,7 +153,41 @@ public partial class Player : CharacterBody3D, IEntity, IPlayerContext
 		
 	}
 
-	public Vector3 GetMovementDirection(Vector2 input)
+	/// <summary>
+	/// При нескольких доступных доступных вещей для поднятия выбриаем одну
+	/// </summary>
+	/// <returns></returns>
+    private IThrowable GetItemPlayerIsLookingAt()
+    {
+        if (itemsInRange.Count == 0)
+            return null;
+
+        Node3D playerNode = (Node3D)context;
+        Vector3 forward = playerNode.GlobalTransform.Basis.Z * -1f;
+
+        PickableItem bestItem = null;
+        float bestDot = -1f;
+
+        foreach (var item in itemsInRange)
+        {
+            Vector3 dirToItem = (item.GlobalPosition - playerNode.GlobalPosition).Normalized();
+            float dot = forward.Dot(dirToItem); // how aligned with look direction
+            if (dot > bestDot)
+            {
+                bestDot = dot;
+                bestItem = item;
+            }
+        }
+
+        // Optional: add a margin to only pick items roughly in front
+        if (bestDot < 0.5f) // 60-degree cone
+            return null;
+
+        return bestItem;
+    }
+
+
+    public Vector3 GetMovementDirection(Vector2 input)
 	{
 		if(_camera == null || input.Length() < 0.1f)
 			return Vector3.Zero;

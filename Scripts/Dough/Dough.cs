@@ -3,7 +3,8 @@ using System;
 
 public partial class Dough : RigidBody3D, IThrowable
 {
-	[Export] public float Damage = 20f;
+    [Signal] public delegate void CanPickUpChangedEventHandler(bool canPickUp);
+    [Export] public float Damage = 20f;
 	[Export] public float StunDuration = 1.5f;
 	
 	// Called when the node enters the scene tree for the first time.
@@ -14,6 +15,7 @@ public partial class Dough : RigidBody3D, IThrowable
 
 	public void OnBodyEntered(Node body)
 	{
+		EmitSignal(SignalName.CanPickUpChanged, true);
 		if (body.HasMethod("TakeDamage")) /// сделать разделение: игрока мы оглушаем, моба - дамажим
 		///один из вариантов - по тому, к какой группе принадлежит сущность. Это точно можно натстроить через editor графически
 			body.Call("TakeDamage", Damage);
@@ -27,6 +29,23 @@ public partial class Dough : RigidBody3D, IThrowable
 
 		//QueueFree();
 	}
+
+    public void OnBodyExited(Node body)
+    {
+        EmitSignal(SignalName.CanPickUpChanged, false);
+        if (body.HasMethod("TakeDamage")) /// сделать разделение: игрока мы оглушаем, моба - дамажим
+                                          ///один из вариантов - по тому, к какой группе принадлежит сущность. Это точно можно натстроить через editor графически
+            body.Call("TakeDamage", Damage);
+        GD.Print("cumTaste? sugar!");
+        // Приземлилось на пол — "прилипает"
+        if (body is StaticBody3D)
+        {
+            Freeze = true; // отключаем физику
+                           // TODO: проиграть анимацию шлепка
+        }
+
+        //QueueFree();
+    }
 
 
     public bool CanBePickedUpBy(IEntity actor)
