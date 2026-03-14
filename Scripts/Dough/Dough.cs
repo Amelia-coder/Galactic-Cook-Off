@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public partial class Dough : RigidBody3D
+public partial class Dough : RigidBody3D, IInteractable
 {
 	[Export] public float Damage = 20f;
 	[Export] public float StunDuration = 1.5f;
@@ -16,7 +16,7 @@ public partial class Dough : RigidBody3D
 	{
 		if (body.HasMethod("TakeDamage"))
 			body.Call("TakeDamage", Damage);
-		GD.Print("cumTaste");
+		GD.Print("cumTaste? sugar!");
 		// Приземлилось на пол — "прилипает"
 		if (body is StaticBody3D)
 		{
@@ -26,4 +26,14 @@ public partial class Dough : RigidBody3D
 
 		//QueueFree();
 	}
+
+    public bool CanPickup(IEntity actor)
+    {
+		return true;
+    }
+
+    public void Pickup(IEntity actor)
+    {
+        return;
+    }
 }

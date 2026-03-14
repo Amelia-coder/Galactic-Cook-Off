@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public partial class Player : CharacterBody3D, IEntity
+public partial class Player : CharacterBody3D, IEntity, IMovable
 {
 	[Export] public float Speed = 5f;
 	[Export] public float JumpVelocity = 5f;
