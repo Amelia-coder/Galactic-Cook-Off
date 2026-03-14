@@ -1,9 +1,12 @@
-[gd_scene load_steps=11 format=3 uid="uid://blw3xgniwfe0f"]
+[gd_scene load_steps=14 format=3 uid="uid://blw3xgniwfe0f"]
 
 [ext_resource type="Script" uid="uid://dnvesphlqsyh3" path="res://Scripts/Player/Player.cs" id="1_s0eop"]
+[ext_resource type="Script" uid="uid://p5v2v05ur5xe" path="res://Scripts/Player/States/CombatStateMachine.cs" id="2_0kmp4"]
 [ext_resource type="Script" uid="uid://dhiv70qmq5brw" path="res://Scripts/Player/States/MovementStateMachine.cs" id="2_ft8w5"]
+[ext_resource type="Script" uid="uid://1d1xwanp3jh3" path="res://Scripts/Player/States/NotAttackingState.cs" id="3_i5acl"]
 [ext_resource type="Script" uid="uid://datcqn2n4fwx3" path="res://Scripts/Player/States/IdleState.cs" id="3_jmcll"]
 [ext_resource type="Script" uid="uid://fkvm3v3ujjge" path="res://Scripts/Player/States/JumpState.cs" id="4_4wape"]
+[ext_resource type="Script" uid="uid://bhxpgaefxalvs" path="res://Scripts/Player/States/BasicAttackState.cs" id="4_epg6k"]
 [ext_resource type="Script" uid="uid://dtpor0hxjvngj" path="res://Scripts/Player/States/RunState.cs" id="5_t26db"]
 [ext_resource type="Script" uid="uid://wvo6nfm20ah6" path="res://Scripts/Player/States/WalkState.cs" id="6_4wape"]
 [ext_resource type="Script" uid="uid://cep5c4fyfj5v8" path="res://Scripts/Player/Components/StaminaComponent.cs" id="7_t26db"]
@@ -32,6 +35,15 @@ spring_length = 3.0
 
 [node name="Camera3D" type="Camera3D" parent="CameraPivot/SpringArm3D"]
 transform = Transform3D(1, 0, 0, 0, 0.979526, 0.201317, 0, -0.201317, 0.979526, 0, 1.50708, 2.37539)
+
+[node name="CombatStateMachine" type="Node" parent="."]
+script = ExtResource("2_0kmp4")
+
+[node name="NotAttackingState" type="Node" parent="CombatStateMachine"]
+script = ExtResource("3_i5acl")
+
+[node name="BasicAttackState" type="Node" parent="CombatStateMachine"]
+script = ExtResource("4_epg6k")
 
 [node name="MovementStateMachine" type="Node" parent="."]
 script = ExtResource("2_ft8w5")

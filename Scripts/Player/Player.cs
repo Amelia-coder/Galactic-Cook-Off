@@ -32,6 +32,8 @@ public partial class Player : CharacterBody3D, IEntity, IPlayerContext
 	
 	private MovementStateMachine _movementStateMachine;
 
+	private CombatStateMachine _combatStateMachine;
+
 	private StaminaComponent _staminaComponent;
 	//private StaminaComponent _staminaComponent;
 
@@ -53,7 +55,8 @@ public partial class Player : CharacterBody3D, IEntity, IPlayerContext
 		_camera = GetNode<Camera3D>("CameraPivot/SpringArm3D/Camera3D");
 		
 		_movementStateMachine = GetNode<MovementStateMachine>("MovementStateMachine");
-		
+		_combatStateMachine = GetNode<CombatStateMachine>("CombatStateMachine");
+
 		_staminaComponent = GetNode<StaminaComponent>("StaminaComponent");
 
 		if (IsLocalPlayer)
