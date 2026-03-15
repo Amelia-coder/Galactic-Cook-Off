@@ -8,9 +8,9 @@ public partial class HealthComponent : Node
 
 	[Export] public float MaxHealth = 100f;
 
-    public float CurrentHealth { get; private set; }
-    // Called when the node enters the scene tree for the first time.
-    public override void _Ready()
+	public float CurrentHealth { get; private set; }
+	// Called when the node enters the scene tree for the first time.
+	public override void _Ready()
 	{
 	}
 

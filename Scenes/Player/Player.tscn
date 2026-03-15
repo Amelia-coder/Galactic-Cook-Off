@@ -1,17 +1,20 @@
-[gd_scene load_steps=11 format=3 uid="uid://blw3xgniwfe0f"]
+[gd_scene load_steps=12 format=3 uid="uid://blw3xgniwfe0f"]
 
 [ext_resource type="Script" uid="uid://dnvesphlqsyh3" path="res://Scripts/Player/Player.cs" id="1_s0eop"]
-[ext_resource type="Script" uid="uid://dhiv70qmq5brw" path="res://Scripts/Player/States/MovementStateMachine.cs" id="2_ft8w5"]
-[ext_resource type="Script" uid="uid://datcqn2n4fwx3" path="res://Scripts/Player/States/IdleState.cs" id="3_jmcll"]
-[ext_resource type="Script" uid="uid://fkvm3v3ujjge" path="res://Scripts/Player/States/JumpState.cs" id="4_4wape"]
-[ext_resource type="Script" uid="uid://dtpor0hxjvngj" path="res://Scripts/Player/States/RunState.cs" id="5_t26db"]
-[ext_resource type="Script" uid="uid://wvo6nfm20ah6" path="res://Scripts/Player/States/WalkState.cs" id="6_4wape"]
-[ext_resource type="Script" uid="uid://cep5c4fyfj5v8" path="res://Scripts/Player/Components/StaminaComponent.cs" id="7_t26db"]
-[ext_resource type="Script" uid="uid://ea0vgerxkv16" path="res://Scripts/Player/Components/HealthComponent.cs" id="8_fk5o5"]
+[ext_resource type="Script" uid="uid://bvmfjxdcq3pbs" path="res://Scripts/Player/States/MovementStateMachine.cs" id="2_ft8w5"]
+[ext_resource type="Script" uid="uid://dmnx7e82fab0p" path="res://Scripts/Player/States/IdleState.cs" id="3_jmcll"]
+[ext_resource type="Script" uid="uid://clcog8q16if13" path="res://Scripts/Player/States/JumpState.cs" id="4_4wape"]
+[ext_resource type="Script" uid="uid://c1oikewb8u5so" path="res://Scripts/Player/States/RunState.cs" id="5_t26db"]
+[ext_resource type="Script" uid="uid://c8f47o1gu7a1i" path="res://Scripts/Player/States/WalkState.cs" id="6_4wape"]
+[ext_resource type="Script" uid="uid://bu3t6twn63qot" path="res://Scripts/Player/Components/StaminaComponent.cs" id="7_t26db"]
+[ext_resource type="Script" uid="uid://bba76e07qiam8" path="res://Scripts/Player/Components/HealthComponent.cs" id="8_fk5o5"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_l3ax4"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_s0eop"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_fk5o5"]
+radius = 2.0
 
 [node name="Player" type="CharacterBody3D"]
 collision_mask = 3
@@ -53,3 +56,17 @@ script = ExtResource("7_t26db")
 
 [node name="HealthComponent" type="Node" parent="."]
 script = ExtResource("8_fk5o5")
+
+[node name="PickupArea" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PickupArea"]
+shape = SubResource("SphereShape3D_fk5o5")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="ChargeBar" type="ProgressBar" parent="CanvasLayer"]
+offset_left = 943.0
+offset_top = 502.0
+offset_right = 947.0
+offset_bottom = 529.0
+max_value = 1.0

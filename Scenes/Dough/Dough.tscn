@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://bpu84pqtndpww"]
 
-[ext_resource type="Script" uid="uid://din4sc04wdxmj" path="res://Scripts/Dough/Dough.cs" id="1_n6k0i"]
+[ext_resource type="Script" uid="uid://bepioyhwmqswe" path="res://Scripts/Dough/Dough.cs" id="1_n6k0i"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_n6k0i"]
 albedo_color = Color(0.105882, 1, 0.211765, 1)
@@ -17,6 +17,8 @@ radius = 0.2
 radius = 0.25
 
 [node name="RigidBody3D" type="RigidBody3D"]
+collision_layer = 2
+collision_mask = 3
 script = ExtResource("1_n6k0i")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
@@ -25,9 +27,10 @@ mesh = SubResource("SphereMesh_vvn1x")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("SphereShape3D_n6k0i")
 
-[node name="Area3D" type="Area3D" parent="."]
+[node name="PickupZone" type="Area3D" parent="."]
+collision_layer = 2
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PickupZone"]
 shape = SubResource("SphereShape3D_0fxut")
 
-[connection signal="body_entered" from="Area3D" to="." method="OnBodyEntered"]
+[connection signal="body_entered" from="PickupZone" to="." method="OnBodyEntered"]

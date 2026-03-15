@@ -36,10 +36,6 @@ mesh = SubResource("BoxMesh_mugxw")
 transform = Transform3D(-0.999468, -0.028532, 0.0157993, 0, 0.484428, 0.874831, -0.0326143, 0.874366, -0.48417, -0.164087, 7.20499, -8.01128)
 light_color = Color(0.521569, 0.278431, 1, 1)
 
-[node name="RigidBody3D" parent="." instance=ExtResource("2_mugxw")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.16116, 0)
-script = null
-
 [node name="CharacterBody3D2" parent="." instance=ExtResource("3_2fwkt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.94338, 2.20709, 5.09061)
 
@@ -49,3 +45,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -7.53337, 0)
 [node name="CollisionShape3D" type="CollisionShape3D" parent="KillZone"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -6.56321, 0)
 shape = SubResource("BoxShape3D_2fwkt")
+
+[node name="RigidBody3D2" parent="." instance=ExtResource("2_mugxw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.9901206, 1.8819289)
