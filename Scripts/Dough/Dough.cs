@@ -3,16 +3,21 @@ using System;
 
 public partial class Dough : RigidBody3D, IThrowable
 {
-	//[Signal] public delegate void CanPickUpChangedEventHandler(bool canPickUp);
 	[Export] public float Damage = 20f;
 	[Export] public float StunDuration = 1.5f;
+    [Export] public float DiappearTimerTimeout = 115f;
 
-	public event Action<bool> PickupAvailabilityChanged;
+    public event Action<bool> PickupAvailabilityChanged;
 
 	private Node _homeScene;
 
-	// Called when the node enters the scene tree for the first time.
-	public override void _Ready()
+    // =========================================================
+    // Lifecycle
+    // =========================================================
+
+
+    // Called when the node enters the scene tree for the first time.
+    public override void _Ready()
 	{
 		_homeScene = GetParent();
 		// Подключаем физику удара
@@ -26,7 +31,7 @@ public partial class Dough : RigidBody3D, IThrowable
 		GD.Print($"[Dough] PickupZone mask: {pickupZone.CollisionMask}, layer: {pickupZone.CollisionLayer}");
 		GD.Print($"[Dough] Monitoring: {pickupZone.Monitoring}");
 
-		GetTree().CreateTimer(115f).Timeout += QueueFree;
+		GetTree().CreateTimer(DiappearTimerTimeout).Timeout += QueueFree;
 	}
 
 
@@ -61,11 +66,12 @@ public partial class Dough : RigidBody3D, IThrowable
 	}
 
 	
+	// -- IThrowable -- 
 	public bool CanBePickedUpBy(IEntity actor) => actor is Player;
 
 	public void PickUp(IEntity actor)
 	{
-		if (actor is not Node3D actorNode) return;
+		if (actor is not Node3D actorNode) return; ///better be charatctrer body 3d in our case
 
 		Freeze = true;
 		LinearVelocity = Vector3.Zero;
@@ -79,7 +85,7 @@ public partial class Dough : RigidBody3D, IThrowable
 		GetParent().RemoveChild(this);
 		actorNode.AddChild(this);
 
-		if (actor is Player carrier && carrier.ThrowPoint != null)
+		if (actor is Player carrier && carrier.ThrowPoint != null) 
 			Position = actorNode.ToLocal(carrier.ThrowPoint.GlobalPosition);
 		else
 			Position = Vector3.Up * 1.5f;
