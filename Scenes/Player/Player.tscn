@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://blw3xgniwfe0f"]
+[gd_scene load_steps=12 format=3 uid="uid://blw3xgniwfe0f"]
 
 [ext_resource type="Script" uid="uid://dnvesphlqsyh3" path="res://Scripts/Player/Player.cs" id="1_s0eop"]
 [ext_resource type="Script" uid="uid://dhiv70qmq5brw" path="res://Scripts/Player/States/MovementStateMachine.cs" id="2_ft8w5"]
@@ -8,6 +8,7 @@
 [ext_resource type="Script" uid="uid://wvo6nfm20ah6" path="res://Scripts/Player/States/WalkState.cs" id="6_4wape"]
 [ext_resource type="Script" uid="uid://cep5c4fyfj5v8" path="res://Scripts/Player/Components/StaminaComponent.cs" id="7_t26db"]
 [ext_resource type="Script" uid="uid://ea0vgerxkv16" path="res://Scripts/Player/Components/HealthComponent.cs" id="8_fk5o5"]
+[ext_resource type="Script" uid="uid://lcqkx26pqiap" path="res://Scripts/Player/PlayerCameraController.cs" id="9_825xp"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_l3ax4"]
 
@@ -24,14 +25,14 @@ mesh = SubResource("CapsuleMesh_l3ax4")
 shape = SubResource("CapsuleShape3D_s0eop")
 
 [node name="CameraPivot" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.959178, -0.00278699)
 
 [node name="SpringArm3D" type="SpringArm3D" parent="CameraPivot"]
 collision_mask = 0
 spring_length = 3.0
 
 [node name="Camera3D" type="Camera3D" parent="CameraPivot/SpringArm3D"]
-transform = Transform3D(1, 0, 0, 0, 0.979526, 0.201317, 0, -0.201317, 0.979526, 0, 1.50708, 2.37539)
+transform = Transform3D(1, 0, 0, 0, 0.990738, 0.135785, 0, -0.135785, 0.990738, 0, 1.57699, 2.12361)
 
 [node name="MovementStateMachine" type="Node" parent="."]
 script = ExtResource("2_ft8w5")
@@ -53,3 +54,6 @@ script = ExtResource("7_t26db")
 
 [node name="HealthComponent" type="Node" parent="."]
 script = ExtResource("8_fk5o5")
+
+[node name="PlayerCameraController" type="Node" parent="."]
+script = ExtResource("9_825xp")

@@ -23,7 +23,7 @@ public partial class JumpState : MovementState
 	public override void PhysicsUpdate(double delta)
 	{
 
-		Vector2 inputDir = Input.GetVector("move_left", "move_right", "move_forward", "move_back");
+		Vector2 inputDir = Input.GetVector("left", "right", "forward", "back");
 
 		Vector3 moveDirection = Entity.GetMovementDirection(inputDir);
 

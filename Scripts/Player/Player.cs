@@ -102,7 +102,7 @@ public partial class Player : CharacterBody3D, IEntity, IPlayerContext
 		//	velocity.Y = JumpVelocity;
 
 		//// Движение относительно направления игрока (который уже повёрнут мышью)
-		//var dir = Input.GetVector("move_left", "move_right", "move_forward", "move_back");
+		//var dir = Input.GetVector("left", "right", "forward", "back");
 		//Vector3 moveDir = (Transform.Basis * new Vector3(dir.X, 0, dir.Y)).Normalized();
 
 		//velocity.X = moveDir.X * Speed;

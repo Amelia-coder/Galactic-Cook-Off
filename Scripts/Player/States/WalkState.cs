@@ -18,12 +18,12 @@ public partial class WalkState : MovementState
 			TransitionTo("JumpState");
 		}
 
-		if (Input.IsActionPressed("sprint") && Input.IsActionPressed("move_forward") && CanEnter())
+		if (Input.IsActionPressed("sprint") && Input.IsActionPressed("forward") && CanEnter())
 		{
 			TransitionTo("RunState");
 		}
 
-		Vector2 inputDir = Input.GetVector("move_left", "move_right", "move_forward", "move_back");
+		Vector2 inputDir = Input.GetVector("left", "right", "forward", "back");
 		if (inputDir == Vector2.Zero)
 		{
 			TransitionTo("IdleState");
