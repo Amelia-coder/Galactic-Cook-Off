@@ -20,6 +20,7 @@ public partial class Player : CharacterBody3D, IEntity
 
 	private Node3D _cameraPivot;
 	private Camera3D _camera;
+
 	private float _chargeTime = 0f;
 	private bool _isCharging = false;
 	
@@ -35,62 +36,20 @@ public partial class Player : CharacterBody3D, IEntity
 	{
 		_cameraPivot = GetNode<Node3D>("CameraPivot");
 		_camera = GetNode<Camera3D>("CameraPivot/SpringArm3D/Camera3D");
-		
 		_movementStateMachine = GetNode<MovementStateMachine>("MovementStateMachine");
-		
+		_staminaComponent = GetNode<StaminaComponent>("StaminaComponent");
 
-		if (IsLocalPlayer)
-		{
-			_camera.MakeCurrent();
-			Input.MouseMode = Input.MouseModeEnum.Captured;
-		}
-		else
-		{
-			// У других игроков камера не активна
+		if (!IsLocalPlayer)
 			_camera.Current = false;
-		}
 	}
 
 	public override void _UnhandledInput(InputEvent @event)
 	{
 		if (!IsLocalPlayer) return; // только локальный игрок управляет мышью
-
-		if (@event is InputEventMouseMotion mouseMotion)
-		{
-			// Вращаем самого игрока горизонтально — движение WASD станет относительным
-			RotateY(-mouseMotion.Relative.X * MouseSensitivity);
-
-			// Вертикальный наклон — только пивот камеры
-			_cameraPivot.RotateX(-mouseMotion.Relative.Y * MouseSensitivity);
-
-			// Clamp вертикального угла
-			Vector3 pivotRot = _cameraPivot.RotationDegrees;
-			pivotRot.X = Mathf.Clamp(pivotRot.X, TiltMin, TiltMax);
-			_cameraPivot.RotationDegrees = pivotRot;
-		}
 	}
 
 	public override void _PhysicsProcess(double delta)
 	{
-		//if (!IsLocalPlayer) return;
-//
-		//var velocity = Velocity;
-//
-		//if (!IsOnFloor())
-			//velocity.Y -= Gravity * (float)delta;
-//
-		//if (Input.IsActionJustPressed("ui_accept") && IsOnFloor())
-			//velocity.Y = JumpVelocity;
-//
-		//// Движение относительно направления игрока (который уже повёрнут мышью)
-		//var dir = Input.GetVector("move_left", "move_right", "move_forward", "move_back");
-		//Vector3 moveDir = (Transform.Basis * new Vector3(dir.X, 0, dir.Y)).Normalized();
-//
-		//velocity.X = moveDir.X * Speed;
-		//velocity.Z = moveDir.Z * Speed;
-//
-		//Velocity = velocity;
-		//MoveAndSlide();
 		_movementStateMachine._PhysicsProcess(delta);
 
 		Velocity += Vector3.Down * Gravity * (float)delta;
