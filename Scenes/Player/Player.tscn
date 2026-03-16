@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://blw3xgniwfe0f"]
+[gd_scene load_steps=14 format=3 uid="uid://blw3xgniwfe0f"]
 
 [ext_resource type="Script" uid="uid://dnvesphlqsyh3" path="res://Scripts/Player/Player.cs" id="1_s0eop"]
 [ext_resource type="Script" uid="uid://dhiv70qmq5brw" path="res://Scripts/Player/States/MovementStateMachine.cs" id="2_ft8w5"]
@@ -8,6 +8,8 @@
 [ext_resource type="Script" uid="uid://wvo6nfm20ah6" path="res://Scripts/Player/States/WalkState.cs" id="6_4wape"]
 [ext_resource type="Script" uid="uid://cep5c4fyfj5v8" path="res://Scripts/Player/Components/StaminaComponent.cs" id="7_t26db"]
 [ext_resource type="Script" uid="uid://ea0vgerxkv16" path="res://Scripts/Player/Components/HealthComponent.cs" id="8_fk5o5"]
+[ext_resource type="Script" uid="uid://cs7u7plljksxn" path="res://Scripts/Player/Abilities/PickupAbility.cs" id="9_ji083"]
+[ext_resource type="Script" uid="uid://m54o6abrfe2k" path="res://Scripts/Player/Abilities/ThrowAbility.cs" id="10_0kmp4"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_l3ax4"]
 
@@ -70,3 +72,11 @@ offset_top = 502.0
 offset_right = 947.0
 offset_bottom = 529.0
 max_value = 1.0
+
+[node name="PlayerAbilities" type="Node" parent="."]
+
+[node name="PickupAbility" type="Node" parent="PlayerAbilities"]
+script = ExtResource("9_ji083")
+
+[node name="ThrowAbility" type="Node" parent="PlayerAbilities"]
+script = ExtResource("10_0kmp4")
