@@ -22,6 +22,8 @@ public partial class Player : CharacterBody3D, IEntity, IPlayerContext
 	private Camera3D _camera;
 	private float _chargeTime = 0f;
 	private bool _isCharging = false;
+	private CoyoteComponent _coyoteTimer;
+
 
 	Vector3 IMovable.Velocity
 	{
@@ -33,14 +35,17 @@ public partial class Player : CharacterBody3D, IEntity, IPlayerContext
 	private MovementStateMachine _movementStateMachine;
 
 	private StaminaComponent _staminaComponent;
-	//private StaminaComponent _staminaComponent;
 
 	private bool _wasOnFloor;
 	public bool IsTouchingFloor => IsOnFloor();
 
-	public bool CanJump => IsTouchingFloor ; //||CoyoteTimer.IsActive()
+	public bool CanJump => IsTouchingFloor|| _coyoteTimer.IsActive;
 
 	public StaminaComponent Stamina;
+
+	public event Action LeftGround;
+	public event Action Landed;
+	private bool _wasGrounded;
 
 	public HealthComponent Health => throw new NotImplementedException();
 
@@ -66,6 +71,9 @@ public partial class Player : CharacterBody3D, IEntity, IPlayerContext
 			// У других игроков камера не активна
 			_camera.Current = false;
 		}
+
+		_coyoteTimer = GetNode<CoyoteComponent>("CoyoteComponent");
+
 	}
 
 	//если при беге камера как-то старнно ведет себ
@@ -91,30 +99,13 @@ public partial class Player : CharacterBody3D, IEntity, IPlayerContext
 
 	public override void _PhysicsProcess(double delta)
 	{
-		//if (!IsLocalPlayer) return;
-
-		//var velocity = Velocity;
-
-		//if (!IsOnFloor())
-		//	velocity.Y -= Gravity * (float)delta;
-
-		//if (Input.IsActionJustPressed("ui_accept") && IsOnFloor())
-		//	velocity.Y = JumpVelocity;
-
-		//// Движение относительно направления игрока (который уже повёрнут мышью)
-		//var dir = Input.GetVector("left", "right", "forward", "back");
-		//Vector3 moveDir = (Transform.Basis * new Vector3(dir.X, 0, dir.Y)).Normalized();
-
-		//velocity.X = moveDir.X * Speed;
-		//velocity.Z = moveDir.Z * Speed;
-
-		//Velocity = velocity;
-		//MoveAndSlide();
 		_movementStateMachine._PhysicsProcess(delta);
 
 		Velocity += Vector3.Down * Gravity * (float)delta;
 
 		MoveAndSlide();
+
+		UpdateGroundState(IsTouchingFloor);
 	}
 
 	public override void _Process(double delta)
@@ -173,6 +164,17 @@ public partial class Player : CharacterBody3D, IEntity, IPlayerContext
 		Vector3 direction = (camRight * input.X) + (camForward * -input.Y);
 
 		return direction.Normalized();
+	}
+
+	void UpdateGroundState(bool grounded)
+	{
+		if (_wasGrounded && !grounded)
+			LeftGround?.Invoke();
+
+		if (!_wasGrounded && grounded)
+			Landed?.Invoke();
+
+		_wasGrounded = grounded;
 	}
 
 }
