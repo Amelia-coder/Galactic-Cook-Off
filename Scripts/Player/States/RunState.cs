@@ -25,7 +25,7 @@ public partial class RunState : MovementState
 	{
 
 
-		if (Input.IsActionJustPressed("jump") && Entity.CanJump)
+		if (Input.IsActionJustPressed("jump") && Entity.TryJump())
 		{
 			GD.Print($"We jumped!", Entity.CanJump);
 			TransitionTo("JumpState");

@@ -29,18 +29,18 @@ public partial class Dough : RigidBody3D, IThrowable
 	}
 
 
-    public bool CanBePickedUpBy(IEntity actor)
-    {
-        return actor is Player;
-    }
+	public bool CanBePickedUpBy(IEntity actor)
+	{
+		return actor is Player;
+	}
 
-    public void PickUp(IEntity actor)
-    {
-        //// remove form scene, add another object
-    }
+	public void PickUp(IEntity actor)
+	{
+		//// remove form scene, add another object
+	}
 
-    public void Throw(Vector3 impulse)
-    {
-        //player gives it
-    }
+	public void Throw(Vector3 impulse)
+	{
+		//player gives it
+	}
 }

@@ -24,6 +24,7 @@ public partial class Player : CharacterBody3D, IEntity, IPlayerContext
 	private bool _isCharging = false;
 	private CoyoteComponent _coyoteTimer;
 
+	private JumpCounterComponent _jumpCounter;
 
 	Vector3 IMovable.Velocity
 	{
@@ -31,7 +32,9 @@ public partial class Player : CharacterBody3D, IEntity, IPlayerContext
 		set => Velocity = value;
 	}
 
-	
+	public void ConsumeCoyote() => _coyoteTimer.Consume();
+
+
 	private MovementStateMachine _movementStateMachine;
 
 	private StaminaComponent _staminaComponent;
@@ -39,7 +42,18 @@ public partial class Player : CharacterBody3D, IEntity, IPlayerContext
 	private bool _wasOnFloor;
 	public bool IsTouchingFloor => IsOnFloor();
 
-	public bool CanJump => IsTouchingFloor|| _coyoteTimer.IsActive;
+	public bool CanJump => _jumpCounter.CanJump;
+
+	private bool CanDoubleJump => !IsTouchingFloor && !_coyoteTimer.IsActive && _jumpCounter.CanJump;
+
+	public bool TryJump()
+	{
+		if (!_jumpCounter.TryConsume()) return false;
+		return true;
+	}
+
+
+
 
 	public StaminaComponent Stamina;
 
@@ -52,6 +66,7 @@ public partial class Player : CharacterBody3D, IEntity, IPlayerContext
 	StaminaComponent IPlayerContext.Stamina { get => _staminaComponent; }
 	HealthComponent IPlayerContext.Health { get => Health; }
 
+
 	public override void _Ready()
 	{
 		_cameraPivot = GetNode<Node3D>("CameraPivot");
@@ -60,6 +75,9 @@ public partial class Player : CharacterBody3D, IEntity, IPlayerContext
 		_movementStateMachine = GetNode<MovementStateMachine>("MovementStateMachine");
 		
 		_staminaComponent = GetNode<StaminaComponent>("StaminaComponent");
+
+		_jumpCounter = GetNode<JumpCounterComponent>("JumpCounterComponent");
+		_jumpCounter.Refill();
 
 		if (IsLocalPlayer)
 		{
@@ -102,6 +120,8 @@ public partial class Player : CharacterBody3D, IEntity, IPlayerContext
 		_movementStateMachine._PhysicsProcess(delta);
 
 		Velocity += Vector3.Down * Gravity * (float)delta;
+
+		GD.Print($"[Physics] Velocity.Y={Velocity.Y:F2} OnFloor={IsOnFloor()}");
 
 		MoveAndSlide();
 
@@ -173,6 +193,10 @@ public partial class Player : CharacterBody3D, IEntity, IPlayerContext
 
 		if (!_wasGrounded && grounded)
 			Landed?.Invoke();
+
+		// Сбрасываем накопленную гравитацию когда стоим на земле
+		if (grounded && Velocity.Y < 0)
+			Velocity = new Vector3(Velocity.X, 0, Velocity.Z);
 
 		_wasGrounded = grounded;
 	}

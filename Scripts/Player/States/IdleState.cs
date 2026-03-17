@@ -8,13 +8,14 @@ public partial class IdleState : MovementState
 	[Export] public float Speed { get; set; } = 0.0f;
 	public override void Enter()
 	{
-		Entity.Velocity = new Vector3(0, 0, 0);
+		//Чтобы не сбрасывать гравитацию
+		Entity.Velocity = new Vector3(0, Entity.Velocity.Y, 0);
 	}
 
 	public override void PhysicsUpdate(double delta)
 	{
 
-		if (Input.IsActionJustPressed("jump") && Entity.CanJump)
+		if (Input.IsActionJustPressed("jump") && Entity.TryJump())
 		{
 
 			GD.Print($"We jumped!", Entity.CanJump);
@@ -32,5 +33,6 @@ public partial class IdleState : MovementState
 			TransitionTo("RunState");
 		}
 		Entity.Stamina.Regen(StaminaRegenPerSecond, (float)delta);
+
 	}
 }

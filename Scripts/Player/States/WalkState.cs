@@ -12,7 +12,7 @@ public partial class WalkState : MovementState
 
 	public override void PhysicsUpdate(double delta)
 	{
-		if (Input.IsActionJustPressed("jump") && Entity.CanJump)
+		if (Input.IsActionJustPressed("jump") && Entity.TryJump())
 		{
 			GD.Print($"We jumped!", Entity.CanJump);
 			TransitionTo("JumpState");
