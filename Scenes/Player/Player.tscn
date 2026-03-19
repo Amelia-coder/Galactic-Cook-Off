@@ -1,15 +1,16 @@
-[gd_scene load_steps=14 format=3 uid="uid://blw3xgniwfe0f"]
+[gd_scene load_steps=15 format=3 uid="uid://blw3xgniwfe0f"]
 
 [ext_resource type="Script" uid="uid://dnvesphlqsyh3" path="res://Scripts/Player/Player.cs" id="1_s0eop"]
-[ext_resource type="Script" uid="uid://dhiv70qmq5brw" path="res://Scripts/Player/States/MovementStateMachine.cs" id="2_ft8w5"]
-[ext_resource type="Script" uid="uid://datcqn2n4fwx3" path="res://Scripts/Player/States/IdleState.cs" id="3_jmcll"]
-[ext_resource type="Script" uid="uid://fkvm3v3ujjge" path="res://Scripts/Player/States/JumpState.cs" id="4_4wape"]
-[ext_resource type="Script" uid="uid://dtpor0hxjvngj" path="res://Scripts/Player/States/RunState.cs" id="5_t26db"]
-[ext_resource type="Script" uid="uid://wvo6nfm20ah6" path="res://Scripts/Player/States/WalkState.cs" id="6_4wape"]
-[ext_resource type="Script" uid="uid://cep5c4fyfj5v8" path="res://Scripts/Player/Components/StaminaComponent.cs" id="7_t26db"]
-[ext_resource type="Script" uid="uid://ea0vgerxkv16" path="res://Scripts/Player/Components/HealthComponent.cs" id="8_fk5o5"]
-[ext_resource type="Script" uid="uid://cs7u7plljksxn" path="res://Scripts/Player/Abilities/PickupAbility.cs" id="9_ji083"]
-[ext_resource type="Script" uid="uid://m54o6abrfe2k" path="res://Scripts/Player/Abilities/ThrowAbility.cs" id="10_0kmp4"]
+[ext_resource type="Script" uid="uid://ccf70em7agyd1" path="res://Scripts/Player/PlayerContext.cs" id="2_0kmp4"]
+[ext_resource type="Script" uid="uid://c30rv0lcu05f3" path="res://Scripts/Player/States/MovementStateMachine.cs" id="2_ft8w5"]
+[ext_resource type="Script" uid="uid://dqm7kq4nq7gvs" path="res://Scripts/Player/States/IdleState.cs" id="3_jmcll"]
+[ext_resource type="Script" uid="uid://brol76wadreig" path="res://Scripts/Player/States/JumpState.cs" id="4_4wape"]
+[ext_resource type="Script" uid="uid://cpf2ncav5ovqy" path="res://Scripts/Player/States/RunState.cs" id="5_t26db"]
+[ext_resource type="Script" uid="uid://cym00vx4fdfge" path="res://Scripts/Player/States/WalkState.cs" id="6_4wape"]
+[ext_resource type="Script" uid="uid://cqtvht5hf1oac" path="res://Scripts/Player/Components/StaminaComponent.cs" id="7_t26db"]
+[ext_resource type="Script" uid="uid://b2q4tmgslsooa" path="res://Scripts/Player/Components/HealthComponent.cs" id="8_fk5o5"]
+[ext_resource type="Script" uid="uid://cqqkwb1arsi5p" path="res://Scripts/Player/Abilities/PickupAbility.cs" id="9_ji083"]
+[ext_resource type="Script" uid="uid://c8xkgsevsuxb" path="res://Scripts/Player/Abilities/ThrowAbility.cs" id="10_0kmp4"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_l3ax4"]
 
@@ -38,19 +39,22 @@ spring_length = 3.0
 [node name="Camera3D" type="Camera3D" parent="CameraPivot/SpringArm3D"]
 transform = Transform3D(1, 0, 0, 0, 0.979526, 0.201317, 0, -0.201317, 0.979526, 0, 1.50708, 2.37539)
 
-[node name="MovementStateMachine" type="Node" parent="."]
+[node name="PlayerContext" type="Node" parent="."]
+script = ExtResource("2_0kmp4")
+
+[node name="MovementStateMachine" type="Node" parent="PlayerContext"]
 script = ExtResource("2_ft8w5")
 
-[node name="IdleState" type="Node" parent="MovementStateMachine"]
+[node name="IdleState" type="Node" parent="PlayerContext/MovementStateMachine"]
 script = ExtResource("3_jmcll")
 
-[node name="JumpState" type="Node" parent="MovementStateMachine"]
+[node name="JumpState" type="Node" parent="PlayerContext/MovementStateMachine"]
 script = ExtResource("4_4wape")
 
-[node name="RunState" type="Node" parent="MovementStateMachine"]
+[node name="RunState" type="Node" parent="PlayerContext/MovementStateMachine"]
 script = ExtResource("5_t26db")
 
-[node name="WalkState" type="Node" parent="MovementStateMachine"]
+[node name="WalkState" type="Node" parent="PlayerContext/MovementStateMachine"]
 script = ExtResource("6_4wape")
 
 [node name="StaminaComponent" type="Node" parent="."]
