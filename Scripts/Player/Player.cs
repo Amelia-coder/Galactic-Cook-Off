@@ -51,17 +51,14 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 
 	private PlayerContext _playerContext; 
 
-	// IPlayerContext
+	// IEntity
 	public StaminaComponent Stamina;
 	public HealthComponent Health => throw new NotImplementedException();
-
-
-	void OnPickableStateChanged(IThrowable item, bool canPick) { }
 
 	private MovementStateMachine _movementStateMachine;
 
 	private StaminaComponent _staminaComponent;
-	//private StaminaComponent _staminaComponent;
+	private BodyDetector _bodyDetector;
 
 	private bool _wasOnFloor;
 	public bool IsTouchingFloor => IsOnFloor();
@@ -88,15 +85,16 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 		GD.Print($"Inside player stamina is null:  ", _staminaComponent == null);
 
 		_playerContext = GetNode<PlayerContext>("PlayerContext");
-		_playerContext.Initialize(this, _camera, _staminaComponent);
+		_bodyDetector = GetNode<BodyDetector>("BodyDetector");
+		_playerContext.Initialize(this, _camera, _staminaComponent, _bodyDetector);
 
 		_chargeBar = GetNode<ProgressBar>("CanvasLayer/ChargeBar");
 		_chargeBar.Visible = false;
 
 
-		var pickupArea = GetNode<Area3D>("PickupArea");
-		pickupArea.BodyEntered += OnPickupAreaBodyEntered;
-		pickupArea.BodyExited += OnPickupAreaBodyExited;
+		//var pickupArea = GetNode<Area3D>("PickupArea");
+		//pickupArea.BodyEntered += OnPickupAreaBodyEntered;
+		//pickupArea.BodyExited += OnPickupAreaBodyExited;
 
 		if (IsLocalPlayer)
 		{
@@ -255,71 +253,71 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 		return best;
 	}
 
-	private void ThrowDough()
-	{
-		if (DoughScene == null) return;
+	//private void ThrowDough()
+	//{
+	//	if (DoughScene == null) return;
 
-		var dough = DoughScene.Instantiate<RigidBody3D>();
-		GetTree().Root.AddChild(dough);
-		dough.GlobalPosition = ThrowPoint.GlobalPosition;
+	//	var dough = DoughScene.Instantiate<RigidBody3D>();
+	//	GetTree().Root.AddChild(dough);
+	//	dough.GlobalPosition = ThrowPoint.GlobalPosition;
 
-		float force = Mathf.Lerp(MinThrowForce, MaxThrowForce, _chargeTime / 1.5f);
-		Vector3 direction = -Transform.Basis.Z;
-		dough.ApplyImpulse(direction * force);
-	}
+	//	float force = Mathf.Lerp(MinThrowForce, MaxThrowForce, _chargeTime / 1.5f);
+	//	Vector3 direction = -Transform.Basis.Z;
+	//	dough.ApplyImpulse(direction * force);
+	//}
 
 	// =========================================================
 	// Область обнаружения предметов (Area3D callbacks)
 	// =========================================================
 
-	private void OnThrowableEntered(Node3D body)
-	{
-		GD.Print($"Тип: {body.GetType().FullName}, скрипт: {body.GetScript()}");
-		GD.Print($"[PickupArea] вошёл: {body.Name}, IThrowable: {body is IThrowable}");
-		//if (body is IThrowable throwable)
-		//{
-		//	_itemsInRange.Add(throwable);
-		//	throwable.PickupAvailabilityChanged += OnPickupAvailabilityChanged;
-		//	GD.Print($"[PickupArea] добавлен в список: {body.Name}");
-		//}
+	//private void OnThrowableEntered(Node3D body)
+	//{
+	//	GD.Print($"Тип: {body.GetType().FullName}, скрипт: {body.GetScript()}");
+	//	GD.Print($"[PickupArea] вошёл: {body.Name}, IThrowable: {body is IThrowable}");
+	//	//if (body is IThrowable throwable)
+	//	//{
+	//	//	_itemsInRange.Add(throwable);
+	//	//	throwable.PickupAvailabilityChanged += OnPickupAvailabilityChanged;
+	//	//	GD.Print($"[PickupArea] добавлен в список: {body.Name}");
+	//	//}
 
-		IThrowable throwable = body as IThrowable;
-		if (throwable == null && body is Node node)
-			throwable = node as IThrowable;
+	//	IThrowable throwable = body as IThrowable;
+	//	if (throwable == null && body is Node node)
+	//		throwable = node as IThrowable;
 
-		if (throwable != null && body != this)
-		{
-			_itemsInRange.Add(throwable);
-			throwable.PickupAvailabilityChanged += OnPickupAvailabilityChanged;
-			GD.Print($"[PickupArea] добавлен: {body.Name}");
-		}
-	}
+	//	if (throwable != null && body != this)
+	//	{
+	//		_itemsInRange.Add(throwable);
+	//		throwable.PickupAvailabilityChanged += OnPickupAvailabilityChanged;
+	//		GD.Print($"[PickupArea] добавлен: {body.Name}");
+	//	}
+	//}
 
-	private void OnThrowableExited(Node3D body)
-	{
-		if (body is IThrowable throwable)
-		{
-			_itemsInRange.Remove(throwable);
-			throwable.PickupAvailabilityChanged -= OnPickupAvailabilityChanged;
-		}
-	}
+	//private void OnThrowableExited(Node3D body)
+	//{
+	//	if (body is IThrowable throwable)
+	//	{
+	//		_itemsInRange.Remove(throwable);
+	//		throwable.PickupAvailabilityChanged -= OnPickupAvailabilityChanged;
+	//	}
+	//}
 
-	private void OnPickupAvailabilityChanged(bool canPickUp)
-	{
-		ShowPickupLabel(canPickUp);
-	}
+	//private void OnPickupAvailabilityChanged(bool canPickUp)
+	//{
+	//	ShowPickupLabel(canPickUp);
+	//}
 
 	private void ShowPickupLabel(bool visible)
 	{
 		// TODO: показать/скрыть UI-подсказку "Нажми F для подбора"
 	}
 
-	public void RegisterNearbyThrowable(IThrowable throwable)
-	{
-		if (_itemsInRange.Contains(throwable)) return;
-		_itemsInRange.Add(throwable);
-		GD.Print($"[Player] добавлен предмет, всего: {_itemsInRange.Count}");
-	}
+	//public void RegisterNearbyThrowable(IThrowable throwable)
+	//{
+	//	if (_itemsInRange.Contains(throwable)) return;
+	//	_itemsInRange.Add(throwable);
+	//	GD.Print($"[Player] добавлен предмет, всего: {_itemsInRange.Count}");
+	//}
 
 	public void UnregisterNearbyThrowable(IThrowable throwable)
 	{
@@ -335,7 +333,7 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 	{
 		if (body is not Player otherPlayer || otherPlayer == this) return;
 		GD.Print($"[PickupArea] вошёл игрок: {body.Name}");
-		RegisterNearbyThrowable(otherPlayer);
+		//RegisterNearbyThrowable(otherPlayer);
 	}
 
 	private void OnPickupAreaBodyExited(Node3D body)

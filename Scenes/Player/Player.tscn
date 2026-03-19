@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://blw3xgniwfe0f"]
+[gd_scene load_steps=16 format=3 uid="uid://blw3xgniwfe0f"]
 
 [ext_resource type="Script" uid="uid://dnvesphlqsyh3" path="res://Scripts/Player/Player.cs" id="1_s0eop"]
 [ext_resource type="Script" uid="uid://ccf70em7agyd1" path="res://Scripts/Player/PlayerContext.cs" id="2_0kmp4"]
@@ -11,6 +11,7 @@
 [ext_resource type="Script" uid="uid://b2q4tmgslsooa" path="res://Scripts/Player/Components/HealthComponent.cs" id="8_fk5o5"]
 [ext_resource type="Script" uid="uid://cqqkwb1arsi5p" path="res://Scripts/Player/Abilities/PickupAbility.cs" id="9_ji083"]
 [ext_resource type="Script" uid="uid://c8xkgsevsuxb" path="res://Scripts/Player/Abilities/ThrowAbility.cs" id="10_0kmp4"]
+[ext_resource type="Script" uid="uid://bxa30gd2ibsn8" path="res://Scripts/Player/BodyDetector.cs" id="10_i5acl"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_l3ax4"]
 
@@ -63,9 +64,11 @@ script = ExtResource("7_t26db")
 [node name="HealthComponent" type="Node" parent="."]
 script = ExtResource("8_fk5o5")
 
-[node name="PickupArea" type="Area3D" parent="."]
+[node name="BodyDetector" type="Area3D" parent="."]
+collision_mask = 3
+script = ExtResource("10_i5acl")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="PickupArea"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BodyDetector"]
 shape = SubResource("SphereShape3D_fk5o5")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]

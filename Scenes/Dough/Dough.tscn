@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://bpu84pqtndpww"]
 
-[ext_resource type="Script" uid="uid://din4sc04wdxmj" path="res://Scripts/Dough/Dough.cs" id="1_n6k0i"]
+[ext_resource type="Script" uid="uid://sux0ri8se7k0" path="res://Scripts/Dough/Dough.cs" id="1_n6k0i"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_n6k0i"]
 albedo_color = Color(0.105882, 1, 0.211765, 1)
