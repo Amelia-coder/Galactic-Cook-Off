@@ -3,7 +3,7 @@ using System;
 using System.Buffers;
 using System.Collections.Generic;
 
-public partial class Player : CharacterBody3D, IEntity, IPlayerContext, IThrowable
+public partial class Player : CharacterBody3D, IEntity, IThrowable
 {
 	[Export] public float Speed = 5f;
 	[Export] public float JumpVelocity = 5f;
@@ -49,19 +49,11 @@ public partial class Player : CharacterBody3D, IEntity, IPlayerContext, IThrowab
 
 	[Export] public float MaxChargeTime = 1.5f;
 
-	// IMovable
-	Vector3 IMovable.Velocity
-	{
-		get => Velocity;
-		set => Velocity = value;
-	}
+	private PlayerContext _playerContext; 
 
 	// IPlayerContext
 	public StaminaComponent Stamina;
 	public HealthComponent Health => throw new NotImplementedException();
-
-	StaminaComponent IPlayerContext.Stamina { get => _staminaComponent; }
-	HealthComponent IPlayerContext.Health { get => Health; }
 
 
 	void OnPickableStateChanged(IThrowable item, bool canPick) { }
@@ -88,9 +80,15 @@ public partial class Player : CharacterBody3D, IEntity, IPlayerContext, IThrowab
 		_cameraPivot = GetNode<Node3D>("CameraPivot");
 		_camera = GetNode<Camera3D>("CameraPivot/SpringArm3D/Camera3D");
 
-		_movementStateMachine = GetNode<MovementStateMachine>("MovementStateMachine");
+		_movementStateMachine = GetNode<MovementStateMachine>("PlayerContext/MovementStateMachine");
+
 
 		_staminaComponent = GetNode<StaminaComponent>("StaminaComponent");
+
+		GD.Print($"Inside player stamina is null:  ", _staminaComponent == null);
+
+		_playerContext = GetNode<PlayerContext>("PlayerContext");
+		_playerContext.Initialize(this, _camera, _staminaComponent);
 
 		_chargeBar = GetNode<ProgressBar>("CanvasLayer/ChargeBar");
 		_chargeBar.Visible = false;
@@ -392,16 +390,10 @@ public partial class Player : CharacterBody3D, IEntity, IPlayerContext, IThrowab
 
 	public void PlayAnimation(string name) { }
 
-	public Vector3 GetMovementDirection(Vector2 input)
-	{
-		if (_camera == null || input.Length() < 0.1f) return Vector3.Zero;
+	//public Vector3 GetMovementDirection(Vector2 input)
+	//{
 
-		Basis camBasis = _camera.GlobalTransform.Basis;
-		Vector3 camForward = new Vector3(-camBasis.Z.X, 0, -camBasis.Z.Z).Normalized();
-		Vector3 camRight = new Vector3(camBasis.X.X, 0, camBasis.X.Z).Normalized();
-
-		return (camRight * input.X + camForward * -input.Y).Normalized();
-	}
+	//}
 
 
 
