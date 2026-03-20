@@ -170,7 +170,7 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 	{
 		if (!IsLocalPlayer || _isHeld) return;
 
-		HandlePickupInput();
+		//HandlePickupInput();
 		HandleThrowInput(delta);
 
 		// Обновляем шкалу — только один раз
@@ -187,25 +187,6 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 	// Подбор и бросок
 	// =========================================================
 
-	private void HandlePickupInput()
-	{
-		if (!Input.IsActionJustPressed("pickup")) return;
-		GD.Print($"[Pickup] нажат pickup, heldObject={_heldObject}, inRange={_itemsInRange.Count}");
-		
-		if (_heldObject != null)
-		{
-			// Уже что-то держим — кладём
-			_heldObject.Drop();
-			_heldObject = null;
-			return;
-		}
-
-		IThrowable target = GetItemPlayerIsLookingAt();
-		if (target == null || !target.CanBePickedUpBy(this)) return;
-
-		_heldObject = target;
-		_heldObject.PickUp(this);
-	}
 
 	private void HandleThrowInput(double delta)
 	{
@@ -245,96 +226,11 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 			_chargeTime = 0f;
 		}
 	}
-
-	private IThrowable GetItemPlayerIsLookingAt()
-	{
-		if (_itemsInRange.Count == 0) return null;
-
-		Vector3 forward = -GlobalTransform.Basis.Z;
-		IThrowable best = null;
-		float bestDot = 0.5f; // минимальный порог — конус ~60°
-
-		foreach (var item in _itemsInRange)
-		{
-			if (item is Player p && p == this) continue;
-			if (item is not Node3D itemNode) continue;
-			Vector3 dir = (itemNode.GlobalPosition - GlobalPosition).Normalized();
-			float dot = forward.Dot(dir);
-			if (dot > bestDot)
-			{
-				bestDot = dot;
-				best = item;
-			}
-		}
-
-		return best;
-	}
-
-	//private void ThrowDough()
-	//{
-	//	if (DoughScene == null) return;
-
-	//	var dough = DoughScene.Instantiate<RigidBody3D>();
-	//	GetTree().Root.AddChild(dough);
-	//	dough.GlobalPosition = ThrowPoint.GlobalPosition;
-
-	//	float force = Mathf.Lerp(MinThrowForce, MaxThrowForce, _chargeTime / 1.5f);
-	//	Vector3 direction = -Transform.Basis.Z;
-	//	dough.ApplyImpulse(direction * force);
-	//}
-
-	// =========================================================
-	// Область обнаружения предметов (Area3D callbacks)
-	// =========================================================
-
-	//private void OnThrowableEntered(Node3D body)
-	//{
-	//	GD.Print($"Тип: {body.GetType().FullName}, скрипт: {body.GetScript()}");
-	//	GD.Print($"[PickupArea] вошёл: {body.Name}, IThrowable: {body is IThrowable}");
-	//	//if (body is IThrowable throwable)
-	//	//{
-	//	//	_itemsInRange.Add(throwable);
-	//	//	throwable.PickupAvailabilityChanged += OnPickupAvailabilityChanged;
-	//	//	GD.Print($"[PickupArea] добавлен в список: {body.Name}");
-	//	//}
-
-	//	IThrowable throwable = body as IThrowable;
-	//	if (throwable == null && body is Node node)
-	//		throwable = node as IThrowable;
-
-	//	if (throwable != null && body != this)
-	//	{
-	//		_itemsInRange.Add(throwable);
-	//		throwable.PickupAvailabilityChanged += OnPickupAvailabilityChanged;
-	//		GD.Print($"[PickupArea] добавлен: {body.Name}");
-	//	}
-	//}
-
-	//private void OnThrowableExited(Node3D body)
-	//{
-	//	if (body is IThrowable throwable)
-	//	{
-	//		_itemsInRange.Remove(throwable);
-	//		throwable.PickupAvailabilityChanged -= OnPickupAvailabilityChanged;
-	//	}
-	//}
-
-	//private void OnPickupAvailabilityChanged(bool canPickUp)
-	//{
-	//	ShowPickupLabel(canPickUp);
-	//}
-
 	private void ShowPickupLabel(bool visible)
 	{
 		// TODO: показать/скрыть UI-подсказку "Нажми F для подбора"
 	}
 
-	//public void RegisterNearbyThrowable(IThrowable throwable)
-	//{
-	//	if (_itemsInRange.Contains(throwable)) return;
-	//	_itemsInRange.Add(throwable);
-	//	GD.Print($"[Player] добавлен предмет, всего: {_itemsInRange.Count}");
-	//}
 
 	public void UnregisterNearbyThrowable(IThrowable throwable)
 	{
@@ -361,61 +257,20 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 	
 	public bool CanBePickedUpBy(IEntity actor) => actor is Player p && p != this;
 
+	public void Drop()
+	{
+		//DetachFromCarrier();
+	}
+
+	public void PlayAnimation(string name) { }
+	public void Throw(Vector3 impulse)
+	{
+		//DetachFromCarrier();
+		//_throwVelocity = impulse;
+	}
 
 	public void PickUp(IEntity actor)
 	{
-		if (actor is not Node3D actorNode) return;
-
-		_isHeld = true;
-
-		// Убираем из текущей иерархии сцены и вешаем на носителя
-		GetParent().RemoveChild(this);
-		actorNode.AddChild(this);
-
-		// Позиционируем относительно ThrowPoint носителя, если есть
-		if (actor is Player carrier && carrier.ThrowPoint != null)
-			Position = actorNode.ToLocal(carrier.ThrowPoint.GlobalPosition);
-		else
-			Position = Vector3.Up * 1.5f;
+		throw new NotImplementedException();
 	}
-
-	public void Drop()
-	{
-		DetachFromCarrier();
-	}
-
-	private void DetachFromCarrier()
-	{
-		if (!_isHeld) return;
-
-		Vector3 worldPos = GlobalPosition;
-		Node carrier = GetParent();
-
-		carrier.RemoveChild(this);
-
-		// Дед = сцена арены. Если деда нет — корень дерева
-		Node homeScene = carrier.GetParent() ?? GetTree().Root;
-		homeScene.AddChild(this);
-		GlobalPosition = worldPos;
-
-		_isHeld = false;
-	}
-
-
-
-	public void PlayAnimation(string name) { }
-
-	//public Vector3 GetMovementDirection(Vector2 input)
-	//{
-
-	//}
-
-
-
-	public void Throw(Vector3 impulse)
-	{
-		DetachFromCarrier();
-		_throwVelocity = impulse;
-	}
-
 }

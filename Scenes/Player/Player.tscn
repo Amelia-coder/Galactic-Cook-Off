@@ -18,8 +18,8 @@
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_s0eop"]
 
-[sub_resource type="SphereShape3D" id="SphereShape3D_fk5o5"]
-radius = 2.0
+[sub_resource type="BoxShape3D" id="BoxShape3D_epg6k"]
+size = Vector3(3.769043, 2, 0.38984376)
 
 [node name="Player" type="CharacterBody3D"]
 collision_mask = 3
@@ -70,7 +70,8 @@ collision_mask = 3
 script = ExtResource("10_i5acl")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="BodyDetector"]
-shape = SubResource("SphereShape3D_fk5o5")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.051757813, 0.20355225, -0.4029785)
+shape = SubResource("BoxShape3D_epg6k")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
