@@ -92,25 +92,25 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 
 
 		List<Ability> abilities = new List<Ability>();
+		
 		PickupAbility pickupAbility = GetNode<PickupAbility>("AbilitySystem/PickupAbility");
 		pickupAbility.Initialize(_playerContext);
 		abilities.Add(pickupAbility);
-		//foreach (var child in _abilitySystem.GetChildren())
-		//{
-		//	if (child is Ability ability)
-		//	{
-		//		abilities.Add(ability);
-		//	}
-		//}
+		
+		ThrowAbility throwAbility = GetNode<ThrowAbility>("AbilitySystem/ThrowAbility");
+		throwAbility.Initialize(_playerContext);
+		throwAbility.ChargeStarted += () => _chargeBar.Visible = true;
+		throwAbility.ChargeUpdated += ratio => _chargeBar.Value = ratio * 100f;
+		throwAbility.ChargeReleased += () => _chargeBar.Visible = false;
+		throwAbility.ChargeCancelled += () => _chargeBar.Visible = false;
+
+		abilities.Add(throwAbility);
+
 		_abilitySystem = GetNode<AbilitySystem>("AbilitySystem");
 		_abilitySystem.Initialize(abilities);
+		
 		_chargeBar = GetNode<ProgressBar>("CanvasLayer/ChargeBar");
 		_chargeBar.Visible = false;
-
-
-		//var pickupArea = GetNode<Area3D>("PickupArea");
-		//pickupArea.BodyEntered += OnPickupAreaBodyEntered;
-		//pickupArea.BodyExited += OnPickupAreaBodyExited;
 
 		if (IsLocalPlayer)
 		{
@@ -171,14 +171,14 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 		if (!IsLocalPlayer || _isHeld) return;
 
 		//HandlePickupInput();
-		HandleThrowInput(delta);
+		//HandleThrowInput(delta);
 
-		// Обновляем шкалу — только один раз
-		if (_chargeBar != null)
-		{
-			_chargeBar.Visible = _isCharging && _heldObject != null;
-			_chargeBar.Value = ChargeRatio;
-		}
+		//// Обновляем шкалу — только один раз
+		//if (_chargeBar != null)
+		//{
+		//	_chargeBar.Visible = _isCharging && _heldObject != null;
+		//	_chargeBar.Value = ChargeRatio;
+		//}
 	}
 
 
@@ -187,45 +187,6 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 	// Подбор и бросок
 	// =========================================================
 
-
-	private void HandleThrowInput(double delta)
-	{
-		//if (_heldObject == null) return;
-
-		//if (Input.IsActionPressed("throw"))
-		//{
-		//	_isCharging = true;
-		//	_chargeTime = Mathf.Min(_chargeTime + (float)delta, 1.5f);
-		//}
-
-		//if (Input.IsActionJustReleased("throw") && _isCharging)
-		//{
-		//	float force = Mathf.Lerp(MinThrowForce, MaxThrowForce, _chargeTime / 1.5f);
-		//	_heldObject.Throw(-Transform.Basis.Z * force);
-		//	_heldObject = null;
-		//	_isCharging = false;
-		//	_chargeTime = 0f;
-		//}
-
-		// Начало зарядки — зажали ЛКМ, держим предмет
-		if (Input.IsActionPressed("throw") && _heldObject != null)
-		{
-			_isCharging = true;
-			_chargeTime = Mathf.Min(_chargeTime + (float)delta, MaxChargeTime);
-		}
-
-		// Бросок — отпустили ЛКМ во время зарядки
-		if (Input.IsActionJustReleased("throw") && _isCharging && _heldObject != null)
-		{
-			float force = Mathf.Lerp(MinThrowForce, MaxThrowForce, ChargeRatio);
-			Vector3 direction = -Transform.Basis.Z;
-
-			_heldObject.Throw(direction * force);
-			_heldObject = null;
-			_isCharging = false;
-			_chargeTime = 0f;
-		}
-	}
 	private void ShowPickupLabel(bool visible)
 	{
 		// TODO: показать/скрыть UI-подсказку "Нажми F для подбора"

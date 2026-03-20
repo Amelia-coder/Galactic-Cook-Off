@@ -27,6 +27,7 @@ physics_material_override = SubResource("PhysicsMaterial_lh3uc")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2, 0)
 shape = SubResource("BoxShape3D_lh3uc")
+debug_fill = false
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2, 0)
@@ -47,4 +48,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -6.56321, 0)
 shape = SubResource("BoxShape3D_2fwkt")
 
 [node name="Dough" parent="." instance=ExtResource("2_mugxw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.99012, 1.88193)
+
+[node name="Dough2" parent="." instance=ExtResource("2_mugxw")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.99012, 1.88193)
