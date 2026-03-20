@@ -1,14 +1,26 @@
 using Godot;
+using System;
 
-public partial class PickupAbility : Node
+public partial class PickupAbility : Ability
 {
-	// Called when the node enters the scene tree for the first time.
-	public override void _Ready()
+	private IPlayerContext _context;
+
+	public override bool IsActive() { return true;  }
+
+	public void Initialize(IPlayerContext context)
 	{
+		_context = context;
 	}
 
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta)
+	public override void Update(double delta)
 	{
+		if (!Input.IsActionJustPressed("pickup")) return;
+
+		if (_context.HeldItem != null)
+			_context.TryDrop();
+		else
+			_context.TryPickUp(_context.ForwardDir);
 	}
+
+	//public void PhysicsProcess(double delta) { }
 }

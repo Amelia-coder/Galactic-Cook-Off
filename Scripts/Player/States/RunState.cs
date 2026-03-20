@@ -2,7 +2,7 @@ using Godot;
 
 public partial class RunState : MovementState
 {
-	public override float StaminaConsumptionPerSecond => 10f;
+	public override float StaminaConsumptionPerSecond => 90f;
 
 
 	[Export] public float Speed { get; set; } = 40.0f;

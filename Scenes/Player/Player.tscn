@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://blw3xgniwfe0f"]
+[gd_scene load_steps=17 format=3 uid="uid://blw3xgniwfe0f"]
 
 [ext_resource type="Script" uid="uid://dnvesphlqsyh3" path="res://Scripts/Player/Player.cs" id="1_s0eop"]
 [ext_resource type="Script" uid="uid://ccf70em7agyd1" path="res://Scripts/Player/PlayerContext.cs" id="2_0kmp4"]
@@ -12,6 +12,7 @@
 [ext_resource type="Script" uid="uid://cqqkwb1arsi5p" path="res://Scripts/Player/Abilities/PickupAbility.cs" id="9_ji083"]
 [ext_resource type="Script" uid="uid://c8xkgsevsuxb" path="res://Scripts/Player/Abilities/ThrowAbility.cs" id="10_0kmp4"]
 [ext_resource type="Script" uid="uid://bxa30gd2ibsn8" path="res://Scripts/Player/BodyDetector.cs" id="10_i5acl"]
+[ext_resource type="Script" uid="uid://cn3dw4okj16qx" path="res://Scripts/Player/Abilities/AbilitySystem.cs" id="11_epg6k"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_l3ax4"]
 
@@ -80,10 +81,11 @@ offset_right = 947.0
 offset_bottom = 529.0
 max_value = 1.0
 
-[node name="PlayerAbilities" type="Node" parent="."]
+[node name="AbilitySystem" type="Node" parent="."]
+script = ExtResource("11_epg6k")
 
-[node name="PickupAbility" type="Node" parent="PlayerAbilities"]
+[node name="PickupAbility" type="Node" parent="AbilitySystem"]
 script = ExtResource("9_ji083")
 
-[node name="ThrowAbility" type="Node" parent="PlayerAbilities"]
+[node name="ThrowAbility" type="Node" parent="AbilitySystem"]
 script = ExtResource("10_0kmp4")

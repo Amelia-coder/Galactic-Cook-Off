@@ -2,6 +2,7 @@ using Godot;
 using System;
 using System.Buffers;
 using System.Collections.Generic;
+using System.Linq;
 
 public partial class Player : CharacterBody3D, IEntity, IThrowable
 {
@@ -56,6 +57,7 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 	public HealthComponent Health => throw new NotImplementedException();
 
 	private MovementStateMachine _movementStateMachine;
+	private AbilitySystem _abilitySystem;
 
 	private StaminaComponent _staminaComponent;
 	private BodyDetector _bodyDetector;
@@ -88,6 +90,20 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 		_bodyDetector = GetNode<BodyDetector>("BodyDetector");
 		_playerContext.Initialize(this, _camera, _staminaComponent, _bodyDetector);
 
+
+		List<Ability> abilities = new List<Ability>();
+		PickupAbility pickupAbility = GetNode<PickupAbility>("AbilitySystem/PickupAbility");
+		pickupAbility.Initialize(_playerContext);
+		abilities.Add(pickupAbility);
+		//foreach (var child in _abilitySystem.GetChildren())
+		//{
+		//	if (child is Ability ability)
+		//	{
+		//		abilities.Add(ability);
+		//	}
+		//}
+		_abilitySystem = GetNode<AbilitySystem>("AbilitySystem");
+		_abilitySystem.Initialize(abilities);
 		_chargeBar = GetNode<ProgressBar>("CanvasLayer/ChargeBar");
 		_chargeBar.Visible = false;
 
@@ -135,6 +151,7 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 		if (_isHeld) return;
 		
 		_movementStateMachine._PhysicsProcess(delta);
+		_abilitySystem.PhysicsProcess(delta);
 
 		Velocity += Vector3.Down * Gravity * (float)delta;
 

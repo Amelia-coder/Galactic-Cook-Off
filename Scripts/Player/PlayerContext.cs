@@ -109,6 +109,9 @@ public partial class PlayerContext : Node, IPlayerContext
 
 		return (camRight * input.X + camForward * -input.Y).Normalized();
 	}
+	Vector3 ForwardDir => -_body.GlobalTransform.Basis.Z;
+
+	Vector3 IPlayerContext.ForwardDir => ForwardDir;
 
 	// =========================================================
 	// BodyDetector callbacks
