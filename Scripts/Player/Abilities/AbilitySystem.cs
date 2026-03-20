@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 public partial class AbilitySystem : Node
 {
@@ -21,15 +22,17 @@ public partial class AbilitySystem : Node
 	
 	public void PhysicsProcess(double delta)
 	{
-		//bool blocked = IsAnyAbilityBlocking();
+		bool blocked = IsAnyAbilityBlocking();
 
 		foreach (var ability in _abilities)
 		{
-			//if (blocked && !ability.BlocksOtherAbilities) continue;
+			if (blocked && !ability.BlocksOtherAbilities()) continue;
 			ability.Update(delta);
 		}
 	}
 
+	private bool IsAnyAbilityBlocking()
+	=> _abilities.Any(a => a.IsActive() && a.BlocksOtherAbilities());
 	//// =========================================================
 	//// Queries — used by Player for HUD, or abilities for each other
 	//// =========================================================
