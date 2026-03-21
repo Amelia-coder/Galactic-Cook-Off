@@ -64,7 +64,7 @@ public partial class RunState : MovementState
 	}
 	public override bool CanEnter()
 	{
-		GD.Print($"We know have stima:", _staminaComponent.CanConsume(StaminaConsumptionPerSecond));
-		return _staminaComponent.CanConsume(StaminaConsumptionPerSecond);
+		//GD.Print($"We know have stima:", _staminaComponent.CanConsume(StaminaConsumptionPerSecond));
+		return Entity.Stamina.CanConsume(StaminaConsumptionPerSecond);
 	}
 }
