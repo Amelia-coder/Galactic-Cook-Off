@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://dbulwwqlvbfot"]
+
+[node name="Node3D" type="Node3D"]
+
+[node name="CSGCylinder3D" type="CSGCylinder3D" parent="."]
+use_collision = true
+radius = 0.337

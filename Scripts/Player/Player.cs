@@ -1,7 +1,10 @@
 using Godot;
 using System;
+using System.Buffers;
+using System.Collections.Generic;
+using System.Linq;
 
-public partial class Player : CharacterBody3D, IEntity, IPlayerContext
+public partial class Player : CharacterBody3D, IEntity, IThrowable
 {
 	[Export] public float Speed = 5f;
 	[Export] public float JumpVelocity = 5f;
@@ -20,41 +23,94 @@ public partial class Player : CharacterBody3D, IEntity, IPlayerContext
 
 	private Node3D _cameraPivot;
 	private Camera3D _camera;
+
+
+
+	// --- IThrowable ---
+	public event Action<bool> PickupAvailabilityChanged;
+
+	// Состояние "в руках у другого игрока"
+	private bool _isHeld = false;
+	// Импульс, который добавляется при броске
+	private Vector3 _throwVelocity = Vector3.Zero;
+
+	// --- Подбор предметов ---
+	private IThrowable _heldObject;
+	private readonly List<IThrowable> _itemsInRange = new();
+
+	// --- Зарядка броска ---
 	private float _chargeTime = 0f;
 	private bool _isCharging = false;
 
-	Vector3 IMovable.Velocity
-	{
-		get => Velocity;
-		set => Velocity = value;
-	}
+	public float ChargeRatio => _chargeTime / MaxChargeTime;
 
-	
+
+	private ProgressBar _chargeBar;
+
+
+	[Export] public float MaxChargeTime = 1.5f;
+
+	private PlayerContext _playerContext; 
+
+	// IEntity
+	public StaminaComponent Stamina;
+	public HealthComponent Health => throw new NotImplementedException();
+
 	private MovementStateMachine _movementStateMachine;
+	private AbilitySystem _abilitySystem;
 
 	private StaminaComponent _staminaComponent;
-	//private StaminaComponent _staminaComponent;
+	private BodyDetector _bodyDetector;
 
 	private bool _wasOnFloor;
 	public bool IsTouchingFloor => IsOnFloor();
 
-	public bool CanJump => IsTouchingFloor ; //||CoyoteTimer.IsActive()
+	public bool CanJump => IsTouchingFloor; //||CoyoteTimer.IsActive()
 
-	public StaminaComponent Stamina;
+	// =========================================================
+	// Lifecycle
+	// =========================================================
 
-	public HealthComponent Health => throw new NotImplementedException();
-
-	StaminaComponent IPlayerContext.Stamina { get => _staminaComponent; }
-	HealthComponent IPlayerContext.Health { get => Health; }
 
 	public override void _Ready()
 	{
+		GD.Print($"[Player] layer: {CollisionLayer}, mask: {CollisionMask}");
+
 		_cameraPivot = GetNode<Node3D>("CameraPivot");
 		_camera = GetNode<Camera3D>("CameraPivot/SpringArm3D/Camera3D");
-		
-		_movementStateMachine = GetNode<MovementStateMachine>("MovementStateMachine");
-		
+
+		_movementStateMachine = GetNode<MovementStateMachine>("PlayerContext/MovementStateMachine");
+
+
 		_staminaComponent = GetNode<StaminaComponent>("StaminaComponent");
+
+		GD.Print($"Inside player stamina is null:  ", _staminaComponent == null);
+
+		_playerContext = GetNode<PlayerContext>("PlayerContext");
+		_bodyDetector = GetNode<BodyDetector>("BodyDetector");
+		_playerContext.Initialize(this, _camera, _staminaComponent, _bodyDetector);
+
+
+		List<Ability> abilities = new List<Ability>();
+		
+		PickupAbility pickupAbility = GetNode<PickupAbility>("AbilitySystem/PickupAbility");
+		pickupAbility.Initialize(_playerContext);
+		abilities.Add(pickupAbility);
+		
+		ThrowAbility throwAbility = GetNode<ThrowAbility>("AbilitySystem/ThrowAbility");
+		throwAbility.Initialize(_playerContext);
+		throwAbility.ChargeStarted += () => _chargeBar.Visible = true;
+		throwAbility.ChargeUpdated += ratio => _chargeBar.Value = ratio * 100f;
+		throwAbility.ChargeReleased += () => _chargeBar.Visible = false;
+		throwAbility.ChargeCancelled += () => _chargeBar.Visible = false;
+
+		abilities.Add(throwAbility);
+
+		_abilitySystem = GetNode<AbilitySystem>("AbilitySystem");
+		_abilitySystem.Initialize(abilities);
+		
+		_chargeBar = GetNode<ProgressBar>("CanvasLayer/ChargeBar");
+		_chargeBar.Visible = false;
 
 		if (IsLocalPlayer)
 		{
@@ -91,88 +147,91 @@ public partial class Player : CharacterBody3D, IEntity, IPlayerContext
 
 	public override void _PhysicsProcess(double delta)
 	{
-		//if (!IsLocalPlayer) return;
 
-		//var velocity = Velocity;
-
-		//if (!IsOnFloor())
-		//	velocity.Y -= Gravity * (float)delta;
-
-		//if (Input.IsActionJustPressed("ui_accept") && IsOnFloor())
-		//	velocity.Y = JumpVelocity;
-
-		//// Движение относительно направления игрока (который уже повёрнут мышью)
-		//var dir = Input.GetVector("left", "right", "forward", "back");
-		//Vector3 moveDir = (Transform.Basis * new Vector3(dir.X, 0, dir.Y)).Normalized();
-
-		//velocity.X = moveDir.X * Speed;
-		//velocity.Z = moveDir.Z * Speed;
-
-		//Velocity = velocity;
-		//MoveAndSlide();
+		if (_isHeld) return;
+		
 		_movementStateMachine._PhysicsProcess(delta);
+		_abilitySystem.PhysicsProcess(delta);
 
 		Velocity += Vector3.Down * Gravity * (float)delta;
+
+
+		// Применяем импульс броска (затухает за кадр)
+		if (_throwVelocity != Vector3.Zero)
+		{
+			Velocity += _throwVelocity;
+			_throwVelocity = Vector3.Zero;
+		}
 
 		MoveAndSlide();
 	}
 
 	public override void _Process(double delta)
 	{
-		if (!IsLocalPlayer) return;
+		if (!IsLocalPlayer || _isHeld) return;
 
-		if (Input.IsActionPressed("throw"))
-		{
-			_isCharging = true;
-			_chargeTime += (float)delta;
-			_chargeTime = Mathf.Min(_chargeTime, 1.5f);
-		}
+		//HandlePickupInput();
+		//HandleThrowInput(delta);
 
-		if (Input.IsActionJustReleased("throw") && _isCharging)
-		{
-			ThrowDough();
-			_isCharging = false;
-			_chargeTime = 0f;
-		}
+		//// Обновляем шкалу — только один раз
+		//if (_chargeBar != null)
+		//{
+		//	_chargeBar.Visible = _isCharging && _heldObject != null;
+		//	_chargeBar.Value = ChargeRatio;
+		//}
 	}
 
-	private void ThrowDough()
+
+
+	// =========================================================
+	// Подбор и бросок
+	// =========================================================
+
+	private void ShowPickupLabel(bool visible)
 	{
-		if (DoughScene == null) return;
-
-		var dough = DoughScene.Instantiate<RigidBody3D>();
-		GetTree().Root.AddChild(dough);
-		dough.GlobalPosition = ThrowPoint.GlobalPosition;
-
-		float force = Mathf.Lerp(MinThrowForce, MaxThrowForce, _chargeTime / 1.5f);
-		Vector3 direction = -Transform.Basis.Z;
-		dough.ApplyImpulse(direction * force);
+		// TODO: показать/скрыть UI-подсказку "Нажми F для подбора"
 	}
 
-	public void PlayAnimation(string name)
+
+	public void UnregisterNearbyThrowable(IThrowable throwable)
 	{
-		
+		_itemsInRange.Remove(throwable);
+		GD.Print($"[Player] убран предмет, всего: {_itemsInRange.Count}");
 	}
 
-	public Vector3 GetMovementDirection(Vector2 input)
+
+	// =========================================================
+	// IThrowable — этого игрока можно подобрать
+	// =========================================================
+	private void OnPickupAreaBodyEntered(Node3D body)
 	{
-		if(_camera == null || input.Length() < 0.1f)
-			return Vector3.Zero;
-
-		Basis camBasis = _camera.GlobalTransform.Basis;
-		Vector3 camForward = -camBasis.Z; // Godot camera forward is -Z
-		Vector3 camRight = camBasis.X;
-
-		camForward.Y = 0;
-		camRight.Y = 0;
-
-		camForward = camForward.Normalized();
-		camRight = camRight.Normalized();
-
-
-		Vector3 direction = (camRight * input.X) + (camForward * -input.Y);
-
-		return direction.Normalized();
+		if (body is not Player otherPlayer || otherPlayer == this) return;
+		GD.Print($"[PickupArea] вошёл игрок: {body.Name}");
+		//RegisterNearbyThrowable(otherPlayer);
 	}
 
+	private void OnPickupAreaBodyExited(Node3D body)
+	{
+		if (body is not Player otherPlayer || otherPlayer == this) return;
+		UnregisterNearbyThrowable(otherPlayer);
+	}
+	
+	public bool CanBePickedUpBy(IEntity actor) => actor is Player p && p != this;
+
+	public void Drop()
+	{
+		//DetachFromCarrier();
+	}
+
+	public void PlayAnimation(string name) { }
+	public void Throw(Vector3 impulse)
+	{
+		//DetachFromCarrier();
+		//_throwVelocity = impulse;
+	}
+
+	public void PickUp(IEntity actor)
+	{
+		throw new NotImplementedException();
+	}
 }

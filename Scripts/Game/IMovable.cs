@@ -6,5 +6,4 @@ public interface IMovable
     bool CanJump { get; }
 
     Vector3 GetMovementDirection(Vector2 input);
-    ////
 }
