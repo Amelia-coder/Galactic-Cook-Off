@@ -32,7 +32,7 @@ public partial class StaminaComponent : Node
 
 	public void Regen(float regenPerSecond, float delta)
 	{
-		CurrentStamina = Mathf.Min(CurrentStamina + regenPerSecond * delta, MaxStamina);//thinkh about reden per se
+		CurrentStamina = Mathf.Min(CurrentStamina + regenPerSecond * delta, MaxStamina);//thinkП about reden per se
 
 		EmitSignal(SignalName.StaminaChanged, CurrentStamina, MaxStamina);
 	}

@@ -7,12 +7,14 @@ public partial class JumpState : MovementState
 	[Export] public float AirControl { get; set; } = 0.3f;
 	[Export] public float AirAcceleration { get; set; } = 15f;
 	[Export] public float VariableJumpCut { get; set; } = 0.5f;
-	public override float StaminaConsumptionPerSecond => 10f;
+	public override float StaminaConsumptionPerSecond => 10f; //severe readability issue(aka naming skill issue)
 
 	public override void Enter()
 	{
-		Entity.Velocity = Vector3.Up * 5.0f;
-		Entity.Stamina.TryConsume(StaminaConsumptionPerSecond);
+		if (Entity.Stamina.TryConsume(StaminaConsumptionPerSecond))
+		{
+			Entity.Velocity = Vector3.Up * 5.0f;
+		}
 	}
 
 	public override void Exit()

@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 public partial class PlayerContext : Node, IPlayerContext
 {
@@ -17,7 +18,7 @@ public partial class PlayerContext : Node, IPlayerContext
 	Vector3 IMovable.Velocity
 	{
 		get => _body.Velocity;
-		set => _body.Velocity = value;
+		set => _body.Velocity = value; //TODO: fix nul pointer exception on start(but then evereuthing works smoothly
 	}
 
 	// Raised for HUD: "Press F to pick up" prompt
@@ -110,7 +111,19 @@ public partial class PlayerContext : Node, IPlayerContext
 
 		return (camRight * input.X + camForward * -input.Y).Normalized();
 	}
-	Vector3 ForwardDir => -_body.GlobalTransform.Basis.Z;
+
+	//Temp fix here for throw; shall consider other models of throw direction calculation
+	//maybe try
+	//Vector3 camForward = -_camera.GlobalTransform.Basis.Z;
+	//    camForward = camForward.Normalized();
+	//float verticalInfluence = 0.6f; // tweak
+	//    Vector3 direction = new Vector3(
+	//        camForward.X,
+	//        camForward.Y * verticalInfluence,
+	//        camForward.Z
+	//    ).Normalized();
+
+	Vector3 ForwardDir => -_camera.GlobalTransform.Basis.Z;
 
 	Vector3 IPlayerContext.ForwardDir => ForwardDir;
 

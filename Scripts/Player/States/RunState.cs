@@ -7,23 +7,31 @@ public partial class RunState : MovementState
 
 	[Export] public float Speed { get; set; } = 40.0f;
 
+	
 	public override void Enter()
 	{
-		Vector2 inputDir = Input.GetVector("left", "right", "forward", "back");
-		Vector3 moveDirection = Entity.GetMovementDirection(inputDir);
+			GD.Print($"We entrerd, but could we", Entity.Stamina.CanConsume(StaminaConsumptionPerSecond));
+			Vector2 inputDir = Input.GetVector("left", "right", "forward", "back");
+			Vector3 moveDirection = Entity.GetMovementDirection(inputDir);
 
-		Entity.Velocity = new Vector3(
-			moveDirection.X * Speed,
-			Entity.Velocity.Y,
-			moveDirection.Z * Speed
-		);
+			Entity.Velocity = new Vector3(
+				moveDirection.X * Speed,
+				Entity.Velocity.Y,
+				moveDirection.Z * Speed
+			);
+		
+		
 	}
 
 
 
 	public override void PhysicsUpdate(double delta)
 	{
-
+		if (!CanEnter())
+		{
+			TransitionTo("WalkState");
+			return;
+		}
 
 		if (Input.IsActionJustPressed("jump") && Entity.CanJump)
 		{
@@ -33,19 +41,13 @@ public partial class RunState : MovementState
 
 		Vector2 inputDir = Input.GetVector("left", "right", "forward", "back");
 
-		
 		if (inputDir == Vector2.Zero)
 		{
 			TransitionTo("IdleState");
 			return;
 		}
-
-		if (!CanEnter())
-		{
-			TransitionTo("WalkState");
-		}
-
-		Entity.Stamina.TryConsume(StaminaConsumptionPerSecond * (float)delta);
+		
+		Entity.Stamina.TryConsume(StaminaConsumptionPerSecond);//важно! либо везде передиазйнить системы на использвоание delta, либо передавтаь сбаоютные значения
 		Vector3 moveDirection = Entity.GetMovementDirection(inputDir);
 
 		Entity.Velocity = new Vector3(
@@ -54,6 +56,8 @@ public partial class RunState : MovementState
 			moveDirection.Z * Speed
 
 		);
+	
+		
 		//// Rotate player to face direction
 		//if (Entity.AsNode() is Player player)
 		//{

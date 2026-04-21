@@ -76,10 +76,10 @@ shape = SubResource("BoxShape3D_epg6k")
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="ChargeBar" type="ProgressBar" parent="CanvasLayer"]
-offset_left = 943.0
-offset_top = 502.0
-offset_right = 947.0
-offset_bottom = 529.0
+offset_left = 270.0
+offset_top = 197.0
+offset_right = 908.0
+offset_bottom = 229.0
 max_value = 1.0
 
 [node name="AbilitySystem" type="Node" parent="."]

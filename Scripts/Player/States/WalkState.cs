@@ -18,6 +18,11 @@ public partial class WalkState : MovementState
 			TransitionTo("JumpState");
 		}
 
+		// Errare humanum est(мое ебланство, правда, бесконечно)
+		// Пока что CanEnter просто быссмысленно - его надо как-то посноуму-переопределить - или вообще переделать, начиная с сигнатуры
+		// Логично смотрится вызов какого-то такого метода - как раз CanEnter без аргументов в рамках состояния
+		// в которое мы хотим перейти 
+		// Либо делать проверку уже в самом мтеоде Enter, что, конечно же, некорреткно с точкизрения логики состояний 
 		if (Input.IsActionPressed("sprint") && Input.IsActionPressed("forward") && CanEnter())
 		{
 			TransitionTo("RunState");

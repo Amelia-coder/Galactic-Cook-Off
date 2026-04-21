@@ -1,8 +1,10 @@
-[gd_scene load_steps=8 format=3 uid="uid://bb3oahwy7pgdk"]
+[gd_scene load_steps=10 format=3 uid="uid://bb3oahwy7pgdk"]
 
+[ext_resource type="Script" uid="uid://i3i5uvrgphq5" path="res://Scripts/World/GlobalScript.cs" id="1_ek0gv"]
 [ext_resource type="PackedScene" uid="uid://blw3xgniwfe0f" path="res://Scenes/Player/Player.tscn" id="1_lh3uc"]
 [ext_resource type="PackedScene" uid="uid://bpu84pqtndpww" path="res://Scenes/Dough/Dough.tscn" id="2_mugxw"]
 [ext_resource type="PackedScene" uid="uid://c2qomyie8px0n" path="res://Scenes/Enemies/MelleEnemy.tscn" id="3_2fwkt"]
+[ext_resource type="Script" uid="uid://cq6emehb6aq6a" path="res://Scripts/Game/StaminaUIComponent.cs" id="4_fl7xt"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_lh3uc"]
 
@@ -16,9 +18,10 @@ size = Vector3(20, 1, 20)
 size = Vector3(500, 1, 500)
 
 [node name="Arena" type="Node3D"]
-
-[node name="Player" parent="." instance=ExtResource("1_lh3uc")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.65659, 0)
+script = ExtResource("1_ek0gv")
+PlayerScene = ExtResource("1_lh3uc")
+EnemyScene = ExtResource("3_2fwkt")
+ThrowableScene = ExtResource("2_mugxw")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.85924, 0)
@@ -30,7 +33,7 @@ shape = SubResource("BoxShape3D_lh3uc")
 debug_fill = false
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.008708954, -1.966752, -0.01594019)
 mesh = SubResource("BoxMesh_mugxw")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
@@ -52,3 +55,27 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.99012, 1.88193)
 
 [node name="Dough2" parent="." instance=ExtResource("2_mugxw")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.99012, 1.88193)
+
+[node name="UIElements" type="CanvasLayer" parent="."]
+
+[node name="Stamina" type="Control" parent="UIElements"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 136.0
+offset_bottom = 40.0
+script = ExtResource("4_fl7xt")
+
+[node name="StaminaLabel" type="Label" parent="UIElements/Stamina"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.41900003
+anchor_right = 0.41900003
+offset_left = 0.015995026
+offset_right = 153.01599
+offset_bottom = 23.0
+
+[node name="StaminaProgressBar" type="ProgressBar" parent="UIElements/Stamina"]
+layout_mode = 0
+offset_right = 236.0
+offset_bottom = 27.0
+show_percentage = false

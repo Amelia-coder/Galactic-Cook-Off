@@ -46,8 +46,8 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 	private PlayerContext _playerContext; 
 
 	// IEntity
-	public StaminaComponent Stamina;
-	public HealthComponent Health => throw new NotImplementedException();
+	public StaminaComponent Stamina => _staminaComponent;
+	public HealthComponent Health;
 
 	private MovementStateMachine _movementStateMachine;
 	private AbilitySystem _abilitySystem;
@@ -162,16 +162,6 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 	public override void _Process(double delta)
 	{
 		if (!IsLocalPlayer || _isHeld) return;
-
-		//HandlePickupInput();
-		//HandleThrowInput(delta);
-
-		//// Обновляем шкалу — только один раз
-		//if (_chargeBar != null)
-		//{
-		//	_chargeBar.Visible = _isCharging && _heldObject != null;
-		//	_chargeBar.Value = ChargeRatio;
-		//}
 	}
 
 
@@ -182,7 +172,7 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 
 	private void ShowPickupLabel(bool visible)
 	{
-		// TODO: показать/скрыть UI-подсказку "Нажми F для подбора"
+		// TODO: показать/скрыть UI-подсказку "Нажми <клавиша для подбора> для подбора"
 	}
 
 
@@ -217,10 +207,10 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 	}
 
 	public void PlayAnimation(string name) { }
-	public void Throw(Vector3 impulse)
+	public void Throw(Vector3 impulse) // TODO: rename, bacues ethis actually describes
+	//jow player is THROWN, not how they themslves throw
 	{
-		//DetachFromCarrier();
-		//_throwVelocity = impulse;
+
 	}
 
 	public void PickUp(IEntity actor)
