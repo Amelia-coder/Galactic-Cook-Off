@@ -85,6 +85,7 @@ public partial class PlayerContext : Node, IPlayerContext
 		var thrown = _heldItem;
 		_heldItem = null;       // clear before Throw so re-entry is safe
 		thrown.Throw(impulse);
+		//cosnume stamina
 	}
 
 	public void TryDrop()

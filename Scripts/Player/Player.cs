@@ -13,7 +13,6 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 	[Export] public float TiltMin = -70f; // градусы
 	[Export] public float TiltMax = 20f;
 
-	[Export] public PackedScene DoughScene; ///re-consider
 	[Export] public float MinThrowForce = 10f;
 	[Export] public float MaxThrowForce = 25f;
 	[Export] public Node3D ThrowPoint;
@@ -42,13 +41,7 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 	private float _chargeTime = 0f;
 	private bool _isCharging = false;
 
-	public float ChargeRatio => _chargeTime / MaxChargeTime;
-
-
 	private ProgressBar _chargeBar;
-
-
-	[Export] public float MaxChargeTime = 1.5f;
 
 	private PlayerContext _playerContext; 
 

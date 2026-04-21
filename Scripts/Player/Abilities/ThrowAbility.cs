@@ -5,9 +5,9 @@ public partial class ThrowAbility : Ability
 	// =========================================================
 	// Exports — tweak in editor
 	// =========================================================
-	[Export] public float MinForce = 10f;
-	[Export] public float MaxForce = 50f;
-	[Export] public float MaxChargeTime = 5.5f;
+	[Export] public float MinForce = 1f;
+	[Export] public float MaxForce = 900f;
+	[Export] public float MaxChargeTime = 18.5f;
 
 	// =========================================================
 	// Signals — HUD subscribes to these
@@ -42,7 +42,7 @@ public partial class ThrowAbility : Ability
 	public override void Update(double delta)
 	{
 		// Lost the item mid-charge (dropped by something else, etc.)
-		if (_isCharging && !(_context.HeldItem != null))
+		if (_isCharging && !(_context.HeldItem != null) || Input.IsActionPressed("cancel_charge"))
 		{
 			Reset(cancelled: true);
 			return;

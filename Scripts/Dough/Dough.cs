@@ -85,7 +85,8 @@ public partial class Dough : RigidBody3D, IThrowable
     {
         if (!_inFlight) return;
 
-        if (body.HasMethod("TakeDamage"))
+        if (body.HasMethod("TakeDamage")) //weird, rather check for fact of the implementation of interface like Dmagebale -r comebont like Healths. Otherwise, coupling
+                                          //TODO: instead, send signal of being hit!
             body.Call("TakeDamage", Damage);
 
         // Stick to static geometry, keep bouncing off dynamic bodies
