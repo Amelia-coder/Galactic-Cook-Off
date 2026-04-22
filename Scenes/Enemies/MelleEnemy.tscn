@@ -1,4 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://c2qomyie8px0n"]
+[gd_scene load_steps=4 format=3 uid="uid://c2qomyie8px0n"]
+
+[ext_resource type="Script" uid="uid://c76uww3y1cyuf" path="res://Scripts/Enemy/MelleEnemy.cs" id="1_ytxpm"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_g8078"]
 radius = 0.7
@@ -6,11 +8,14 @@ radius = 0.7
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_ytxpm"]
 radius = 0.7
 
-[node name="MeeleEnemy" type="CharacterBody3D"]
+[node name="MelleEnemy" type="CharacterBody3D"]
 collision_layer = 2
+script = ExtResource("1_ytxpm")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("CapsuleShape3D_g8078")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 mesh = SubResource("CapsuleMesh_ytxpm")
+
+[node name="Pivot" type="Node3D" parent="."]

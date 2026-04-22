@@ -21,7 +21,9 @@ public partial class GlobalScript : Node3D
 		StaminaUI =  GetNode<StaminaUIComponent>("UIElements/Stamina");
 		StaminaUI.Bind(player.Stamina);
 		
-		//EnemyScene enemy = EnemyScene.Instantiate<EnemyScene>();
+		//var enemy = EnemyScene.Instantiate<MelleEnemy>();
+		//enemy.SetTarget(player);
+		//AddChild(enemy);
 		//TODO: spawn enemies on sthe start OR on timer timeout. TImer can be seen in tutorial project!
 	}
 

@@ -13,8 +13,7 @@
 [ext_resource type="Script" uid="uid://mtk0uirvtkvc" path="res://Scripts/Player/Abilities/ThrowAbility.cs" id="10_0kmp4"]
 [ext_resource type="Script" uid="uid://npsigflulhbx" path="res://Scripts/Player/BodyDetector.cs" id="10_i5acl"]
 [ext_resource type="Script" uid="uid://dnww8y37ulu3a" path="res://Scripts/Player/Abilities/AbilitySystem.cs" id="11_epg6k"]
-
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_l3ax4"]
+[ext_resource type="PackedScene" uid="uid://67pyi2bk1c2e" path="res://Scenes/Enemies/3DGodotRobot.glb" id="14_0u84n"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_s0eop"]
 
@@ -24,9 +23,6 @@ size = Vector3(3.769043, 2, 0.38984376)
 [node name="Player" type="CharacterBody3D"]
 collision_mask = 3
 script = ExtResource("1_s0eop")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-mesh = SubResource("CapsuleMesh_l3ax4")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("CapsuleShape3D_s0eop")
@@ -90,3 +86,8 @@ script = ExtResource("9_ji083")
 
 [node name="ThrowAbility" type="Node" parent="AbilitySystem"]
 script = ExtResource("10_0kmp4")
+
+[node name="ModelPivot" type="Node3D" parent="."]
+
+[node name="3DGodotRobot" parent="ModelPivot" instance=ExtResource("14_0u84n")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, -0.9, 0)

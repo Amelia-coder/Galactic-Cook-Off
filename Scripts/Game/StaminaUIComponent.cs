@@ -23,11 +23,26 @@ public partial class StaminaUIComponent : Control
 	private void OnStaminaChanged(float current, float max)
 	{
 		_bar.Value = (current / max) * 100f;
+		UpdateColor(current / max);
 		//GD.Print($"We actually caaanged ui!", _bar.Value);
 	}
 
 	private void OnStaminaConsumed(float amount)
 	{
 		// optional feedback later
+	}
+	
+	private void UpdateColor(float ratio)
+	{
+		Color color;
+
+		if (ratio < 0.3f)
+			color = Colors.Red;
+		else if (ratio < 0.7f)
+			color = Colors.Orange;
+		else
+			color = Colors.Green;
+
+		_bar.Modulate = color;
 	}
 }

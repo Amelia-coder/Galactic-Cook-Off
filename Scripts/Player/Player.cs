@@ -115,6 +115,15 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 			// У других игроков камера не активна
 			_camera.Current = false;
 		}
+		//this will go into animation component
+		//var animPlayer = GetNode<AnimationPlayer>("ModelPivot/3DGodotRobot/AnimationPlayer");
+//
+		//foreach (var name in animPlayer.GetAnimationList())
+		//{
+			//GD.Print(name);
+		//}
+//
+		//animPlayer.Play("Idle");
 	}
 
 	//если при беге камера как-то старнно ведет себ

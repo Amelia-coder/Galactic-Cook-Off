@@ -33,7 +33,8 @@ public partial class BodyDetector : Area3D
 	private void OnAreaEntered(Area3D area)
 	{
 		GD.Print("Something entered!");
-		if (area.GetParent() is not IThrowable throwable) return;
+		//safer than GetParent
+		if (area.GetOwner() is not IThrowable throwable) return;
 		GD.Print("Something throwable entered!");
 		_itemsInRange.Add(throwable);
 		ThrowableEntered?.Invoke(throwable);
@@ -42,7 +43,7 @@ public partial class BodyDetector : Area3D
 	private void OnAreaExited(Area3D area)
 	{
 		GD.Print("Something exited");
-		if (area.GetParent() is not IThrowable throwable) return;
+		if (area.GetOwner() is not IThrowable throwable) return; 
 		GD.Print("Something eчшеув!");
 		_itemsInRange.Remove(throwable);
 		ThrowableExited?.Invoke(throwable);

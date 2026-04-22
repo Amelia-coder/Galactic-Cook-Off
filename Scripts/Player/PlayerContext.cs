@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
+//перенести компоент в IEntty -  и так в однм месте чрез не го образемся. а так центарлиезум
 public partial class PlayerContext : Node, IPlayerContext
 {
 	// =========================================================
@@ -148,12 +149,6 @@ public partial class PlayerContext : Node, IPlayerContext
 	//		OnItemPromptChanged(throwable, available);
 	//}
 
-	//private void OnItemPromptChanged(IThrowable throwable, bool available)
-	//{
-	//	// Don't show prompt for item we're already holding
-	//	if (throwable == _heldItem) return;
-	//	NearbyItemPromptChanged?.Invoke(throwable, available);
-	//}
 
 	// =========================================================
 	// Selection logic — best item in look direction
