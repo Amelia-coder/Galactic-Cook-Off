@@ -8,30 +8,38 @@ public partial class IdleState : MovementState
 	[Export] public float Speed { get; set; } = 0.0f;
 	public override void Enter()
 	{
-		Entity.Velocity = new Vector3(0, 0, 0);
+		var movementComponent = Entity.GetComponent<MovementComponent>();
 		GD.Print($"is entity null?", Entity == null);
 	}
 
 	public override void PhysicsUpdate(double delta)
 	{
+		var _movement = Entity.GetComponent<MovementComponent>();
+		var _stamina = Entity.GetComponent<StaminaComponent>();
+		var _input = Entity.GetComponent<InputComponent>();
+		// 1. Read from InputComponent (not raw Input)
+		_input.Update();
 
-		if (Input.IsActionJustPressed("jump") && Entity.CanJump)
+		// 2. Try actions based on input
+		if (_input.JumpPressed && _movement.TryJump())
 		{
-
-			GD.Print($"We jumped!", Entity.CanJump);
 			TransitionTo("JumpState");
-		}
-		Vector2 inputDir = Input.GetVector("left", "right", "forward", "back");
-		if (inputDir != Vector2.Zero)
-		{
-			TransitionTo("WalkState");
+			return;
 		}
 
-		if (Input.IsActionJustPressed("sprint"))
+		// 3. Apply movement
+		if (_input.MoveDirection.LengthSquared() > 0.01f)
 		{
-			GD.Print($"We are running!", Entity.CanJump);
-			TransitionTo("RunState");
+			if (_input.SprintPressed)
+				TransitionTo("RunState");
+			else
+				TransitionTo("WalkState");
+			return;
 		}
-		Entity.Stamina.Regen(StaminaRegenPerSecond, (float)delta);
+
+		// 4. Idle behavior - just stand still and regen
+		_movement.SetHorizontalVelocity(Vector3.Zero);
+		_movement.Update((float)delta);
+		_stamina.Regen(StaminaRegenPerSecond, (float)delta);
 	}
 }

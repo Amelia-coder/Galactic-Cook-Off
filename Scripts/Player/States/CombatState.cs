@@ -1,17 +1,17 @@
 using Godot;
 using System;
 
-public partial class CombatState : State<IPlayerContext>
+public partial class CombatState : State<IEntity>
 {
 	public virtual float InstantStaminaConsumption => 0f;
 	StaminaComponent _staminaComponent;
 	HealthComponent _healthComponent;
 
 
-	public override void Initialize(IPlayerContext entity)
+	public override void Initialize(IEntity entity)
 	{
 		base.Initialize(entity);
-		_staminaComponent = entity.Stamina;
-		_healthComponent = entity.Health; 
+		_staminaComponent = entity.GetComponent<StaminaComponent>();
+		_healthComponent = entity.GetComponent<HealthComponent>(); 
 	}
 }

@@ -19,7 +19,7 @@ public partial class PlayerContext : Node, IPlayerContext
 	Vector3 IMovable.Velocity
 	{
 		get => _body.Velocity;
-		set {  if (_body != null) _body.Velocity = value;} //TODO: fix nul pointer exception on start(but then evereuthing works smoothly
+		set => _body.Velocity = value; //TODO: fix nul pointer exception on start(but then evereuthing works smoothly
 	}
 
 	// Raised for HUD: "Press F to pick up" prompt

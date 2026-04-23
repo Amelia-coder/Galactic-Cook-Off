@@ -1,47 +1,61 @@
-// JumpState.cs
 using Godot;
 
 public partial class JumpState : MovementState
 {
-	[Export] public float JumpVelocity { get; set; } = 7.0f;
-	[Export] public float AirControl { get; set; } = 0.3f;
-	[Export] public float AirAcceleration { get; set; } = 15f;
-	[Export] public float VariableJumpCut { get; set; } = 0.5f;
-	public override float StaminaConsumptionPerSecond => 10f; //severe readability issue(aka naming skill issue)
+	[Export] public float AirSpeed { get; set; } = 5.0f;
+	[Export] public float AirControl { get; set; } = 0.6f; // How responsive movement is in air (0-1)
+	[Export] public float JumpCutMultiplier { get; set; } = 0.5f; // How much to reduce upward velocity when releasing jump early
+
+	private bool _jumpReleased = false;
+
 
 	public override void Enter()
 	{
-		if (Entity.Stamina.TryConsume(StaminaConsumptionPerSecond))
-		{
-			Entity.Velocity = Vector3.Up * 5.0f;
-		}
-	}
-
-	public override void Exit()
-	{
-
+		GD.Print("Entered Airborne State");
+		_jumpReleased = false;
 	}
 
 	public override void PhysicsUpdate(double delta)
 	{
+		var _movement = Entity.GetComponent<MovementComponent>();
+		var _stamina = Entity.GetComponent<StaminaComponent>();
+		var _input = Entity.GetComponent<InputComponent>();
+		_input.Update();
 
-		Vector2 inputDir = Input.GetVector("left", "right", "forward", "back");
-
-		Vector3 moveDirection = Entity.GetMovementDirection(inputDir);
-
-		Entity.Velocity = new Vector3(
-			moveDirection.X * JumpVelocity,
-			Entity.Velocity.Y,
-			moveDirection.Z * JumpVelocity
-		);
-
-		// ground transition
-		if (Entity.IsTouchingFloor)
+		// Variable jump height: if player releases jump early, cut upward velocity
+		if (!_jumpReleased && !_input.JumpPressed && _movement.Velocity.Y > 0)
 		{
-			if (inputDir.Length() > 0.1f)
-				TransitionTo("WalkState");
+			_movement.SetVerticalVelocity(_movement.Velocity.Y * JumpCutMultiplier);
+			_jumpReleased = true;
+		}
+
+		// Air control: lerp toward desired direction instead of instant change
+		if (_input.MoveDirection.LengthSquared() > 0.01f)
+		{
+			Vector3 currentHorizontal = new Vector3(_movement.Velocity.X, 0, _movement.Velocity.Z);
+			Vector3 targetHorizontal = _input.MoveDirection * AirSpeed;
+			Vector3 newHorizontal = currentHorizontal.Lerp(targetHorizontal, AirControl);
+
+			_movement.SetHorizontalVelocity(newHorizontal);
+		}
+
+		// Apply physics
+		_movement.Update((float)delta);
+
+		// Transition when landing
+		if (_movement.IsGrounded)
+		{
+			if (_input.MoveDirection.LengthSquared() > 0.01f)
+			{
+				if (_input.SprintPressed)
+					TransitionTo("RunState");
+				else
+					TransitionTo("WalkState");
+			}
 			else
+			{
 				TransitionTo("IdleState");
+			}
 		}
 	}
 }

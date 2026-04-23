@@ -2,47 +2,46 @@ using Godot;
 
 public partial class WalkState : MovementState
 {
-	public override float StaminaRegenPerSecond => 1f;
-	[Export] public float Speed { get; set; } = 5.0f;
+	[Export] public float WalkSpeed { get; set; } = 2.0f;
 
 	public override void Enter()
 	{
+		GD.Print("Entered WalkState");
 	}
-
 
 	public override void PhysicsUpdate(double delta)
 	{
-		if (Input.IsActionJustPressed("jump") && Entity.CanJump)
+		var _movement = Entity.GetComponent<MovementComponent>();
+		var _stamina = Entity.GetComponent<StaminaComponent>();
+		var _input = Entity.GetComponent<InputComponent>();
+		_input.Update();
+
+		// Try jump
+		if (_input.JumpPressed && _movement.TryJump())
 		{
-			GD.Print($"We jumped!", Entity.CanJump);
 			TransitionTo("JumpState");
+			return;
 		}
 
-		// Errare humanum est(мое ебланство, правда, бесконечно)
-		// Пока что CanEnter просто быссмысленно - его надо как-то посноуму-переопределить - или вообще переделать, начиная с сигнатуры
-		// Логично смотрится вызов какого-то такого метода - как раз CanEnter без аргументов в рамках состояния
-		// в которое мы хотим перейти 
-		// Либо делать проверку уже в самом мтеоде Enter, что, конечно же, некорреткно с точкизрения логики состояний 
-		if (Input.IsActionPressed("sprint") && Input.IsActionPressed("forward") && CanEnter())
+		// Check for sprint
+		if (_input.SprintPressed && _input.MoveDirection.LengthSquared() > 0.01f)
 		{
 			TransitionTo("RunState");
+			return;
 		}
 
-		Vector2 inputDir = Input.GetVector("left", "right", "forward", "back");
-		if (inputDir == Vector2.Zero)
+		// Check for idle
+		if (_input.MoveDirection.LengthSquared() < 0.01f)
 		{
 			TransitionTo("IdleState");
 			return;
 		}
 
-		Vector3 moveDirection = Entity.GetMovementDirection(inputDir);
+		// Walk movement
+		_movement.SetHorizontalVelocity(_input.MoveDirection * WalkSpeed);
+		_movement.Update((float)delta);
 
-		Entity.Velocity = new Vector3(
-			moveDirection.X * Speed,
-			Entity.Velocity.Y,
-			moveDirection.Z * Speed
-		);
-		Entity.Stamina.Regen(StaminaRegenPerSecond, (float)delta);
-		
+		// Regenerate stamina while walking
+		_stamina.Regen(StaminaRegenPerSecond, (float)delta);
 	}
 }

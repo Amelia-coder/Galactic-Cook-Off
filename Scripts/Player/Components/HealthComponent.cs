@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public partial class HealthComponent : Node
+public partial class HealthComponent : Component
 {
 	[Signal] public delegate void HealthConsumedEventHandler(float consumedHealth);
 	[Signal] public delegate void HealthChangedEventHandler(float consumedHealth, float maxHealth);

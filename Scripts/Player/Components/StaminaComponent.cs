@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public partial class StaminaComponent : Node
+public partial class StaminaComponent : Component
 {
 
 	[Signal] public delegate void StaminaConsumedEventHandler(float consumedStamina);

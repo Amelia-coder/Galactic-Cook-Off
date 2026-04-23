@@ -2,6 +2,7 @@ using Godot;
 using System;
 using System.Buffers;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 
 public partial class Player : CharacterBody3D, IEntity, IThrowable
@@ -20,9 +21,21 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 	// Является ли этот игрок локальным (управляемым с этого компьютера)
 	[Export] public bool IsLocalPlayer = true;
 
-	private Node3D _cameraPivot;
-	private Camera3D _camera;
+	private Dictionary<Type, Component> _components = new();
+	public void RegisterComponent(Component component)
+	{
+		_components[component.GetType()] = component;
+	}
 
+	// --- IEntity ---
+	public T GetComponent<T>() where T : Component
+	{
+		if (_components.TryGetValue(typeof(T), out Component component))
+			return component as T;
+
+		GD.PrintErr($"[Player] Component {typeof(T).Name} not found in dictionary!");
+		return null;
+	}
 
 
 	// --- IThrowable ---
@@ -43,11 +56,14 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 
 	private ProgressBar _chargeBar;
 
-	private PlayerContext _playerContext; 
-
-	// IEntity
-	public StaminaComponent Stamina => _staminaComponent;
 	public HealthComponent Health;
+	private MovementComponent _movementComponent;
+	private InputComponent _inputComponent;
+	private ThrowableDetectorComponent _detectionComponent;
+	private CameraComponent _cameraComponent;
+	private Camera3D _camera;
+	private CameraControllerComponent _cameraControllerComponent;
+	private ItemHolderComponent _itemHolderComponent;
 
 	private MovementStateMachine _movementStateMachine;
 	private AbilitySystem _abilitySystem;
@@ -58,7 +74,7 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 	private bool _wasOnFloor;
 	public bool IsTouchingFloor => IsOnFloor();
 
-	public bool CanJump => IsTouchingFloor; //||CoyoteTimer.IsActive()
+	public bool CanJump => IsTouchingFloor;
 
 	// =========================================================
 	// Lifecycle
@@ -69,29 +85,53 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 	{
 		GD.Print($"[Player] layer: {CollisionLayer}, mask: {CollisionMask}");
 
-		_cameraPivot = GetNode<Node3D>("CameraPivot");
+		_movementStateMachine = GetNode<MovementStateMachine>("MovementStateMachine");
+
+
+		_staminaComponent = GetNode<StaminaComponent>("ComponentRegistry/StaminaComponent");
+		GD.Print("Stamina component is null: ", _staminaComponent == null);
+		RegisterComponent(_staminaComponent);
+		
+
+		_movementComponent = GetNode<MovementComponent>("ComponentRegistry/MovementComponent");
+		_movementComponent.Initialize(this, _staminaComponent);
+		RegisterComponent(_movementComponent);
+		GD.Print("Movement component is null: ", _movementComponent == null);
+
+
+		_inputComponent = GetNode<InputComponent>("ComponentRegistry/InputComponent");
+		_inputComponent.Initialize(this);
+		RegisterComponent(_inputComponent);
+		GD.Print("Input component is null: ", _inputComponent == null);
+
+
+		_detectionComponent = GetNode<ThrowableDetectorComponent>("ComponentRegistry/ThrowableDetectorComponent");
+		// Get the Area3D child node and pass it to component
+		var bodyDetector = GetNode<Area3D>("BodyDetector");
+		_detectionComponent.Initialize(bodyDetector);
+		RegisterComponent(_detectionComponent);
+
+		_itemHolderComponent = GetNode<ItemHolderComponent>("ComponentRegistry/ItemHolderComponent");
+		RegisterComponent(_itemHolderComponent);
+
+		_cameraComponent = GetNode<CameraComponent>("ComponentRegistry/CameraComponent");
 		_camera = GetNode<Camera3D>("CameraPivot/SpringArm3D/Camera3D");
+		_cameraComponent.Initialize(_camera);
+		RegisterComponent(_cameraComponent);
 
-		_movementStateMachine = GetNode<MovementStateMachine>("PlayerContext/MovementStateMachine");
-
-
-		_staminaComponent = GetNode<StaminaComponent>("StaminaComponent");
+		_cameraControllerComponent = GetNode<CameraControllerComponent>("ComponentRegistry/CameraControllerComponent");
+		_cameraControllerComponent.Initialize(this, _camera, GetNode<Node3D>("CameraPivot"), GetNode<SpringArm3D>("CameraPivot/SpringArm3D"), true); 
+		RegisterComponent(_cameraControllerComponent);
 
 		GD.Print($"Inside player stamina is null:  ", _staminaComponent == null);
-
-		_playerContext = GetNode<PlayerContext>("PlayerContext");
-		_bodyDetector = GetNode<BodyDetector>("BodyDetector");
-		_playerContext.Initialize(this, _camera, _staminaComponent, _bodyDetector);
-
-
 		List<Ability> abilities = new List<Ability>();
-		
 		PickupAbility pickupAbility = GetNode<PickupAbility>("AbilitySystem/PickupAbility");
-		pickupAbility.Initialize(_playerContext);
+		pickupAbility.Initialize(this);
 		abilities.Add(pickupAbility);
 		
+
 		ThrowAbility throwAbility = GetNode<ThrowAbility>("AbilitySystem/ThrowAbility");
-		throwAbility.Initialize(_playerContext);
+		throwAbility.Initialize(this);
 		throwAbility.ChargeStarted += () => _chargeBar.Visible = true;
 		throwAbility.ChargeUpdated += ratio => _chargeBar.Value = ratio * 100f;
 		throwAbility.ChargeReleased += () => _chargeBar.Visible = false;
@@ -104,47 +144,12 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 		
 		_chargeBar = GetNode<ProgressBar>("CanvasLayer/ChargeBar");
 		_chargeBar.Visible = false;
-
-		if (IsLocalPlayer)
-		{
-			_camera.MakeCurrent();
-			//Input.MouseMode = Input.MouseModeEnum.Captured;
-		}
-		else
-		{
-			// У других игроков камера не активна
-			_camera.Current = false;
-		}
-		//this will go into animation component
-		//var animPlayer = GetNode<AnimationPlayer>("ModelPivot/3DGodotRobot/AnimationPlayer");
-//
-		//foreach (var name in animPlayer.GetAnimationList())
-		//{
-			//GD.Print(name);
-		//}
-//
-		//animPlayer.Play("Idle");
 	}
 
-	//если при беге камера как-то старнно ведет себ
-	//то это можно исправит, настроив коллизии для SpingArm
 	public override void _UnhandledInput(InputEvent @event)
 	{
-		if (!IsLocalPlayer) return; // только локальный игрок управляет мышью
-
-		if (@event is InputEventMouseMotion mouseMotion)
-		{
-			// Вращаем самого игрока горизонтально — движение WASD станет относительным
-			RotateY(-mouseMotion.Relative.X * MouseSensitivity);
-
-			// Вертикальный наклон — только пивот камеры
-			_cameraPivot.RotateX(-mouseMotion.Relative.Y * MouseSensitivity);
-
-			// Clamp вертикального угла
-			Vector3 pivotRot = _cameraPivot.RotationDegrees;
-			pivotRot.X = Mathf.Clamp(pivotRot.X, TiltMin, TiltMax);
-			_cameraPivot.RotationDegrees = pivotRot;
-		}
+		GD.Print("[Player] _UnhandledInput fired"); // Add this
+		_cameraControllerComponent.HandleInput(@event);
 	}
 
 	public override void _PhysicsProcess(double delta)
@@ -154,18 +159,8 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 		
 		_movementStateMachine._PhysicsProcess(delta);
 		_abilitySystem.PhysicsProcess(delta);
+		_cameraControllerComponent.Update((float)delta);
 
-		Velocity += Vector3.Down * Gravity * (float)delta;
-
-
-		// Применяем импульс броска (затухает за кадр)
-		if (_throwVelocity != Vector3.Zero)
-		{
-			Velocity += _throwVelocity;
-			_throwVelocity = Vector3.Zero;
-		}
-
-		MoveAndSlide();
 	}
 
 	public override void _Process(double delta)
@@ -226,4 +221,6 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 	{
 		throw new NotImplementedException();
 	}
+
+
 }

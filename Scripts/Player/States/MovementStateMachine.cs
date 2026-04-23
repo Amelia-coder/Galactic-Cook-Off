@@ -1,2 +1,2 @@
 
-public partial class MovementStateMachine : StateMachine<IPlayerContext> { }
+public partial class MovementStateMachine : StateMachine<IEntity> { }

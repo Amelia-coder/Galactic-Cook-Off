@@ -1,26 +1,61 @@
 using Godot;
-using System;
 
 public partial class PickupAbility : Ability
 {
-	private IPlayerContext _context;
+    private InputComponent _input;
+    private ThrowableDetectorComponent _detector;
+    private CameraComponent _camera;
+    private ItemHolderComponent _itemHolder;
+    private CharacterBody3D _body;
 
-	public override bool IsActive() { return true;  }
+    [Export] public float MinDotProduct { get; set; } = 0.5f;
 
-	public void Initialize(IPlayerContext context)
-	{
-		_context = context;
-	}
+    public override bool IsActive() => true;
 
-	public override void Update(double delta)
-	{
-		if (!Input.IsActionJustPressed("pickup")) return;
+    public void Initialize(IEntity entity)
+    {
+        _input = entity.GetComponent<InputComponent>();
+        _detector = entity.GetComponent<ThrowableDetectorComponent>();
+        _camera = entity.GetComponent<CameraComponent>();
+        _itemHolder = entity.GetComponent<ItemHolderComponent>();
+        _body = entity as CharacterBody3D;
+    }
 
-		if (_context.HeldItem != null)
-			_context.TryDrop();
-		else
-			_context.TryPickUp(_context.ForwardDir);
-	}
+    public override void Update(double delta)
+    {
+        _input.Update();
 
-	//public void PhysicsProcess(double delta) { }
+        if (!_input.PickupPressed) return;
+
+        if (_itemHolder.IsHoldingItem)
+            TryDrop();
+        else
+            TryPickUp();
+    }
+
+    private void TryPickUp()
+    {
+        Vector3 lookDir = _camera.GetForwardDirection();
+
+        IThrowable target = _detector.GetBestInDirection(
+            _body.GlobalPosition,
+            lookDir,
+            MinDotProduct
+        );
+
+        if (target == null || !target.CanBePickedUpBy(_body as IEntity))
+            return;
+
+        _itemHolder.SetHeldItem(target);
+        target.PickUp(_body as IEntity);
+    }
+
+    private void TryDrop()
+    {
+        if (!_itemHolder.IsHoldingItem) return;
+
+        IThrowable item = _itemHolder.HeldItem;
+        _itemHolder.ClearHeldItem();
+        item.Drop();
+    }
 }

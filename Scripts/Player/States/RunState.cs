@@ -2,73 +2,50 @@ using Godot;
 
 public partial class RunState : MovementState
 {
-	public override float StaminaConsumptionPerSecond => 90f;
+	[Export] public float SprintSpeed { get; set; } = 8.0f;
+ 
 
-
-	[Export] public float Speed { get; set; } = 40.0f;
-
-	
 	public override void Enter()
 	{
-			GD.Print($"We entrerd, but could we", Entity.Stamina.CanConsume(StaminaConsumptionPerSecond));
-			Vector2 inputDir = Input.GetVector("left", "right", "forward", "back");
-			Vector3 moveDirection = Entity.GetMovementDirection(inputDir);
-
-			Entity.Velocity = new Vector3(
-				moveDirection.X * Speed,
-				Entity.Velocity.Y,
-				moveDirection.Z * Speed
-			);
-		
-		
+		GD.Print("Entered RunState");
 	}
-
-
 
 	public override void PhysicsUpdate(double delta)
 	{
-		if (!CanEnter())
+		var _movement = Entity.GetComponent<MovementComponent>();
+		var _stamina = Entity.GetComponent<StaminaComponent>();
+		var  _input = Entity.GetComponent<InputComponent>();
+		 _input.Update();
+
+		// Try jump
+		if (_input.JumpPressed && _movement.TryJump())
+		{
+			TransitionTo("JumpState");
+			return;
+		}
+
+		// Check if still moving
+		if (_input.MoveDirection.LengthSquared() < 0.01f)
+		{
+			TransitionTo("IdleState");
+			return;
+		}
+
+		// Try to sprint - if stamina runs out, fall back to walk
+		if (!_movement.TrySetSprintVelocity(_input.MoveDirection, SprintSpeed, (float)delta))
 		{
 			TransitionTo("WalkState");
 			return;
 		}
 
-		if (Input.IsActionJustPressed("jump") && Entity.CanJump)
-		{
-			GD.Print($"We jumped!", Entity.CanJump);
-			TransitionTo("JumpState");
-		}
-
-		Vector2 inputDir = Input.GetVector("left", "right", "forward", "back");
-
-		if (inputDir == Vector2.Zero)
-		{
-			TransitionTo("IdleState");
-			return;
-		}
-		
-		Entity.Stamina.TryConsume(StaminaConsumptionPerSecond);//важно! либо везде передиазйнить системы на использвоание delta, либо передавтаь сбаоютные значения
-		Vector3 moveDirection = Entity.GetMovementDirection(inputDir);
-
-		Entity.Velocity = new Vector3(
-			moveDirection.X * Speed,
-			Entity.Velocity.Y,
-			moveDirection.Z * Speed
-
-		);
-	
-		
-		//// Rotate player to face direction
-		//if (Entity.AsNode() is Player player)
-		//{
-		//    player.LookDirection(direction);
-		//}
-
-		//Entity.PlayAnimation("walk");
+		// Apply physics
+		_movement.Update((float)delta);
 	}
+
 	public override bool CanEnter()
 	{
-		GD.Print($"We know have stima:", Entity.Stamina.CanConsume(StaminaConsumptionPerSecond));
-		return Entity.Stamina.CanConsume(StaminaConsumptionPerSecond);
+		var _movement = Entity.GetComponent<MovementComponent>();
+		// Can only enter if we have enough stamina for at least one frame
+		return _movement.CanSprint(1f / 60f); // Assume 60 FPS check
 	}
 }

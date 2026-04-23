@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://bb3oahwy7pgdk"]
+[gd_scene load_steps=16 format=3 uid="uid://bb3oahwy7pgdk"]
 
 [ext_resource type="Script" uid="uid://i3i5uvrgphq5" path="res://Scripts/World/GlobalScript.cs" id="1_ek0gv"]
 [ext_resource type="PackedScene" uid="uid://blw3xgniwfe0f" path="res://Scenes/Player/Player.tscn" id="1_lh3uc"]
@@ -25,6 +25,12 @@ _bundled = {
 "version": 3
 }
 
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_ek0gv"]
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_csujq"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_wcn2d"]
+
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_lh3uc"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_lh3uc"]
@@ -44,6 +50,17 @@ script = ExtResource("1_ek0gv")
 PlayerScene = ExtResource("1_lh3uc")
 EnemyScene = SubResource("PackedScene_ner4r")
 ThrowableScene = ExtResource("2_mugxw")
+
+[node name="StaticBody3D2" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.9392023, 4.933073, 2.8144119)
+physics_material_override = SubResource("PhysicsMaterial_ek0gv")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D2"]
+mesh = SubResource("CylinderMesh_csujq")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D2"]
+transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0, 0)
+shape = SubResource("CapsuleShape3D_wcn2d")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.85924, 0)
@@ -70,7 +87,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -6.56321, 0)
 shape = SubResource("BoxShape3D_2fwkt")
 
 [node name="Dough" parent="." instance=ExtResource("2_mugxw")]
-transform = Transform3D(0.99812114, 0.061250653, 0.0016003783, 0.06125065, -0.9967576, -0.052171964, -0.0016003783, 0.052171983, -0.99863684, 2.559569, 2.8795316, 3.2817426)
+transform = Transform3D(0.99812114, 0.061250653, 0.0016003783, 0.06125065, -0.9967575, -0.052171957, -0.0016003783, 0.052171983, -0.99863684, 0.9086795, 4.520682, 3.2817426)
 
 [node name="Dough2" parent="." instance=ExtResource("2_mugxw")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.9392023, 4.933073, 2.8144119)

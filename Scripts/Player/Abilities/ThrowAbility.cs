@@ -2,95 +2,103 @@ using Godot;
 
 public partial class ThrowAbility : Ability
 {
-	// =========================================================
-	// Exports — tweak in editor
-	// =========================================================
-	[Export] public float MinForce = 1f;
-	[Export] public float MaxForce = 90f;
-	[Export] public float MaxChargeTime = 18.5f;
+	private InputComponent _input;
+	private CameraComponent _camera;
+	private StaminaComponent _stamina;
+	private ItemHolderComponent _itemHolder;
 
-	// =========================================================
-	// Signals — HUD subscribes to these
-	// =========================================================
+	[Export] public float MinForce { get; set; } = 1f;
+	[Export] public float MaxForce { get; set; } = 90f;
+	[Export] public float MaxChargeTime { get; set; } = 2.0f;
+	[Export] public float StaminaCostPercentage { get; set; } = 1.0f; // 100% charge = 100 stamina
+
+	// Signals for HUD
 	[Signal] public delegate void ChargeStartedEventHandler();
-	[Signal] public delegate void ChargeUpdatedEventHandler(float ratio);  // 0..1
+	[Signal] public delegate void ChargeUpdatedEventHandler(float ratio);
 	[Signal] public delegate void ChargeReleasedEventHandler();
-	[Signal] public delegate void ChargeCancelledEventHandler();           // dropped without throwing
+	[Signal] public delegate void ChargeCancelledEventHandler();
 
-	// =========================================================
-	// State
-	// =========================================================
 	private float _chargeTime;
 	private bool _isCharging;
 
 	public float ChargeRatio => _chargeTime / MaxChargeTime;
-	public override bool IsActive() { return _isCharging; }
-	public override bool BlocksOtherAbilities() { return _isCharging; }
+	public override bool IsActive() => _isCharging;
+	public override bool BlocksOtherAbilities() => _isCharging;
 
-	private IPlayerContext _context;
-	// =========================================================
-	// Setup — matches PickupAbility pattern
-	// =========================================================
-	public void Initialize(IPlayerContext context)
+	public  void Initialize(IEntity entity)
 	{
-		_context = context;
+		_input = entity.GetComponent<InputComponent>();
+		_camera = entity.GetComponent<CameraComponent>();
+		_stamina = entity.GetComponent<StaminaComponent>();
+		_itemHolder = entity.GetComponent<ItemHolderComponent>();
 	}
 
-	// =========================================================
-	// Process
-	// =========================================================
 	public override void Update(double delta)
 	{
-		if (_isCharging && !(_context.HeldItem != null) || Input.IsActionPressed("cancel_charge"))
+		// Cancel if lost item or cancel pressed
+		if (_isCharging && (!_itemHolder.IsHoldingItem || Input.IsActionPressed("cancel_charge")))
 		{
 			Reset(cancelled: true);
 			return;
 		}
 
-		if (!(_context.HeldItem != null)) return;
+		// Can't throw without item
+        if (!_itemHolder.IsHoldingItem) return;
 
-		if (Input.IsActionPressed("throw"))
-		{
-			if (!_isCharging)
-			{
-				_isCharging = true;
-				EmitSignal(SignalName.ChargeStarted);
-			}
+        // Start/continue charging
+        if (Input.IsActionPressed("throw"))
+        {
+            if (!_isCharging)
+            {
+                _isCharging = true;
+                EmitSignal(SignalName.ChargeStarted);
+            }
 
-			_chargeTime = Mathf.Min(_chargeTime + (float)delta, MaxChargeTime);
+            _chargeTime = Mathf.Min(_chargeTime + (float)delta, MaxChargeTime);
 
-			// Clamp charge to whatever stamina can actually afford
-			// e.g. 60 stamina left → bar can only fill to 0.6
-			float staminaRatio = _context.Stamina.CurrentStamina / 100f;
-			float effectiveRatio = Mathf.Min(ChargeRatio, staminaRatio);
+            // Clamp charge by available stamina
+            float maxStaminaCost = StaminaCostPercentage * 100f;
+            float staminaRatio = _stamina.CurrentStamina / maxStaminaCost;
+            float effectiveRatio = Mathf.Min(ChargeRatio, staminaRatio);
 
-			EmitSignal(SignalName.ChargeUpdated, effectiveRatio);
-		}
+            EmitSignal(SignalName.ChargeUpdated, effectiveRatio);
+        }
 
-		if (Input.IsActionJustReleased("throw") && _isCharging)
-		{
-			// Use the same effective ratio for force, not raw ChargeRatio
-			float staminaRatio = _context.Stamina.CurrentStamina / 100f;
-			float effectiveRatio = Mathf.Min(ChargeRatio, staminaRatio);
+        // Release throw
+        if (Input.IsActionJustReleased("throw") && _isCharging)
+        {
+            // Calculate effective force based on stamina limit
+            float maxStaminaCost = StaminaCostPercentage * 100f;
+            float staminaRatio = _stamina.CurrentStamina / maxStaminaCost;
+            float effectiveRatio = Mathf.Min(ChargeRatio, staminaRatio);
 
-			float force = Mathf.Lerp(MinForce, MaxForce, effectiveRatio);
-			_context.TryThrow(_context.ForwardDir * force);
-			_context.Stamina.TryConsume(effectiveRatio * 100f);
-			Reset(cancelled: false);
-		}
-	}
+            float force = Mathf.Lerp(MinForce, MaxForce, effectiveRatio);
+            float staminaCost = effectiveRatio * maxStaminaCost;
 
-	// =========================================================
-	// Helpers
-	// =========================================================
-	private void Reset(bool cancelled)
-	{
-		_isCharging = false;
-		_chargeTime = 0f;
+            // Throw the item
+            Vector3 throwDirection = _camera.GetForwardDirection();
+            Vector3 impulse = throwDirection * force;
 
-		if (cancelled)
-			EmitSignal(SignalName.ChargeCancelled);
-		else
-			EmitSignal(SignalName.ChargeReleased);
-	}
+            IThrowable item = _itemHolder.HeldItem;
+            _itemHolder.ClearHeldItem();
+
+            // Consume stamina before throwing
+            _stamina.TryConsume(staminaCost);
+
+            item.Throw(impulse);
+
+            Reset(cancelled: false);
+        }
+    }
+
+    private void Reset(bool cancelled)
+    {
+        _isCharging = false;
+        _chargeTime = 0f;
+
+        if (cancelled)
+            EmitSignal(SignalName.ChargeCancelled);
+        else
+            EmitSignal(SignalName.ChargeReleased);
+    }
 }

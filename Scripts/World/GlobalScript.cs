@@ -19,7 +19,7 @@ public partial class GlobalScript : Node3D
 		player.GlobalPosition = SpawnPoint;
 		//if (player.IsMultiplayerAuthority())
 		StaminaUI =  GetNode<StaminaUIComponent>("UIElements/Stamina");
-		StaminaUI.Bind(player.Stamina);
+		StaminaUI.Bind(player.GetComponent<StaminaComponent>());
 		
 		//TODO: replacer with correct initialization logic
 		//var enemy = EnemyScene.Instantiate<MelleEnemy>();
