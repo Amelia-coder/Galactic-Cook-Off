@@ -1,26 +1,48 @@
-[gd_scene load_steps=10 format=3 uid="uid://bb3oahwy7pgdk"]
+[gd_scene load_steps=13 format=3 uid="uid://bb3oahwy7pgdk"]
 
 [ext_resource type="Script" uid="uid://i3i5uvrgphq5" path="res://Scripts/World/GlobalScript.cs" id="1_ek0gv"]
 [ext_resource type="PackedScene" uid="uid://blw3xgniwfe0f" path="res://Scenes/Player/Player.tscn" id="1_lh3uc"]
 [ext_resource type="PackedScene" uid="uid://bpu84pqtndpww" path="res://Scenes/Dough/Dough.tscn" id="2_mugxw"]
-[ext_resource type="PackedScene" uid="uid://c2qomyie8px0n" path="res://Scenes/Enemies/MelleEnemy.tscn" id="3_2fwkt"]
+[ext_resource type="Script" uid="uid://c76uww3y1cyuf" path="res://Scripts/Enemy/MelleEnemy.cs" id="3_ek0gv"]
 [ext_resource type="Script" uid="uid://cq6emehb6aq6a" path="res://Scripts/Game/StaminaUIComponent.cs" id="4_fl7xt"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_g8078"]
+radius = 0.7
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_ytxpm"]
+radius = 0.7
+
+[sub_resource type="PackedScene" id="PackedScene_ner4r"]
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("MelleEnemy", "collision_layer", "collision_mask", "script", "CharacterBody3D", "CollisionShape3D", "transform", "shape", "MeshInstance3D", "mesh"),
+"node_count": 3,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 4, 0, -1, 3, 1, 0, 2, 1, 3, 2, 0, 0, 0, 5, 5, -1, 2, 6, 3, 7, 4, 0, 0, 0, 8, 8, -1, 2, 6, 3, 9, 5, 0),
+"variants": [2, 3, ExtResource("3_ek0gv"), Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0), SubResource("CapsuleShape3D_g8078"), SubResource("CapsuleMesh_ytxpm")],
+"version": 3
+}
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_lh3uc"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_lh3uc"]
 size = Vector3(20, 1, 20)
 
-[sub_resource type="BoxMesh" id="BoxMesh_mugxw"]
-size = Vector3(20, 1, 20)
+[sub_resource type="CylinderMesh" id="CylinderMesh_ner4r"]
+top_radius = 30.0
+bottom_radius = 3.0
+height = 5.0
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_2fwkt"]
 size = Vector3(500, 1, 500)
 
 [node name="Arena" type="Node3D"]
+transform = Transform3D(0.99952984, 0.03066063, 0, -0.03066063, 0.99952984, 0, 0, 0, 1, 0, 0, 0)
 script = ExtResource("1_ek0gv")
 PlayerScene = ExtResource("1_lh3uc")
-EnemyScene = ExtResource("3_2fwkt")
+EnemyScene = SubResource("PackedScene_ner4r")
 ThrowableScene = ExtResource("2_mugxw")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="."]
@@ -28,20 +50,17 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.85924, 0)
 physics_material_override = SubResource("PhysicsMaterial_lh3uc")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2, 0)
+transform = Transform3D(2.7, 0, 0, 0, 2.7, 0, 0, 0, 2.7, 0, -2.5, 0)
 shape = SubResource("BoxShape3D_lh3uc")
 debug_fill = false
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.008708954, -1.966752, -0.01594019)
-mesh = SubResource("BoxMesh_mugxw")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.009, -4, -0.016)
+mesh = SubResource("CylinderMesh_ner4r")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(-0.999468, -0.028532, 0.0157993, 0, 0.484428, 0.874831, -0.0326143, 0.874366, -0.48417, -0.164087, 7.20499, -8.01128)
-light_color = Color(0.521569, 0.278431, 1, 1)
-
-[node name="Enemy" parent="." instance=ExtResource("3_2fwkt")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.94338, 2.20709, 5.09061)
+transform = Transform3D(0.10245553, 0.41239592, -0.90522504, 0.9767445, 0.13059367, 0.1700452, 0.18834262, -0.9015958, -0.3894254, -18.894526, 30.055649, 6.761135)
+light_color = Color(0.5833795, 0.46525705, 0.038366947, 1)
 
 [node name="KillZone" type="Area3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -7.53337, 0)
@@ -51,10 +70,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -6.56321, 0)
 shape = SubResource("BoxShape3D_2fwkt")
 
 [node name="Dough" parent="." instance=ExtResource("2_mugxw")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.99012, 1.88193)
+transform = Transform3D(0.99812114, 0.061250653, 0.0016003783, 0.06125065, -0.9967576, -0.052171964, -0.0016003783, 0.052171983, -0.99863684, 2.559569, 2.8795316, 3.2817426)
 
 [node name="Dough2" parent="." instance=ExtResource("2_mugxw")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.99012, 1.88193)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.9392023, 4.933073, 2.8144119)
 
 [node name="UIElements" type="CanvasLayer" parent="."]
 
@@ -69,13 +88,16 @@ script = ExtResource("4_fl7xt")
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.41900003
-anchor_right = 0.41900003
+anchor_top = 0.2
+anchor_right = 1.9710001
+anchor_bottom = 0.70000005
 offset_left = 0.015995026
-offset_right = 153.01599
-offset_bottom = 23.0
+offset_top = -3.0
+offset_right = -0.055999756
+horizontal_alignment = 1
 
 [node name="StaminaProgressBar" type="ProgressBar" parent="UIElements/Stamina"]
 layout_mode = 0
-offset_right = 236.0
-offset_bottom = 27.0
+offset_right = 309.0
+offset_bottom = 35.0
 show_percentage = false

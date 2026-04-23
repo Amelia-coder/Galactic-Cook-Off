@@ -9,6 +9,7 @@ public partial class IdleState : MovementState
 	public override void Enter()
 	{
 		Entity.Velocity = new Vector3(0, 0, 0);
+		GD.Print($"is entity null?", Entity == null);
 	}
 
 	public override void PhysicsUpdate(double delta)

@@ -6,7 +6,7 @@ public partial class ThrowAbility : Ability
 	// Exports — tweak in editor
 	// =========================================================
 	[Export] public float MinForce = 1f;
-	[Export] public float MaxForce = 900f;
+	[Export] public float MaxForce = 90f;
 	[Export] public float MaxChargeTime = 18.5f;
 
 	// =========================================================
@@ -41,7 +41,6 @@ public partial class ThrowAbility : Ability
 	// =========================================================
 	public override void Update(double delta)
 	{
-		// Lost the item mid-charge (dropped by something else, etc.)
 		if (_isCharging && !(_context.HeldItem != null) || Input.IsActionPressed("cancel_charge"))
 		{
 			Reset(cancelled: true);
@@ -50,7 +49,6 @@ public partial class ThrowAbility : Ability
 
 		if (!(_context.HeldItem != null)) return;
 
-		// Begin / continue charging
 		if (Input.IsActionPressed("throw"))
 		{
 			if (!_isCharging)
@@ -60,16 +58,24 @@ public partial class ThrowAbility : Ability
 			}
 
 			_chargeTime = Mathf.Min(_chargeTime + (float)delta, MaxChargeTime);
-			EmitSignal(SignalName.ChargeUpdated, ChargeRatio);
+
+			// Clamp charge to whatever stamina can actually afford
+			// e.g. 60 stamina left → bar can only fill to 0.6
+			float staminaRatio = _context.Stamina.CurrentStamina / 100f;
+			float effectiveRatio = Mathf.Min(ChargeRatio, staminaRatio);
+
+			EmitSignal(SignalName.ChargeUpdated, effectiveRatio);
 		}
 
-		// Release — actually throw
 		if (Input.IsActionJustReleased("throw") && _isCharging)
 		{
-			float force = Mathf.Lerp(MinForce, MaxForce, ChargeRatio);
-			Vector3 direction = _context.ForwardDir;
+			// Use the same effective ratio for force, not raw ChargeRatio
+			float staminaRatio = _context.Stamina.CurrentStamina / 100f;
+			float effectiveRatio = Mathf.Min(ChargeRatio, staminaRatio);
 
-			_context.TryThrow(direction * force);
+			float force = Mathf.Lerp(MinForce, MaxForce, effectiveRatio);
+			_context.TryThrow(_context.ForwardDir * force);
+			_context.Stamina.TryConsume(effectiveRatio * 100f);
 			Reset(cancelled: false);
 		}
 	}

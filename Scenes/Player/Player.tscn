@@ -13,7 +13,8 @@
 [ext_resource type="Script" uid="uid://mtk0uirvtkvc" path="res://Scripts/Player/Abilities/ThrowAbility.cs" id="10_0kmp4"]
 [ext_resource type="Script" uid="uid://npsigflulhbx" path="res://Scripts/Player/BodyDetector.cs" id="10_i5acl"]
 [ext_resource type="Script" uid="uid://dnww8y37ulu3a" path="res://Scripts/Player/Abilities/AbilitySystem.cs" id="11_epg6k"]
-[ext_resource type="PackedScene" uid="uid://67pyi2bk1c2e" path="res://Scenes/Enemies/3DGodotRobot.glb" id="14_0u84n"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_0u84n"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_s0eop"]
 
@@ -21,8 +22,11 @@
 size = Vector3(3.769043, 2, 0.38984376)
 
 [node name="Player" type="CharacterBody3D"]
-collision_mask = 3
+collision_mask = 7
 script = ExtResource("1_s0eop")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("CapsuleMesh_0u84n")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("CapsuleShape3D_s0eop")
@@ -72,10 +76,15 @@ shape = SubResource("BoxShape3D_epg6k")
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="ChargeBar" type="ProgressBar" parent="CanvasLayer"]
-offset_left = 270.0
-offset_top = 197.0
-offset_right = 908.0
-offset_bottom = 229.0
+anchors_preset = -1
+anchor_left = 0.51600003
+anchor_top = 0.42100003
+anchor_right = 0.51600003
+anchor_bottom = 0.42100003
+offset_left = -334.432
+offset_top = -15.808014
+offset_right = 334.568
+offset_bottom = 16.191986
 max_value = 1.0
 
 [node name="AbilitySystem" type="Node" parent="."]
@@ -86,8 +95,3 @@ script = ExtResource("9_ji083")
 
 [node name="ThrowAbility" type="Node" parent="AbilitySystem"]
 script = ExtResource("10_0kmp4")
-
-[node name="ModelPivot" type="Node3D" parent="."]
-
-[node name="3DGodotRobot" parent="ModelPivot" instance=ExtResource("14_0u84n")]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, -0.9, 0)

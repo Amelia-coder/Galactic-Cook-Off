@@ -6,7 +6,7 @@ public partial class Dough : RigidBody3D, IThrowable
     // =========================================================
     // Exports
     // =========================================================
-    [Export] public float Damage = 20f;
+    [Export] public float Damage = 100f; //for omneshting enemises
     [Export] public float StunDuration = 1.5f;
     [Export] public float DisappearTimeout = 115f;
 
@@ -83,12 +83,16 @@ public partial class Dough : RigidBody3D, IThrowable
     // =========================================================
     private void OnImpact(Node body)
     {
+        GD.Print("Is is reallyt called...");
         if (!_inFlight) return;
 
-        if (body.HasMethod("TakeDamage")) //weird, rather check for fact of the implementation of interface like Dmagebale -r comebont like Healths. Otherwise, coupling
-                                          //TODO: instead, send signal of being hit!
+        //weird, rather check for fact of the implementation of interface like Dmagebale -r comebont like Healths. Otherwise, coupling
+        //TODO: instead, send signal of being hit!
+        if (body.HasMethod("TakeDamage"))
+        {
+            GD.Print("I guess it really is called");
             body.Call("TakeDamage", Damage);
-
+        }
         // Stick to static geometry, keep bouncing off dynamic bodies
         if (body is StaticBody3D)
         {

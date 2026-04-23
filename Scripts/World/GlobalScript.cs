@@ -21,9 +21,23 @@ public partial class GlobalScript : Node3D
 		StaminaUI =  GetNode<StaminaUIComponent>("UIElements/Stamina");
 		StaminaUI.Bind(player.Stamina);
 		
+		//TODO: replacer with correct initialization logic
 		//var enemy = EnemyScene.Instantiate<MelleEnemy>();
 		//enemy.SetTarget(player);
+		//enemy.GlobalPosition = new Vector3(2, 5, -9);
 		//AddChild(enemy);
+		//
+		//enemy = EnemyScene.Instantiate<MelleEnemy>();
+		//enemy.GlobalPosition = new Vector3(4, 5, -7);
+		//enemy.SetTarget(player);
+		//AddChild(enemy);
+		//
+		//enemy = EnemyScene.Instantiate<MelleEnemy>();
+		//enemy.SetTarget(player);
+		//enemy.GlobalPosition = new Vector3(-4, 5, -8);
+		//AddChild(enemy);
+		
+		
 		//TODO: spawn enemies on sthe start OR on timer timeout. TImer can be seen in tutorial project!
 	}
 
