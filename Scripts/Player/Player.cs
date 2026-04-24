@@ -21,23 +21,6 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 	// Является ли этот игрок локальным (управляемым с этого компьютера)
 	[Export] public bool IsLocalPlayer = true;
 
-	private Dictionary<Type, Component> _components = new();
-	public void RegisterComponent(Component component)
-	{
-		_components[component.GetType()] = component;
-	}
-
-	// --- IEntity ---
-	public T GetComponent<T>() where T : Component
-	{
-		if (_components.TryGetValue(typeof(T), out Component component))
-			return component as T;
-
-		GD.PrintErr($"[Player] Component {typeof(T).Name} not found in dictionary!");
-		return null;
-	}
-
-
 	// --- IThrowable ---
 	public event Action<bool> PickupAvailabilityChanged;
 
@@ -53,25 +36,24 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 	// --- Зарядка броска ---
 	private float _chargeTime = 0f;
 	private bool _isCharging = false;
-
 	private ProgressBar _chargeBar;
 
-	public HealthComponent Health;
+	private Dictionary<Type, Component> _components = new();
+	private HealthComponent _healthComponent;
 	private MovementComponent _movementComponent;
 	private InputComponent _inputComponent;
 	private ThrowableDetectorComponent _detectionComponent;
 	private CameraComponent _cameraComponent;
-	private Camera3D _camera;
 	private CameraControllerComponent _cameraControllerComponent;
 	private ItemHolderComponent _itemHolderComponent;
+	private StaminaComponent _staminaComponent;
+	
+	private Camera3D _camera;
+	private Area3D _bodyDetector;
 
 	private MovementStateMachine _movementStateMachine;
 	private AbilitySystem _abilitySystem;
 
-	private StaminaComponent _staminaComponent;
-	private BodyDetector _bodyDetector;
-
-	private bool _wasOnFloor;
 	public bool IsTouchingFloor => IsOnFloor();
 
 	public bool CanJump => IsTouchingFloor;
@@ -84,8 +66,6 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 	public override void _Ready()
 	{
 		GD.Print($"[Player] layer: {CollisionLayer}, mask: {CollisionMask}");
-
-		_movementStateMachine = GetNode<MovementStateMachine>("MovementStateMachine");
 
 
 		_staminaComponent = GetNode<StaminaComponent>("ComponentRegistry/StaminaComponent");
@@ -107,8 +87,8 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 
 		_detectionComponent = GetNode<ThrowableDetectorComponent>("ComponentRegistry/ThrowableDetectorComponent");
 		// Get the Area3D child node and pass it to component
-		var bodyDetector = GetNode<Area3D>("BodyDetector");
-		_detectionComponent.Initialize(bodyDetector);
+		_bodyDetector = GetNode<Area3D>("BodyDetector");
+		_detectionComponent.Initialize(_bodyDetector);
 		RegisterComponent(_detectionComponent);
 
 		_itemHolderComponent = GetNode<ItemHolderComponent>("ComponentRegistry/ItemHolderComponent");
@@ -123,6 +103,9 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 		_cameraControllerComponent.Initialize(this, _camera, GetNode<Node3D>("CameraPivot"), GetNode<SpringArm3D>("CameraPivot/SpringArm3D"), true); 
 		RegisterComponent(_cameraControllerComponent);
 
+		
+		_movementStateMachine = GetNode<MovementStateMachine>("MovementStateMachine");
+		
 		GD.Print($"Inside player stamina is null:  ", _staminaComponent == null);
 		List<Ability> abilities = new List<Ability>();
 		PickupAbility pickupAbility = GetNode<PickupAbility>("AbilitySystem/PickupAbility");
@@ -144,6 +127,24 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 		
 		_chargeBar = GetNode<ProgressBar>("CanvasLayer/ChargeBar");
 		_chargeBar.Visible = false;
+	}
+
+   
+	public void RegisterComponent(Component component)
+	{
+		_components[component.GetType()] = component;
+	}
+
+	// --- IEntity ---
+	public T GetComponent<T>() where T : Component
+	{
+		if (_components.TryGetValue(typeof(T), out Component component))
+			return component as T;
+
+		GD.PrintErr($"[Player] Component {typeof(T).Name} not found in dictionary!");
+		GD.PrintErr($"[Player] Call stack: {System.Environment.StackTrace}"); // Shows who called this
+
+		return null;
 	}
 
 	public override void _UnhandledInput(InputEvent @event)

@@ -8,6 +8,8 @@ public partial class InputComponent : Component
 	public bool JumpPressed { get; private set; }
 	public bool SprintPressed { get; private set; }
 	public bool PickupPressed { get; private set; }
+	public bool ThrowHeld { get; private set; }
+	public bool ThrowReleased { get; private set; }
 
 	public void Initialize(Node3D transform)
 	{
@@ -42,11 +44,14 @@ public partial class InputComponent : Component
 		JumpPressed = Input.IsActionJustPressed("jump");
 		SprintPressed = Input.IsActionPressed("sprint");
 		PickupPressed = Input.IsActionJustPressed("pickup");
+		ThrowHeld = Input.IsActionPressed("throw");
+		ThrowReleased = Input.IsActionJustReleased("throw");
 	}
 
 	public void Reset()
 	{
 		JumpPressed = false;
 		PickupPressed = false;
+		ThrowReleased = false;
 	}
 }

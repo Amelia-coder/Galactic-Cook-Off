@@ -15,7 +15,8 @@ public partial class RunState : MovementState
 		var _movement = Entity.GetComponent<MovementComponent>();
 		var _stamina = Entity.GetComponent<StaminaComponent>();
 		var  _input = Entity.GetComponent<InputComponent>();
-		 _input.Update();
+		
+		_input.Update();
 
 		// Try jump
 		if (_input.JumpPressed && _movement.TryJump())
@@ -28,6 +29,13 @@ public partial class RunState : MovementState
 		if (_input.MoveDirection.LengthSquared() < 0.01f)
 		{
 			TransitionTo("IdleState");
+			return;
+		}
+
+		// Check if sprint button released - transition to walk
+		if (!_input.SprintPressed)
+		{
+			TransitionTo("WalkState");
 			return;
 		}
 

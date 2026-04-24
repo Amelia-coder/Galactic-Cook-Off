@@ -11,7 +11,9 @@ public partial class ThrowAbility : Ability
 	[Export] public float MaxForce { get; set; } = 90f;
 	[Export] public float MaxChargeTime { get; set; } = 2.0f;
 	[Export] public float StaminaCostPercentage { get; set; } = 1.0f; // 100% charge = 100 stamina
-
+	[Export] public float CancelCooldown { get; set; } = 0.3f; // Can't charge for 0.3s after cancel
+	private float _cancelCooldownTimer = 0f;
+	
 	// Signals for HUD
 	[Signal] public delegate void ChargeStartedEventHandler();
 	[Signal] public delegate void ChargeUpdatedEventHandler(float ratio);
@@ -35,70 +37,81 @@ public partial class ThrowAbility : Ability
 
 	public override void Update(double delta)
 	{
+		_input.Update();
+
+		if (_cancelCooldownTimer > 0)
+		{
+			_cancelCooldownTimer -= (float)delta;
+		}
 		// Cancel if lost item or cancel pressed
 		if (_isCharging && (!_itemHolder.IsHoldingItem || Input.IsActionPressed("cancel_charge")))
 		{
+			_cancelCooldownTimer = CancelCooldown; // Start cooldown
 			Reset(cancelled: true);
 			return;
 		}
 
 		// Can't throw without item
-        if (!_itemHolder.IsHoldingItem) return;
+		if (!_itemHolder.IsHoldingItem) return;
 
-        // Start/continue charging
-        if (Input.IsActionPressed("throw"))
-        {
-            if (!_isCharging)
-            {
-                _isCharging = true;
-                EmitSignal(SignalName.ChargeStarted);
-            }
+		// Start/continue charging
+		if(_input.ThrowHeld && _cancelCooldownTimer <= 0)
+		{
+			if (!_isCharging)
+			{
+				_isCharging = true;
+				EmitSignal(SignalName.ChargeStarted);
+			}
 
-            _chargeTime = Mathf.Min(_chargeTime + (float)delta, MaxChargeTime);
+			_chargeTime = Mathf.Min(_chargeTime + (float)delta, MaxChargeTime);
 
-            // Clamp charge by available stamina
-            float maxStaminaCost = StaminaCostPercentage * 100f;
-            float staminaRatio = _stamina.CurrentStamina / maxStaminaCost;
-            float effectiveRatio = Mathf.Min(ChargeRatio, staminaRatio);
+			// Clamp charge by available stamina
+			float maxStaminaCost = StaminaCostPercentage * 100f;
+			float staminaRatio = _stamina.CurrentStamina / maxStaminaCost;
+			float effectiveRatio = Mathf.Min(ChargeRatio, staminaRatio);
 
-            EmitSignal(SignalName.ChargeUpdated, effectiveRatio);
-        }
+			EmitSignal(SignalName.ChargeUpdated, effectiveRatio);
+		}
 
-        // Release throw
-        if (Input.IsActionJustReleased("throw") && _isCharging)
-        {
-            // Calculate effective force based on stamina limit
-            float maxStaminaCost = StaminaCostPercentage * 100f;
-            float staminaRatio = _stamina.CurrentStamina / maxStaminaCost;
-            float effectiveRatio = Mathf.Min(ChargeRatio, staminaRatio);
+		// Release throw
+		if (_input.ThrowReleased && _isCharging)
+		{
+			// Calculate effective force based on stamina limit
+			float maxStaminaCost = StaminaCostPercentage * 100f;
+			float staminaRatio = _stamina.CurrentStamina / maxStaminaCost;
+			float effectiveRatio = Mathf.Min(ChargeRatio, staminaRatio);
 
-            float force = Mathf.Lerp(MinForce, MaxForce, effectiveRatio);
-            float staminaCost = effectiveRatio * maxStaminaCost;
+			float force = Mathf.Lerp(MinForce, MaxForce, effectiveRatio);
+			float staminaCost = effectiveRatio * maxStaminaCost;
 
-            // Throw the item
-            Vector3 throwDirection = _camera.GetForwardDirection();
-            Vector3 impulse = throwDirection * force;
+			// Get camera forward and add upward bias
+			Vector3 cameraForward = _camera.GetForwardDirection();
+			Vector3 horizontalDir = new Vector3(cameraForward.X, 0, cameraForward.Z).Normalized();
 
-            IThrowable item = _itemHolder.HeldItem;
-            _itemHolder.ClearHeldItem();
+			// Mix: 70% horizontal, 30% upward (adjust to taste)
+			Vector3 throwDirection = _camera.GetForwardDirection();
+			Vector3 impulse = throwDirection * force;
+			
+			IThrowable item = _itemHolder.HeldItem;
+			_itemHolder.ClearHeldItem();
 
-            // Consume stamina before throwing
-            _stamina.TryConsume(staminaCost);
+			// Consume stamina before throwing
+			_stamina.TryConsume(staminaCost);
 
-            item.Throw(impulse);
+			item.Throw(impulse);
 
-            Reset(cancelled: false);
-        }
-    }
+			Reset(cancelled: false);
+		}
+	}
 
-    private void Reset(bool cancelled)
-    {
-        _isCharging = false;
-        _chargeTime = 0f;
+	private void Reset(bool cancelled)
+	{
+		_isCharging = false;
+		_chargeTime = 0f;
 
-        if (cancelled)
-            EmitSignal(SignalName.ChargeCancelled);
-        else
-            EmitSignal(SignalName.ChargeReleased);
-    }
+		if (cancelled)
+			EmitSignal(SignalName.ChargeCancelled);
+		else
+			EmitSignal(SignalName.ChargeReleased);
+	}
 }

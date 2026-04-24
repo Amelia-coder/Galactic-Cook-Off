@@ -1,6 +1,4 @@
 using Godot;
-using System;
-using System.Text.RegularExpressions;
 
 public partial class IdleState : MovementState
 {
@@ -14,6 +12,7 @@ public partial class IdleState : MovementState
 
 	public override void PhysicsUpdate(double delta)
 	{
+		//better add sometying like initiliaze for sppeding up logic and escaping search on each tick
 		var _movement = Entity.GetComponent<MovementComponent>();
 		var _stamina = Entity.GetComponent<StaminaComponent>();
 		var _input = Entity.GetComponent<InputComponent>();
