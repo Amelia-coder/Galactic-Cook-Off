@@ -58,9 +58,7 @@ public partial class Dough : RigidBody3D, IThrowable
 
         Reparent(actorNode);
 
-        Position = actor is Player carrier && carrier.ThrowPoint != null
-            ? actorNode.ToLocal(carrier.ThrowPoint.GlobalPosition)
-            : Vector3.Up * 1.5f;
+        Position = Vector3.Up * 1.5f;//yemporaty - shall be done so that we will be able to see the picked item somewhere in hands
     }
 
     public void Throw(Vector3 impulse)

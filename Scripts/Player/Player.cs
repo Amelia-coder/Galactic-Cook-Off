@@ -16,7 +16,6 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 
 	[Export] public float MinThrowForce = 10f;
 	[Export] public float MaxThrowForce = 25f;
-	[Export] public Node3D ThrowPoint;
 
 	// Является ли этот игрок локальным (управляемым с этого компьютера)
 	[Export] public bool IsLocalPlayer = true;
