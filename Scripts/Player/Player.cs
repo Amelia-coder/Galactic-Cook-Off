@@ -7,16 +7,6 @@ using System.Linq;
 
 public partial class Player : CharacterBody3D, IEntity, IThrowable
 {
-	[Export] public float Speed = 5f;
-	[Export] public float JumpVelocity = 5f;
-	[Export] public float Gravity = 9.8f;
-	[Export] public float MouseSensitivity = 0.003f;
-	[Export] public float TiltMin = -70f; // градусы
-	[Export] public float TiltMax = 20f;
-
-	[Export] public float MinThrowForce = 10f;
-	[Export] public float MaxThrowForce = 25f;
-
 	// Является ли этот игрок локальным (управляемым с этого компьютера)
 	[Export] public bool IsLocalPlayer = true;
 
@@ -29,12 +19,10 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 	private Vector3 _throwVelocity = Vector3.Zero;
 
 	// --- Подбор предметов ---
-	private IThrowable _heldObject;
+	private IThrowable _heldObject; // will be used for determination of where visually shall picked object be
 	private readonly List<IThrowable> _itemsInRange = new();
 
 	// --- Зарядка броска ---
-	private float _chargeTime = 0f;
-	private bool _isCharging = false;
 	private ProgressBar _chargeBar;
 
 	private Dictionary<Type, Component> _components = new();
@@ -102,7 +90,8 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 		_cameraControllerComponent.Initialize(this, _camera, GetNode<Node3D>("CameraPivot"), GetNode<SpringArm3D>("CameraPivot/SpringArm3D"), true); 
 		RegisterComponent(_cameraControllerComponent);
 
-		
+		_healthComponent = GetNode<HealthComponent>("ComponentRegistry/HealthComponent");
+
 		_movementStateMachine = GetNode<MovementStateMachine>("MovementStateMachine");
 		
 		GD.Print($"Inside player stamina is null:  ", _staminaComponent == null);

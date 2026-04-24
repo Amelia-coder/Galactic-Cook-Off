@@ -18,4 +18,10 @@ public partial class HealthComponent : Component
 	public override void _Process(double delta)
 	{
 	}
+
+    public bool TryTakeDamage(float damage)
+    {
+
+       return CurrentHealth > 0;
+    }
 }
