@@ -1,13 +1,17 @@
 using Godot;
+using System;
+using System.Collections.Generic;
 
-public partial class MelleEnemy : CharacterBody3D
+public partial class MelleEnemy : CharacterBody3D, IEntity
 {
-	private Player _target;
+	private Player _target; // reconsider
 
 	[Export] public float Speed = 1f;
 	[Export] public float Gravity = 9.8f;
 	[Export] public float StoppingDistance = 1.5f;
-	[Export] public float MaxHealth = 100f;  
+	[Export] public float MaxHealth = 100f;
+	private Dictionary<Type, Component> _components = new();
+
 
 	private float _currentHealth;
 
@@ -15,6 +19,7 @@ public partial class MelleEnemy : CharacterBody3D
 	{
 		_currentHealth = MaxHealth;
 	}
+
 
 	// =========================================================
 	// Called by Dough's OnImpact via body.Call("TakeDamage", ...)
@@ -73,5 +78,22 @@ public partial class MelleEnemy : CharacterBody3D
 
 		Velocity = velocity;
 		MoveAndSlide();
+	}
+
+	public void RegisterComponent(Component component)
+	{
+		_components[component.GetType()] = component;
+	}
+
+	// --- IEntity ---
+	public T GetComponent<T>() where T : Component
+	{
+		if (_components.TryGetValue(typeof(T), out Component component))
+			return component as T;
+
+		GD.PrintErr($"[Player] Component {typeof(T).Name} not found in dictionary!");
+		GD.PrintErr($"[Player] Call stack: {System.Environment.StackTrace}"); // Shows who called this
+
+		return null;
 	}
 }
