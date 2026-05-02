@@ -145,10 +145,10 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 	{
 
 		if (_isHeld) return;
-		
+
 		_movementStateMachine._PhysicsProcess(delta);
-		_abilitySystem.PhysicsProcess(delta);
-		_cameraControllerComponent.Update((float)delta);
+		_abilitySystem._PhysicsProcess(delta);
+		_cameraControllerComponent.Update((float)delta); // TODO: think about moving this to _PhysicsProcess in some system/component
 
 	}
 
