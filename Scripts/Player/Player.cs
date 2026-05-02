@@ -34,8 +34,9 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 	private CameraControllerComponent _cameraControllerComponent;
 	private ItemHolderComponent _itemHolderComponent;
 	private StaminaComponent _staminaComponent;
-	
-	private Camera3D _camera;
+    private AnimationComponent _animationComponent;
+
+    private Camera3D _camera;
 	private Area3D _bodyDetector;
 
 	private MovementStateMachine _movementStateMachine;
@@ -90,9 +91,13 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 		_cameraControllerComponent.Initialize(this, _camera, GetNode<Node3D>("CameraPivot"), GetNode<SpringArm3D>("CameraPivot/SpringArm3D"), true); 
 		RegisterComponent(_cameraControllerComponent);
 
+		_animationComponent = GenNode<AnimationComponent>("");
+		//todo: add init
+		RegisterComponent(_animationComponent);
 		_healthComponent = GetNode<HealthComponent>("ComponentRegistry/HealthComponent");
 
 		_movementStateMachine = GetNode<MovementStateMachine>("MovementStateMachine");
+
 		
 		GD.Print($"Inside player stamina is null:  ", _staminaComponent == null);
 		List<Ability> abilities = new List<Ability>();
