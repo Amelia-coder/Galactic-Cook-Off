@@ -24,7 +24,9 @@ public partial class WalkState : MovementState
 		}
 
 		// Check for sprint
-		if (_input.SprintPressed && _input.MoveDirection.LengthSquared() > 0.01f)
+		if (_input.SprintPressed 
+			&& _input.MoveDirection.LengthSquared() > 0.01f
+			&& _movement.CanSprint((float)delta)) 
 		{
 			TransitionTo("RunState");
 			return;
