@@ -1,13 +1,19 @@
-[gd_scene load_steps=5 format=3 uid="uid://wju1adqciolp"]
+[gd_scene load_steps=10 format=3 uid="uid://wju1adqciolp"]
 
 [ext_resource type="Script" uid="uid://c76uww3y1cyuf" path="res://Scripts/Enemy/MelleEnemy.cs" id="1_ytxpm"]
 [ext_resource type="Script" uid="uid://vyqbph3u4h28" path="res://Scripts/Enemy/States/EnemyStateMachine.cs" id="2_26bol"]
+[ext_resource type="Script" uid="uid://ctjmscttxn5p4" path="res://Scripts/Enemy/Components/TargetDetectorComponent.cs" id="2_nwxiv"]
+[ext_resource type="Script" uid="uid://dnggfhtp1nw41" path="res://Scripts/Enemy/States/IdleState.cs" id="4_8o2ik"]
+[ext_resource type="Script" uid="uid://dcsepk4j0hgne" path="res://Scripts/Enemy/States/ChaseState.cs" id="5_us81c"]
+[ext_resource type="Script" uid="uid://dbc58emat3ckc" path="res://Scripts/Enemy/States/AttackState.cs" id="6_0eus3"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_g8078"]
 radius = 0.7
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_ytxpm"]
 radius = 0.7
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_8o2ik"]
 
 [node name="MelleEnemy" type="CharacterBody3D"]
 collision_layer = 2
@@ -25,7 +31,28 @@ mesh = SubResource("CapsuleMesh_ytxpm")
 
 [node name="NavigationComponent" type="Node" parent="ComponentsRegistry"]
 
+[node name="AttackComponent" type="Node" parent="ComponentsRegistry"]
+
+[node name="TargetDetectorComponent" type="Node" parent="ComponentsRegistry"]
+script = ExtResource("2_nwxiv")
+
 [node name="StateMachine" type="Node" parent="."]
 script = ExtResource("2_26bol")
 
 [node name="IdleState" type="Node" parent="StateMachine"]
+script = ExtResource("4_8o2ik")
+
+[node name="ChaseState" type="Node" parent="StateMachine"]
+script = ExtResource("5_us81c")
+
+[node name="AttackState" type="Node" parent="StateMachine"]
+script = ExtResource("6_0eus3")
+
+[node name="Strategies" type="Node" parent="."]
+
+[node name="DetectionArea" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="DetectionArea"]
+shape = SubResource("SphereShape3D_8o2ik")
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]

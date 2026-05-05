@@ -54,11 +54,41 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 	{
 		GD.Print($"[Player] layer: {CollisionLayer}, mask: {CollisionMask}");
 
+		InitAndRegisterComponents();
 
+		_healthComponent = GetNode<HealthComponent>("ComponentRegistry/HealthComponent");
+
+		_movementStateMachine = GetNode<MovementStateMachine>("MovementStateMachine");
+
+		GD.Print($"Inside player stamina is null:  ", _staminaComponent == null);
+		List<Ability> abilities = new List<Ability>();
+		PickupAbility pickupAbility = GetNode<PickupAbility>("AbilitySystem/PickupAbility");
+		pickupAbility.Initialize(this);
+		abilities.Add(pickupAbility);
+
+
+		ThrowAbility throwAbility = GetNode<ThrowAbility>("AbilitySystem/ThrowAbility");
+		throwAbility.Initialize(this);
+		throwAbility.ChargeStarted += () => _chargeBar.Visible = true;
+		throwAbility.ChargeUpdated += ratio => _chargeBar.Value = ratio * 100f;
+		throwAbility.ChargeReleased += () => _chargeBar.Visible = false;
+		throwAbility.ChargeCancelled += () => _chargeBar.Visible = false;
+
+		abilities.Add(throwAbility);
+
+		_abilitySystem = GetNode<AbilitySystem>("AbilitySystem");
+		_abilitySystem.Initialize(abilities);
+
+		_chargeBar = GetNode<ProgressBar>("CanvasLayer/ChargeBar");
+		_chargeBar.Visible = false;
+	}
+
+	private void InitAndRegisterComponents()
+	{
 		_staminaComponent = GetNode<StaminaComponent>("ComponentRegistry/StaminaComponent");
 		GD.Print("Stamina component is null: ", _staminaComponent == null);
 		RegisterComponent(_staminaComponent);
-		
+
 
 		_movementComponent = GetNode<MovementComponent>("ComponentRegistry/MovementComponent");
 		_movementComponent.Initialize(this, _staminaComponent);
@@ -87,37 +117,10 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 		RegisterComponent(_cameraComponent);
 
 		_cameraControllerComponent = GetNode<CameraControllerComponent>("ComponentRegistry/CameraControllerComponent");
-		_cameraControllerComponent.Initialize(this, _camera, GetNode<Node3D>("CameraPivot"), GetNode<SpringArm3D>("CameraPivot/SpringArm3D"), true); 
+		_cameraControllerComponent.Initialize(this, _camera, GetNode<Node3D>("CameraPivot"), GetNode<SpringArm3D>("CameraPivot/SpringArm3D"), true);
 		RegisterComponent(_cameraControllerComponent);
-
-		_healthComponent = GetNode<HealthComponent>("ComponentRegistry/HealthComponent");
-
-		_movementStateMachine = GetNode<MovementStateMachine>("MovementStateMachine");
-		
-		GD.Print($"Inside player stamina is null:  ", _staminaComponent == null);
-		List<Ability> abilities = new List<Ability>();
-		PickupAbility pickupAbility = GetNode<PickupAbility>("AbilitySystem/PickupAbility");
-		pickupAbility.Initialize(this);
-		abilities.Add(pickupAbility);
-		
-
-		ThrowAbility throwAbility = GetNode<ThrowAbility>("AbilitySystem/ThrowAbility");
-		throwAbility.Initialize(this);
-		throwAbility.ChargeStarted += () => _chargeBar.Visible = true;
-		throwAbility.ChargeUpdated += ratio => _chargeBar.Value = ratio * 100f;
-		throwAbility.ChargeReleased += () => _chargeBar.Visible = false;
-		throwAbility.ChargeCancelled += () => _chargeBar.Visible = false;
-
-		abilities.Add(throwAbility);
-
-		_abilitySystem = GetNode<AbilitySystem>("AbilitySystem");
-		_abilitySystem.Initialize(abilities);
-		
-		_chargeBar = GetNode<ProgressBar>("CanvasLayer/ChargeBar");
-		_chargeBar.Visible = false;
 	}
 
-   
 	public void RegisterComponent(Component component)
 	{
 		_components[component.GetType()] = component;

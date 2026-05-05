@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://bb3oahwy7pgdk"]
+[gd_scene load_steps=14 format=3 uid="uid://bb3oahwy7pgdk"]
 
 [ext_resource type="Script" uid="uid://i3i5uvrgphq5" path="res://Scripts/World/GlobalScript.cs" id="1_ek0gv"]
 [ext_resource type="PackedScene" uid="uid://blw3xgniwfe0f" path="res://Scenes/Player/Player.tscn" id="1_lh3uc"]
@@ -24,6 +24,8 @@ height = 5.0
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_2fwkt"]
 size = Vector3(500, 1, 500)
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_ek0gv"]
 
 [node name="Arena" type="Node3D"]
 transform = Transform3D(0.99952984, 0.03066063, 0, -0.03066063, 0.99952984, 0, 0, 0, 1, 0, 0, 0)
@@ -99,3 +101,6 @@ layout_mode = 0
 offset_right = 309.0
 offset_bottom = 35.0
 show_percentage = false
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
+navigation_mesh = SubResource("NavigationMesh_ek0gv")

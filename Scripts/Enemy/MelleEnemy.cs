@@ -2,7 +2,7 @@ using Godot;
 using System;
 using System.Collections.Generic;
 
-public partial class MelleEnemy : CharacterBody3D, IEntity
+public partial class MelleEnemy : CharacterBody3D, IEnemyEntity
 {
 	private Player _target; // reconsider
 
@@ -14,6 +14,8 @@ public partial class MelleEnemy : CharacterBody3D, IEntity
 
 
 	private float _currentHealth;
+
+	public Node3D CurrentTarget; // TODD: wtore implnention
 
 	public override void _Ready()
 	{
@@ -96,4 +98,10 @@ public partial class MelleEnemy : CharacterBody3D, IEntity
 
 		return null;
 	}
+
+    // --- IEnemyEntity ---
+    public T GetTarget<T>() where T : Node3D
+    {
+        throw new NotImplementedException();
+    }
 }
