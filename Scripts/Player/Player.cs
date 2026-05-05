@@ -147,7 +147,7 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 		if (_isHeld) return;
 
 		_movementStateMachine._PhysicsProcess(delta);
-		_abilitySystem._PhysicsProcess(delta);
+		_abilitySystem.PhysicsProcess(delta); //,ake this truly copmetible with engine's method; think aout blocking abilitoes and their egnral update; ODO: instead of blocking abilites, marl some as active, or current
 		_cameraControllerComponent.Update((float)delta); // TODO: think about moving this to _PhysicsProcess in some system/component
 
 	}
