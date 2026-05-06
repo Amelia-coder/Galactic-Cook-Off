@@ -1,17 +1,20 @@
-using Godot;
-using System;
+using Scripts.Player.Components;
+using Scripts.Game;
 
-public partial class CombatState : State<IEntity>
+namespace Scripts.Player.States
 {
-	public virtual float InstantStaminaConsumption => 0f;
-	StaminaComponent _staminaComponent;
-	HealthComponent _healthComponent;
-
-
-	public override void Initialize(IEntity entity)
+	public partial class CombatState : State<IEntity>
 	{
-		base.Initialize(entity);
-		_staminaComponent = entity.GetComponent<StaminaComponent>();
-		_healthComponent = entity.GetComponent<HealthComponent>(); 
+		public virtual float InstantStaminaConsumption => 0f;
+		StaminaComponent _staminaComponent;
+		HealthComponent _healthComponent;
+
+
+		public override void Initialize(IEntity entity)
+		{
+			base.Initialize(entity);
+			_staminaComponent = entity.GetComponent<StaminaComponent>();
+			_healthComponent = entity.GetComponent<HealthComponent>();
+		}
 	}
 }

@@ -1,61 +1,66 @@
 using Godot;
+using Scripts.Player.Components;
+using Scripts.Game;
 
-public partial class PickupAbility : Ability
+namespace Scripts.Player.Abilities
 {
-    private InputComponent _input;
-    private ThrowableDetectorComponent _detector;
-    private CameraComponent _camera;
-    private ItemHolderComponent _itemHolder;
-    private CharacterBody3D _body;
-
-    [Export] public float MinDotProduct { get; set; } = 0.5f;
-
-    public override bool IsActive() => true;
-
-    public void Initialize(IEntity entity)
+    public partial class PickupAbility : Ability
     {
-        _input = entity.GetComponent<InputComponent>();
-        _detector = entity.GetComponent<ThrowableDetectorComponent>();
-        _camera = entity.GetComponent<CameraComponent>();
-        _itemHolder = entity.GetComponent<ItemHolderComponent>();
-        _body = entity as CharacterBody3D;
-    }
+        private InputComponent _input;
+        private ThrowableDetectorComponent _detector;
+        private CameraComponent _camera;
+        private ItemHolderComponent _itemHolder;
+        private CharacterBody3D _body;
 
-    public override void Update(double delta)
-    {
-        _input.Update();
+        [Export] public float MinDotProduct { get; set; } = 0.5f;
 
-        if (!_input.PickupPressed) return;
+        public override bool IsActive() => true;
 
-        if (_itemHolder.IsHoldingItem)
-            TryDrop();
-        else
-            TryPickUp();
-    }
+        public void Initialize(IEntity entity)
+        {
+            _input = entity.GetComponent<InputComponent>();
+            _detector = entity.GetComponent<ThrowableDetectorComponent>();
+            _camera = entity.GetComponent<CameraComponent>();
+            _itemHolder = entity.GetComponent<ItemHolderComponent>();
+            _body = entity as CharacterBody3D;
+        }
 
-    private void TryPickUp()
-    {
-        Vector3 lookDir = _camera.GetForwardDirection();
+        public override void Update(double delta)
+        {
+            _input.Update();
 
-        IThrowable target = _detector.GetBestInDirection(
-            _body.GlobalPosition,
-            lookDir,
-            MinDotProduct
-        );
+            if (!_input.PickupPressed) return;
 
-        if (target == null || !target.CanBePickedUpBy(_body as IEntity))
-            return;
+            if (_itemHolder.IsHoldingItem)
+                TryDrop();
+            else
+                TryPickUp();
+        }
 
-        _itemHolder.SetHeldItem(target);
-        target.PickUp(_body as IEntity);
-    }
+        private void TryPickUp()
+        {
+            Vector3 lookDir = _camera.GetForwardDirection();
 
-    private void TryDrop()
-    {
-        if (!_itemHolder.IsHoldingItem) return;
+            IThrowable target = _detector.GetBestInDirection(
+                _body.GlobalPosition,
+                lookDir,
+                MinDotProduct
+            );
 
-        IThrowable item = _itemHolder.HeldItem;
-        _itemHolder.ClearHeldItem();
-        item.Drop();
+            if (target == null || !target.CanBePickedUpBy(_body as IEntity))
+                return;
+
+            _itemHolder.SetHeldItem(target);
+            target.PickUp(_body as IEntity);
+        }
+
+        private void TryDrop()
+        {
+            if (!_itemHolder.IsHoldingItem) return;
+
+            IThrowable item = _itemHolder.HeldItem;
+            _itemHolder.ClearHeldItem();
+            item.Drop();
+        }
     }
 }

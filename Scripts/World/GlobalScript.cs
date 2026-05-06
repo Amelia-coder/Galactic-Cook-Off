@@ -1,5 +1,7 @@
 using Godot;
 using System;
+using Scripts.Player.Components;
+using Scripts.Game;
 
 public partial class GlobalScript : Node3D
 {

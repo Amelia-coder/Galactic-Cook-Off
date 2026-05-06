@@ -1,118 +1,122 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using Scripts.Game;
 
-public partial class ThrowableDetectorComponent : Component
+namespace Scripts.Player.Components
 {
-	private Area3D _detectionArea;
-	private readonly List<IThrowable> _itemsInRange = new();
-
-	public event Action<IThrowable> ThrowableEntered;
-	public event Action<IThrowable> ThrowableExited;
-
-	public void Initialize(Area3D detectionArea)
+	public partial class ThrowableDetectorComponent : Component
 	{
-		_detectionArea = detectionArea;
-		_detectionArea.AreaEntered += OnAreaEntered;
-		_detectionArea.AreaExited += OnAreaExited;
-	}
+		private Area3D _detectionArea;
+		private readonly List<IThrowable> _itemsInRange = new();
 
-	public IEnumerable<IThrowable> GetNearby() => _itemsInRange;
+		public event Action<IThrowable> ThrowableEntered;
+		public event Action<IThrowable> ThrowableExited;
 
-	public IThrowable GetClosest(Vector3 fromPosition)
-	{
-		IThrowable closest = null;
-		float best = float.MaxValue;
-
-		foreach (var item in _itemsInRange)
+		public void Initialize(Area3D detectionArea)
 		{
-			if (item is not Node3D node) continue;
-			float d = fromPosition.DistanceSquaredTo(node.GlobalPosition);
-			if (d < best)
-			{
-				best = d;
-				closest = item;
-			}
+			_detectionArea = detectionArea;
+			_detectionArea.AreaEntered += OnAreaEntered;
+			_detectionArea.AreaExited += OnAreaExited;
 		}
 
-		return closest;
-	}
+		public IEnumerable<IThrowable> GetNearby() => _itemsInRange;
 
-	public bool HasNearbyThrowables() => _itemsInRange.Count > 0;
-
-	private void OnAreaEntered(Area3D area)
-	{
-		if (area.GetOwner() is not IThrowable throwable) return;
-
-		_itemsInRange.Add(throwable);
-		ThrowableEntered?.Invoke(throwable);
-		GD.Print($"Throwable entered: {throwable}");
-	}
-
-	private void OnAreaExited(Area3D area)
-	{
-		if (area.GetOwner() is not IThrowable throwable) return;
-
-		_itemsInRange.Remove(throwable);
-		ThrowableExited?.Invoke(throwable);
-		GD.Print($"Throwable exited: {throwable}");
-	}
-
-	/// <summary>
-	/// Gets the best throwable in a direction (based on dot product)
-	/// </summary>
-	public IThrowable GetBestInDirection(Vector3 fromPosition, Vector3 lookDirection, float minDot = 0.5f)
-	{
-		IThrowable best = null;
-		float bestDot = minDot;
-
-		foreach (var item in _itemsInRange)
+		public IThrowable GetClosest(Vector3 fromPosition)
 		{
-			if (item is not Node3D node) continue;
+			IThrowable closest = null;
+			float best = float.MaxValue;
 
-			Vector3 toItem = (node.GlobalPosition - fromPosition).Normalized();
-			float dot = lookDirection.Dot(toItem);
-
-			if (dot > bestDot)
+			foreach (var item in _itemsInRange)
 			{
-				bestDot = dot;
-				best = item;
+				if (item is not Node3D node) continue;
+				float d = fromPosition.DistanceSquaredTo(node.GlobalPosition);
+				if (d < best)
+				{
+					best = d;
+					closest = item;
+				}
 			}
+
+			return closest;
 		}
 
-		return best;
-	}
+		public bool HasNearbyThrowables() => _itemsInRange.Count > 0;
 
-	/// <summary>
-	/// Gets the best throwable combining distance and direction
-	/// </summary>
-	public IThrowable GetBestWeighted(Vector3 fromPosition, Vector3 lookDirection, float directionWeight = 0.7f)
-	{
-		IThrowable best = null;
-		float bestScore = float.MinValue;
-
-		foreach (var item in _itemsInRange)
+		private void OnAreaEntered(Area3D area)
 		{
-			if (item is not Node3D node) continue;
+			if (area.GetOwner() is not IThrowable throwable) return;
 
-			// Normalize distance to 0-1 range (closer = higher score)
-			float dist = fromPosition.DistanceTo(node.GlobalPosition);
-			float distScore = Mathf.Clamp(1.0f - (dist / 10.0f), 0, 1);
-
-			// Direction score (0-1)
-			Vector3 toItem = (node.GlobalPosition - fromPosition).Normalized();
-			float dirScore = (lookDirection.Dot(toItem) + 1) / 2; // Map -1..1 to 0..1
-
-			// Weighted combination
-			float score = (dirScore * directionWeight) + (distScore * (1 - directionWeight));
-
-			if (score > bestScore)
-			{
-				bestScore = score;
-				best = item;
-			}
+			_itemsInRange.Add(throwable);
+			ThrowableEntered?.Invoke(throwable);
+			GD.Print($"Throwable entered: {throwable}");
 		}
 
-		return best;
+		private void OnAreaExited(Area3D area)
+		{
+			if (area.GetOwner() is not IThrowable throwable) return;
+
+			_itemsInRange.Remove(throwable);
+			ThrowableExited?.Invoke(throwable);
+			GD.Print($"Throwable exited: {throwable}");
+		}
+
+		/// <summary>
+		/// Gets the best throwable in a direction (based on dot product)
+		/// </summary>
+		public IThrowable GetBestInDirection(Vector3 fromPosition, Vector3 lookDirection, float minDot = 0.5f)
+		{
+			IThrowable best = null;
+			float bestDot = minDot;
+
+			foreach (var item in _itemsInRange)
+			{
+				if (item is not Node3D node) continue;
+
+				Vector3 toItem = (node.GlobalPosition - fromPosition).Normalized();
+				float dot = lookDirection.Dot(toItem);
+
+				if (dot > bestDot)
+				{
+					bestDot = dot;
+					best = item;
+				}
+			}
+
+			return best;
+		}
+
+		/// <summary>
+		/// Gets the best throwable combining distance and direction
+		/// </summary>
+		public IThrowable GetBestWeighted(Vector3 fromPosition, Vector3 lookDirection, float directionWeight = 0.7f)
+		{
+			IThrowable best = null;
+			float bestScore = float.MinValue;
+
+			foreach (var item in _itemsInRange)
+			{
+				if (item is not Node3D node) continue;
+
+				// Normalize distance to 0-1 range (closer = higher score)
+				float dist = fromPosition.DistanceTo(node.GlobalPosition);
+				float distScore = Mathf.Clamp(1.0f - (dist / 10.0f), 0, 1);
+
+				// Direction score (0-1)
+				Vector3 toItem = (node.GlobalPosition - fromPosition).Normalized();
+				float dirScore = (lookDirection.Dot(toItem) + 1) / 2; // Map -1..1 to 0..1
+
+				// Weighted combination
+				float score = (dirScore * directionWeight) + (distScore * (1 - directionWeight));
+
+				if (score > bestScore)
+				{
+					bestScore = score;
+					best = item;
+				}
+			}
+
+			return best;
+		}
 	}
 }

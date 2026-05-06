@@ -1,6 +1,8 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using Scripts.Enemy;
+using Scripts.Game;
 
 public partial class MelleEnemy : CharacterBody3D, IEnemyEntity
 {
@@ -99,9 +101,9 @@ public partial class MelleEnemy : CharacterBody3D, IEnemyEntity
 		return null;
 	}
 
-    // --- IEnemyEntity ---
-    public T GetTarget<T>() where T : Node3D
-    {
-        throw new NotImplementedException();
-    }
+	// --- IEnemyEntity ---
+	public T GetTarget<T>() where T : Node3D
+	{
+		throw new NotImplementedException();
+	}
 }

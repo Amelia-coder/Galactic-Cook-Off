@@ -1,2 +1,6 @@
+using Scripts.Game;
 
-public partial class MovementStateMachine : StateMachine<IEntity> { }
+namespace Scripts.Player.States
+{
+	public partial class MovementStateMachine : StateMachine<IEntity> { }
+}

@@ -1,12 +1,16 @@
-using Godot;
-public abstract partial class MovementState : State<IEntity>
+using Scripts.Game;
+
+namespace Scripts.Player.States
 {
-	public virtual float StaminaConsumptionPerSecond => 0f; //нужно ли оно здесь? например, прыжок потребляет вынсливость только при входе в состояние, а вот над зарядом силы броска надо подумать
-	public virtual float StaminaRegenPerSecond => 0f;
-
-
-	public override void Initialize(IEntity movableObject)
+	public abstract partial class MovementState : State<IEntity>
 	{
-		base.Initialize(movableObject);
+		public virtual float StaminaConsumptionPerSecond => 0f; //нужно ли оно здесь? например, прыжок потребляет вынсливость только при входе в состояние, а вот над зарядом силы броска надо подумать
+		public virtual float StaminaRegenPerSecond => 0f;
+
+
+		public override void Initialize(IEntity movableObject)
+		{
+			base.Initialize(movableObject);
+		}
 	}
 }

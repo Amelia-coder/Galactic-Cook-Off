@@ -1,21 +1,26 @@
 using Godot;
-
+using Scripts.Game;
 /// <summary>
 /// Manages the currently held throwable item
 /// </summary>
-public partial class ItemHolderComponent : Component
+/// 
+
+namespace Scripts.Player.Components
 {
-	public IThrowable HeldItem { get; private set; }
-
-	public bool IsHoldingItem => HeldItem != null;
-
-	public void SetHeldItem(IThrowable item)
+	public partial class ItemHolderComponent : Component
 	{
-		HeldItem = item;
-	}
+		public IThrowable HeldItem { get; private set; }
 
-	public void ClearHeldItem()
-	{
-		HeldItem = null;
+		public bool IsHoldingItem => HeldItem != null;
+
+		public void SetHeldItem(IThrowable item)
+		{
+			HeldItem = item;
+		}
+
+		public void ClearHeldItem()
+		{
+			HeldItem = null;
+		}
 	}
 }

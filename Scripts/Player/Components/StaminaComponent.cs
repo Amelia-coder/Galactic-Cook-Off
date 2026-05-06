@@ -1,39 +1,42 @@
 using Godot;
-using System;
+using Scripts.Game;
 
-public partial class StaminaComponent : Component
+namespace Scripts.Player.Components
 {
-
-	[Signal] public delegate void StaminaConsumedEventHandler(float consumedStamina);
-	[Signal] public delegate void StaminaChangedEventHandler(float consumedStamina, float maxStamina);
-
-	[Export] public float MaxStamina = 100f;
-
-	public float CurrentStamina { get; private set; }
-
-	public override void _Ready()
+	public partial class StaminaComponent : Component
 	{
-		CurrentStamina = MaxStamina;
-	}
-	public bool CanConsume(float cost) => CurrentStamina >= cost;
 
-	public bool TryConsume(float amount)
-	{
-		if (CurrentStamina < amount)
-			return false;
+		[Signal] public delegate void StaminaConsumedEventHandler(float consumedStamina);
+		[Signal] public delegate void StaminaChangedEventHandler(float consumedStamina, float maxStamina);
 
-		CurrentStamina -= amount;
+		[Export] public float MaxStamina = 100f;
 
-		EmitSignal(SignalName.StaminaConsumed, amount);
-		EmitSignal(SignalName.StaminaChanged, CurrentStamina, MaxStamina);
+		public float CurrentStamina { get; private set; }
 
-		return true;
-	}
+		public override void _Ready()
+		{
+			CurrentStamina = MaxStamina;
+		}
+		public bool CanConsume(float cost) => CurrentStamina >= cost;
 
-	public void Regen(float regenPerSecond, float delta)
-	{
-		CurrentStamina = Mathf.Min(CurrentStamina + regenPerSecond * delta, MaxStamina);//thinkП about reden per se
+		public bool TryConsume(float amount)
+		{
+			if (CurrentStamina < amount)
+				return false;
 
-		EmitSignal(SignalName.StaminaChanged, CurrentStamina, MaxStamina);
+			CurrentStamina -= amount;
+
+			EmitSignal(SignalName.StaminaConsumed, amount);
+			EmitSignal(SignalName.StaminaChanged, CurrentStamina, MaxStamina);
+
+			return true;
+		}
+
+		public void Regen(float regenPerSecond, float delta)
+		{
+			CurrentStamina = Mathf.Min(CurrentStamina + regenPerSecond * delta, MaxStamina);//thinkП about reden per se
+
+			EmitSignal(SignalName.StaminaChanged, CurrentStamina, MaxStamina);
+		}
 	}
 }

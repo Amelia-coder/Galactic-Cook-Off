@@ -1,6 +1,8 @@
-using Godot;
+using Scripts.Game;
+using Scripts.Player.Components;
 
-public partial class AttackState : State<IEnemyEntity>
+
+public partial class AttackState : State<IEntity>
 {
 	public override void Enter()
 	{

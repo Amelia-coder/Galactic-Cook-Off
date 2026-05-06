@@ -1,5 +1,5 @@
 using Godot;
-
+using Scripts.Game;
 /// <summary>
 /// Handles camera control input (mouse look, zoom, shake)
 /// Only active for local player
@@ -9,7 +9,7 @@ public partial class CameraControllerComponent : Component
 	private CharacterBody3D _player;
 	private Node3D _cameraPivot;
 	private SpringArm3D _springArm;
-	private Camera3D _camera;
+	private Camera3D _camera; //todo: maybe use CameraComponent here, because currenlty the other one is used solely for idk 
 
 	[Export] public float MouseSensitivity { get; set; } = 0.003f;
 	[Export] public float TiltMin { get; set; } = -70f;

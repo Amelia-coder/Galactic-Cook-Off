@@ -1,57 +1,61 @@
 using Godot;
+using Scripts.Game;
 
-public partial class InputComponent : Component
+namespace Scripts.Player.Components
 {
-	private Node3D _transform; // The player's transform
-
-	public Vector3 MoveDirection { get; private set; }
-	public bool JumpPressed { get; private set; }
-	public bool SprintPressed { get; private set; }
-	public bool PickupPressed { get; private set; }
-	public bool ThrowHeld { get; private set; }
-	public bool ThrowReleased { get; private set; }
-
-	public void Initialize(Node3D transform)
+	public partial class InputComponent : Component
 	{
-		_transform = transform;
-	}
+		private Node3D _transform; // The player's transform
 
-	public void Update()
-	{
-		Vector2 inputDir = Input.GetVector("left", "right", "forward", "back");
+		public Vector3 MoveDirection { get; private set; }
+		public bool JumpPressed { get; private set; }
+		public bool SprintPressed { get; private set; }
+		public bool PickupPressed { get; private set; }
+		public bool ThrowHeld { get; private set; }
+		public bool ThrowReleased { get; private set; }
 
-		// Transform input to player-local space
-		if (inputDir.LengthSquared() > 0.01f)
+		public void Initialize(Node3D transform)
 		{
-			// Get player's forward and right vectors
-			Vector3 forward = -_transform.Transform.Basis.Z; // Player's forward
-			Vector3 right = _transform.Transform.Basis.X;    // Player's right
-
-			// Project to horizontal plane
-			forward.Y = 0;
-			right.Y = 0;
-			forward = forward.Normalized();
-			right = right.Normalized();
-
-			// Combine based on input
-			MoveDirection = (right * inputDir.X + forward * -inputDir.Y).Normalized();
-		}
-		else
-		{
-			MoveDirection = Vector3.Zero;
+			_transform = transform;
 		}
 
-		JumpPressed = Input.IsActionJustPressed("jump");
-		SprintPressed = Input.IsActionPressed("sprint");
-		PickupPressed = Input.IsActionJustPressed("pickup");
-		ThrowHeld = Input.IsActionPressed("throw");
-		ThrowReleased = Input.IsActionJustReleased("throw");
-	}
+		public void Update()
+		{
+			Vector2 inputDir = Input.GetVector("left", "right", "forward", "back");
 
-	public void Reset()
-	{
-		JumpPressed = false;
-		PickupPressed = false;
-		ThrowReleased = false;
+			// Transform input to player-local space
+			if (inputDir.LengthSquared() > 0.01f)
+			{
+				// Get player's forward and right vectors
+				Vector3 forward = -_transform.Transform.Basis.Z; // Player's forward
+				Vector3 right = _transform.Transform.Basis.X;    // Player's right
+
+				// Project to horizontal plane
+				forward.Y = 0;
+				right.Y = 0;
+				forward = forward.Normalized();
+				right = right.Normalized();
+
+				// Combine based on input
+				MoveDirection = (right * inputDir.X + forward * -inputDir.Y).Normalized();
+			}
+			else
+			{
+				MoveDirection = Vector3.Zero;
+			}
+
+			JumpPressed = Input.IsActionJustPressed("jump");
+			SprintPressed = Input.IsActionPressed("sprint");
+			PickupPressed = Input.IsActionJustPressed("pickup");
+			ThrowHeld = Input.IsActionPressed("throw");
+			ThrowReleased = Input.IsActionJustReleased("throw");
+		}
+
+		public void Reset()
+		{
+			JumpPressed = false;
+			PickupPressed = false;
+			ThrowReleased = false;
+		}
 	}
 }

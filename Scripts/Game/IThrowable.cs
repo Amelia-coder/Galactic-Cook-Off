@@ -1,10 +1,13 @@
 using Godot;
 using System;
-public interface IThrowable
+namespace Scripts.Game
 {
-    event Action<bool> PickupAvailabilityChanged;
-    bool CanBePickedUpBy(IEntity actor);
-    void PickUp(IEntity actor);
-    void Throw(Vector3 impulse);
-    void Drop();
+    public interface IThrowable
+    {
+        event Action<bool> PickupAvailabilityChanged;
+        bool CanBePickedUpBy(IEntity actor);
+        void PickUp(IEntity actor);
+        void Throw(Vector3 impulse);
+        void Drop();
+    }
 }

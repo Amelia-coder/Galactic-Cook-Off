@@ -1,6 +1,10 @@
-﻿using Godot;
+using Godot;
+using Scripts.Game;
 
-public interface IEnemyEntity : IEntity
+namespace Scripts.Enemy
 {
-    T GetTarget<T>() where T : Node3D;
+	public interface IEnemyEntity : IEntity
+	{
+		T GetTarget<T>() where T : Node3D;
+	}
 }

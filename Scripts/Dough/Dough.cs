@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using Scripts.Game;
 
 public partial class Dough : RigidBody3D, IThrowable
 {

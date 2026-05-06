@@ -1,6 +1,11 @@
-public interface IEntity
-{
-    T GetComponent<T>() where T : Component;
+using Scripts.Player.Components;
 
-    void RegisterComponent(Component component);
+namespace Scripts.Game
+{
+    public interface IEntity
+    {
+        T GetComponent<T>() where T : Component;
+
+        void RegisterComponent(Component component);
+    }
 }

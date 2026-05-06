@@ -1,10 +1,10 @@
 using Godot;
 using System;
-using System.Buffers;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-
+using Scripts.Game;
+using Scripts.Player.Components;
+using Scripts.Player.Abilities;
+using Scripts.Player.States;
 public partial class Player : CharacterBody3D, IEntity, IThrowable
 {
 	// Является ли этот игрок локальным (управляемым с этого компьютера)

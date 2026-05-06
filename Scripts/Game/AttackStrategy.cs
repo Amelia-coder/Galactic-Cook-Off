@@ -1,3 +1,6 @@
-﻿public class AttackStrategy
+﻿namespace Scripts.Game
 {
+    public class AttackStrategy
+    {
+    }
 }
