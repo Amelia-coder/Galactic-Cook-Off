@@ -24,7 +24,6 @@ namespace Scripts.Player.States
 			var _movement = Entity.GetComponent<MovementComponent>();
 			var _stamina = Entity.GetComponent<StaminaComponent>();
 			var _input = Entity.GetComponent<InputComponent>();
-			_input.Update();
 
 			// Variable jump height: if player releases jump early, cut upward velocity
 			if (!_jumpReleased && !_input.JumpPressed && _movement.Velocity.Y > 0)
@@ -42,9 +41,6 @@ namespace Scripts.Player.States
 
 				_movement.SetHorizontalVelocity(newHorizontal);
 			}
-
-			// Apply physics
-			_movement.Update((float)delta);
 
 			// Transition when landing
 			if (_movement.IsGrounded)

@@ -81,7 +81,7 @@ public partial class CameraControllerComponent : Component
 
 	private void HandleZoomInput(InputEvent @event)
 	{
-		GD.Print("We will try to zoom!");
+		//GD.Print("We will try to zoom!");
 		if (@event is not InputEventMouseButton scroll || !scroll.Pressed) return;
 
 		if (scroll.ButtonIndex == MouseButton.WheelUp)

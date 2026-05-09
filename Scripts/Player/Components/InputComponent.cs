@@ -49,6 +49,7 @@ namespace Scripts.Player.Components
 			PickupPressed = Input.IsActionJustPressed("pickup");
 			ThrowHeld = Input.IsActionPressed("throw");
 			ThrowReleased = Input.IsActionJustReleased("throw");
+			GD.Print($"Input Update frame: {Engine.GetPhysicsFrames()}");
 		}
 
 		public void Reset()

@@ -7,14 +7,14 @@ namespace Scripts.Player.States
 	{
 		public virtual float InstantStaminaConsumption => 0f;
 		StaminaComponent _staminaComponent;
-		HealthComponent _healthComponent;
+		GenericHealthComponent _healthComponent;
 
 
 		public override void Initialize(IEntity entity)
 		{
 			base.Initialize(entity);
 			_staminaComponent = entity.GetComponent<StaminaComponent>();
-			_healthComponent = entity.GetComponent<HealthComponent>();
+			_healthComponent = entity.GetComponent<GenericHealthComponent>();
 		}
 	}
 }

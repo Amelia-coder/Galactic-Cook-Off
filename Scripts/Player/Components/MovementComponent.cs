@@ -1,16 +1,16 @@
 using Godot;
-using Scripts.Game;
+using Scripts.Game.GenericComponents;
 
 namespace Scripts.Player.Components
 {
-	public partial class MovementComponent : Component
+	public partial class MovementComponent : GenericMovementComponent
 	{
 		private CharacterBody3D _body;
 		private StaminaComponent _stamina;
 
 		[Export] public float Gravity { get; set; } = 7.8f;
 		[Export] public float JumpForce { get; set; } = 5f;
-		[Export] public float JumpStaminaCost { get; set; } = 10f;
+		[Export] public float JumpStaminaCost { get; set; } = 10f; // think about moving stamina elsewhere
 		[Export] public float SprintStaminaPerSecond { get; set; } = 15f;
 
 		public Vector3 Velocity { get; private set; }

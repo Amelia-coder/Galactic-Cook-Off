@@ -5,7 +5,7 @@ namespace Scripts.Player.States
 {
 	public partial class WalkState : MovementState
 	{
-		[Export] public float WalkSpeed { get; set; } = 2.0f;
+		[Export] public float WalkSpeed { get; set; } = 4.0f;
 
 		public override void Enter()
 		{
@@ -17,7 +17,7 @@ namespace Scripts.Player.States
 			var _movement = Entity.GetComponent<MovementComponent>();
 			var _stamina = Entity.GetComponent<StaminaComponent>();
 			var _input = Entity.GetComponent<InputComponent>();
-			_input.Update();
+
 
 			// Try jump
 			if (_input.JumpPressed && _movement.TryJump())
@@ -42,7 +42,6 @@ namespace Scripts.Player.States
 
 			// Walk movement
 			_movement.SetHorizontalVelocity(_input.MoveDirection * WalkSpeed);
-			_movement.Update((float)delta);
 
 			// Regenerate stamina while walking
 			_stamina.Regen(StaminaRegenPerSecond, (float)delta);

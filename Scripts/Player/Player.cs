@@ -26,7 +26,7 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 	private ProgressBar _chargeBar;
 
 	private Dictionary<Type, Component> _components = new();
-	private HealthComponent _healthComponent;
+	private GenericHealthComponent _healthComponent;
 	private MovementComponent _movementComponent;
 	private InputComponent _inputComponent;
 	private ThrowableDetectorComponent _detectionComponent;
@@ -56,7 +56,7 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 
 		InitAndRegisterComponents();
 
-		_healthComponent = GetNode<HealthComponent>("ComponentRegistry/HealthComponent");
+		_healthComponent = GetNode<GenericHealthComponent>("ComponentRegistry/HealthComponent");
 
 		_movementStateMachine = GetNode<MovementStateMachine>("MovementStateMachine");
 
@@ -140,7 +140,7 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 
 	public override void _UnhandledInput(InputEvent @event)
 	{
-		GD.Print("[Player] _UnhandledInput fired"); // Add this
+		//GD.Print("[Player] _UnhandledInput fired"); // Add this
 		_cameraControllerComponent.HandleInput(@event);
 	}
 
@@ -148,12 +148,11 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 	{
 
 		if (_isHeld) return;
+		_inputComponent.Update();
 
-		_movementStateMachine._PhysicsProcess(delta);
-		_abilitySystem.PhysicsProcess(delta); //,ake this truly copmetible with engine's method; think aout blocking abilitoes and their egnral update; ODO: instead of blocking abilites, marl some as active, or current
 		_cameraControllerComponent.Update((float)delta); // TODO: think about moving this to _PhysicsProcess in some system/component
-
-	}
+        _movementComponent.Update((float)delta);
+    }
 
 	public override void _Process(double delta)
 	{

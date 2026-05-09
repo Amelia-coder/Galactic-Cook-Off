@@ -20,7 +20,7 @@ namespace Scripts.Player.States
 			var _stamina = Entity.GetComponent<StaminaComponent>();
 			var _input = Entity.GetComponent<InputComponent>();
 			// 1. Read from InputComponent (not raw Input)
-			_input.Update();
+;
 
 			// 2. Try actions based on input
 			if (_input.JumpPressed && _movement.TryJump())
@@ -41,7 +41,6 @@ namespace Scripts.Player.States
 
 			// 4. Idle behavior - just stand still and regen
 			_movement.SetHorizontalVelocity(Vector3.Zero);
-			_movement.Update((float)delta);
 			_stamina.Regen(StaminaRegenPerSecond, (float)delta);
 		}
 	}

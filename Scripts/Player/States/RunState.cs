@@ -19,7 +19,6 @@ namespace Scripts.Player.States
 			var _stamina = Entity.GetComponent<StaminaComponent>();
 			var _input = Entity.GetComponent<InputComponent>();
 
-			_input.Update();
 
 			// Try jump
 			if (_input.JumpPressed && _movement.TryJump())
@@ -27,6 +26,9 @@ namespace Scripts.Player.States
 				TransitionTo("JumpState");
 				return;
 			}
+			
+			if (!_movement.IsGrounded) //prevents running in air
+				return;
 
 			// Check if still moving
 			if (_input.MoveDirection.LengthSquared() < 0.01f)
@@ -48,9 +50,6 @@ namespace Scripts.Player.States
 				TransitionTo("WalkState");
 				return;
 			}
-
-			// Apply physics
-			_movement.Update((float)delta);
 		}
 
 		public override bool CanEnter()
