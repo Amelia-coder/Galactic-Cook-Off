@@ -1,41 +1,53 @@
 using Godot;
 using System;
 using System.Collections.Generic;
-using Scripts.Enemy;
-using Scripts.Game;
 
-public partial class MelleEnemy : CharacterBody3D, IEnemyEntity
+using Scripts.Enemy;
+using Scripts.Enemy.Components;
+using Scripts.Enemy.States;
+using Scripts.Game;
+using Scripts.Player.Components;
+using Scripts.Game.GenericComponents;
+
+public partial class MelleEnemy : CharacterBody3D, IEntity
 {
 	private Player _target; // reconsider
 
 	[Export] public float Speed = 1f;
 	[Export] public float Gravity = 9.8f;
 	[Export] public float StoppingDistance = 1.5f;
-	[Export] public float MaxHealth = 100f;
 	private Dictionary<Type, Component> _components = new();
-
-
-	private float _currentHealth;
-
+	
 	public Node3D CurrentTarget; // TODD: wtore implnention
+	private GenericMovementComponent _movementComponent;
+	private EnemyStateMachine _enemyStateMachine;
+	private GenericHealthComponent _healthComponent;
+	private TargetDetectorComponent _targetDetectorComponent;
+	private TargetSelectorComponent _targetSelectorComponent;
 
 	public override void _Ready()
 	{
-		_currentHealth = MaxHealth;
+		_movementComponent = GetNode<GenericMovementComponent>("ComponentRegistry/MovementComponent");
+		_movementComponent.Initialize(this);
+		RegisterComponent(_movementComponent);
+		GD.Print("Movement component is null: ", _movementComponent == null);
+
+		//_cameraControllerComponent = GetNode<CameraControllerComponent>("ComponentRegistry/CameraControllerComponent");
+		//_cameraControllerComponent.Initialize(this, _camera, GetNode<Node3D>("CameraPivot"), GetNode<SpringArm3D>("CameraPivot/SpringArm3D"), true);
+		//RegisterComponent(_cameraControllerComponent);
+		_healthComponent = GetNode<GenericHealthComponent>("ComponentRegistry/HealthComponent");
+		RegisterComponent(_healthComponent);
+
+		var targetDetector = GetNode<Area3D>("DetectionArea");
+		_targetDetectorComponent = GetNode<TargetDetectorComponent>("ComponentRegistry/TargetDetectorComponent");
+		_targetDetectorComponent.Initialize(targetDetector);
+		RegisterComponent(_targetDetectorComponent);
+
+		_targetSelectorComponent = GetNode<TargetSelectorComponent>("ComponentRegistry/TargetSelectorComponent");
+		RegisterComponent(_targetSelectorComponent);
+
 	}
 
-
-	// =========================================================
-	// Called by Dough's OnImpact via body.Call("TakeDamage", ...)
-	// =========================================================
-	public void TakeDamage(float amount)
-	{
-		_currentHealth -= amount;
-		GD.Print($"Enemy hit! HP: {_currentHealth}/{MaxHealth}");
-
-		if (_currentHealth <= 0f)
-			Die();
-	}
 
 	private void Die()
 	{
@@ -43,45 +55,14 @@ public partial class MelleEnemy : CharacterBody3D, IEnemyEntity
 		QueueFree();
 	}
 
-	// =========================================================
-	// Movement (unchanged from before)
-	// =========================================================
-	public void SetTarget(Player player) => _target = player;
+	//// =========================================================
+	//// Movement (unchanged from before)
+	//// =========================================================
+	//public void SetTarget(Player player) => _target = player;
 
 	public override void _PhysicsProcess(double delta)
 	{
-		Vector3 velocity = Velocity;
-
-		if (!IsOnFloor())
-			velocity.Y -= Gravity * (float)delta;
-		else
-			velocity.Y = 0f;
-
-		if (_target != null)
-		{
-			Vector3 toPlayer = _target.GlobalPosition - GlobalPosition;
-			toPlayer.Y = 0f;
-
-			if (toPlayer.Length() > StoppingDistance)
-			{
-				Vector3 direction = toPlayer.Normalized();
-				velocity.X = direction.X * Speed;
-				velocity.Z = direction.Z * Speed;
-			}
-			else
-			{
-				velocity.X = 0f;
-				velocity.Z = 0f;
-			}
-		}
-		else
-		{
-			velocity.X = 0f;
-			velocity.Z = 0f;
-		}
-
-		Velocity = velocity;
-		MoveAndSlide();
+		_movementComponent.Update((float)delta);
 	}
 
 	public void RegisterComponent(Component component)

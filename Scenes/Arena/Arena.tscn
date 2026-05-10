@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://bb3oahwy7pgdk"]
+[gd_scene load_steps=15 format=3 uid="uid://bb3oahwy7pgdk"]
 
 [ext_resource type="Script" uid="uid://i3i5uvrgphq5" path="res://Scripts/World/GlobalScript.cs" id="1_ek0gv"]
 [ext_resource type="PackedScene" uid="uid://blw3xgniwfe0f" path="res://Scenes/Player/Player.tscn" id="1_lh3uc"]
@@ -19,12 +19,6 @@ ambient_light_color = Color(0.8474744, 0.84747446, 0.84747446, 1)
 ssil_enabled = true
 
 [sub_resource type="Compositor" id="Compositor_wcn2d"]
-
-[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_ek0gv"]
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_csujq"]
-
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_wcn2d"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_lh3uc"]
 
@@ -51,17 +45,6 @@ ThrowableScene = ExtResource("2_mugxw")
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_csujq")
 compositor = SubResource("Compositor_wcn2d")
-
-[node name="StaticBody3D2" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.9392023, 4.933073, 2.8144119)
-physics_material_override = SubResource("PhysicsMaterial_ek0gv")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D2"]
-mesh = SubResource("CylinderMesh_csujq")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D2"]
-transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0, 0)
-shape = SubResource("CapsuleShape3D_wcn2d")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.85924, 0)
@@ -127,3 +110,6 @@ navigation_layers = 65535
 
 [node name="GridMap" type="GridMap" parent="NavigationRegion3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.009, -1.14076, -0.016)
+
+[node name="MelleEnemy" parent="." instance=ExtResource("3_ek0gv")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 3, 0)

@@ -27,7 +27,7 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 
 	private Dictionary<Type, Component> _components = new();
 	private GenericHealthComponent _healthComponent;
-	private MovementComponent _movementComponent;
+	private PlayerMovementComponent _movementComponent;
 	private InputComponent _inputComponent;
 	private ThrowableDetectorComponent _detectionComponent;
 	private CameraComponent _cameraComponent;
@@ -58,9 +58,8 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 
 		_healthComponent = GetNode<GenericHealthComponent>("ComponentRegistry/HealthComponent");
 
-		_movementStateMachine = GetNode<MovementStateMachine>("MovementStateMachine");
+		//_movementStateMachine = GetNode<MovementStateMachine>("MovementStateMachine");
 
-		GD.Print($"Inside player stamina is null:  ", _staminaComponent == null);
 		List<Ability> abilities = new List<Ability>();
 		PickupAbility pickupAbility = GetNode<PickupAbility>("AbilitySystem/PickupAbility");
 		pickupAbility.Initialize(this);
@@ -70,7 +69,7 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 		ThrowAbility throwAbility = GetNode<ThrowAbility>("AbilitySystem/ThrowAbility");
 		throwAbility.Initialize(this);
 		throwAbility.ChargeStarted += () => _chargeBar.Visible = true;
-		throwAbility.ChargeUpdated += ratio => _chargeBar.Value = ratio * 100f;
+		throwAbility.ChargeUpdated += ratio => _chargeBar.Value = ratio * 100f; //нужно соректировлоать, т к при дляительном заряде некорреткно ооюрадается шкала
 		throwAbility.ChargeReleased += () => _chargeBar.Visible = false;
 		throwAbility.ChargeCancelled += () => _chargeBar.Visible = false;
 
@@ -90,7 +89,7 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 		RegisterComponent(_staminaComponent);
 
 
-		_movementComponent = GetNode<MovementComponent>("ComponentRegistry/MovementComponent");
+		_movementComponent = GetNode<PlayerMovementComponent>("ComponentRegistry/MovementComponent");
 		_movementComponent.Initialize(this, _staminaComponent);
 		RegisterComponent(_movementComponent);
 		GD.Print("Movement component is null: ", _movementComponent == null);
@@ -151,8 +150,8 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 		_inputComponent.Update();
 
 		_cameraControllerComponent.Update((float)delta); // TODO: think about moving this to _PhysicsProcess in some system/component
-        _movementComponent.Update((float)delta);
-    }
+		_movementComponent.Update((float)delta);
+	}
 
 	public override void _Process(double delta)
 	{
@@ -165,7 +164,7 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 	// Подбор и бросок
 	// =========================================================
 
-	private void ShowPickupLabel(bool visible)
+	private void ShowPickupLabel(bool visible) //должны быть сигналом в рамкх UI
 	{
 		// TODO: показать/скрыть UI-подсказку "Нажми <клавиша для подбора> для подбора"
 	}
@@ -201,7 +200,7 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 		//DetachFromCarrier();
 	}
 
-	public void PlayAnimation(string name) { }
+	public void PlayAnimation(string name) { } //уйдет в AnmationComponent
 	public void Throw(Vector3 impulse) // TODO: rename, bacues ethis actually describes
 	//jow player is THROWN, not how they themslves throw
 	{

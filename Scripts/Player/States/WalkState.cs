@@ -14,7 +14,7 @@ namespace Scripts.Player.States
 
 		public override void PhysicsUpdate(double delta)
 		{
-			var _movement = Entity.GetComponent<MovementComponent>();
+			var _movement = Entity.GetComponent<PlayerMovementComponent>();
 			var _stamina = Entity.GetComponent<StaminaComponent>();
 			var _input = Entity.GetComponent<InputComponent>();
 

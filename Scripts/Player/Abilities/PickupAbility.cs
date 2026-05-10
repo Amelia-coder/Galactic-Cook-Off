@@ -27,14 +27,19 @@ namespace Scripts.Player.Abilities
 
         public override void Update(double delta)
         {
-            _input.Update();
 
             if (!_input.PickupPressed) return;
 
             if (_itemHolder.IsHoldingItem)
+            {
                 TryDrop();
+                GD.Print("Dropped");
+            }
             else
+            {
                 TryPickUp();
+                GD.Print("PICKED");
+            }
         }
 
         private void TryPickUp()

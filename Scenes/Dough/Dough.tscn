@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://bpu84pqtndpww"]
+[gd_scene load_steps=7 format=3 uid="uid://bpu84pqtndpww"]
 
 [ext_resource type="Script" uid="uid://sux0ri8se7k0" path="res://Scripts/Dough/Dough.cs" id="1_n6k0i"]
 
@@ -11,10 +11,13 @@ radius = 0.2
 height = 0.2
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_n6k0i"]
-radius = 0.2
+radius = 0.32051358
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_0fxut"]
-radius = 0.25
+radius = 0.19743048
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_7vv78"]
+radius = 0.21953067
 
 [node name="Dough" type="RigidBody3D"]
 collision_layer = 4
@@ -25,12 +28,21 @@ script = ExtResource("1_n6k0i")
 mesh = SubResource("SphereMesh_vvn1x")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+visible = false
 shape = SubResource("SphereShape3D_n6k0i")
 
 [node name="PickupZone" type="Area3D" parent="."]
-collision_layer = 2
+collision_layer = 8
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="PickupZone"]
 shape = SubResource("SphereShape3D_0fxut")
 
+[node name="Hurtbox" type="Area3D" parent="."]
+collision_layer = 16
+collision_mask = 3
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Hurtbox"]
+shape = SubResource("SphereShape3D_7vv78")
+
 [connection signal="body_entered" from="PickupZone" to="." method="OnBodyEntered"]
+[connection signal="area_entered" from="Hurtbox" to="." method="OnImpact"]

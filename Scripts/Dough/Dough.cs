@@ -1,9 +1,12 @@
 using Godot;
-using System;
 using Scripts.Game;
-
+using System;
+using System.Collections.Generic;
 public partial class Dough : RigidBody3D, IThrowable
 {
+
+	private List<IHitEffect> _effects = new(); //так мы можем дать любой набор эффеетов чему угдно, что долно их приент при попадании
+	//todo: придумать разгранчиени емуде игроком и врагом, т к к ним приподании даоны примянть разыне эфеек. Скорее всего, у эффетков будет слой применисоти - что=-то на подобии позици в enum
 	// =========================================================
 	// Exports
 	// =========================================================
@@ -11,6 +14,7 @@ public partial class Dough : RigidBody3D, IThrowable
 	[Export] public float StunDuration = 1.5f;
 	[Export] public float DisappearTimeout = 115f;
 
+	private Area3D _hurtbox;
 	// =========================================================
 	// IThrowable
 	// =========================================================
@@ -31,8 +35,7 @@ public partial class Dough : RigidBody3D, IThrowable
 	public override void _Ready()
 	{
 		_homeScene = GetParent();
-
-		BodyEntered += OnImpact;
+		_hurtbox = GetNodeOrNull<Area3D>("Hurtbox");
 
 		// PickupZone fires PickupAvailabilityChanged for the HUD prompt only.
 		// Detection/tracking is handled by BodyDetector on the player side.
@@ -67,6 +70,7 @@ public partial class Dough : RigidBody3D, IThrowable
 		ReturnToScene();
 		_inFlight = true;
 		Freeze = false;
+		_hurtbox.Monitoring = true;
 		ApplyCentralImpulse(impulse);
 	}
 
@@ -80,24 +84,72 @@ public partial class Dough : RigidBody3D, IThrowable
 	// =========================================================
 	// Impact — called by BodyEntered (RigidBody3D signal)
 	// =========================================================
-	private void OnImpact(Node body)
+	private void OnImpact(Area3D area)
 	{
-		GD.Print("Is is reallyt called...");
-		if (!_inFlight) return;
+		_hurtbox.Monitoring = true;
+		GD.Print("ON IMPACT FIRED: " + area?.Name);
+		GD.Print("Area hit triggered...");
+		GD.Print($"Area is null: {area == null}");
 
-		//weird, rather check for fact of the implementation of interface like Dmagebale -r comebont like Healths. Otherwise, coupling
-		//TODO: instead, send signal of being hit!
-		if (body.HasMethod("TakeDamage"))
+		if (!_inFlight)
+			return;
+
+		// Start from the Area3D that was hit
+		Node entity = area;
+
+		// Walk up to find IEntity
+		while (entity != null && entity is not IEntity)
 		{
-			GD.Print("I guess it really is called");
-			body.Call("TakeDamage", Damage);
+			GD.Print($"Node: {entity.Name}, Type: {entity.GetType().Name}");
+			entity = entity.GetParent();
 		}
+
+		if (entity is not IEntity ie)
+			return;
+
+		var health = ie.GetComponent<GenericHealthComponent>();
+
+		if (health == null)
+			return;
+
+		// Temporary grouping logic (can be replaced later with components/factions)
+		if (entity.IsInGroup("Player"))
+		{
+			GD.Print("Hit player");
+		}
+		else if (entity.IsInGroup("Enemy"))
+		{
+			health.TryTakeDamage(Damage);
+			GD.Print("Hit enemy");
+		}
+		//if (body is IEntity entity)
+		//{
+		//	var healthComponent = entity.GetComponent<GenericHealthComponent>();
+
+
+		//	if (healthComponent != null)
+		//	{
+		//		GD.Print("I guess it really is called");
+		//		//body.Call("TakeDamage", Damage);
+		//		if (body.IsInGroup("Player"))
+		//		{
+		//			//	ApplyStun();
+		//			GD.Print("We've hit a player with dough");
+		//		}
+		//		else if (body.IsInGroup("Enemy"))
+		//		{
+		//			healthComponent.TryTakeDamage(Damage);
+		//			GD.Print("We've hit an enemy with dough");
+		//		}
+
+		//	}
+		//}
 		// Stick to static geometry, keep bouncing off dynamic bodies
-		if (body is StaticBody3D)
-		{
-			Freeze = true;
-			_inFlight = false;
-		}
+		//if (body is StaticBody3D)
+		//{
+		//	Freeze = true;
+		//	_inFlight = false;
+		//}
 	}
 
 	// =========================================================
@@ -127,7 +179,7 @@ public partial class Dough : RigidBody3D, IThrowable
 		GetParent().RemoveChild(this);
 		_homeScene.AddChild(this);
 		GlobalPosition = worldPos;
-		SetPickupZoneActive(true);
+		SetPickupZoneActive(true); // возмжно, в полете это стоит отключить. Но не факт
 	}
 
 	private void SetPickupZoneActive(bool active)

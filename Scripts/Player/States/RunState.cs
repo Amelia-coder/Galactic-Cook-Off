@@ -15,7 +15,7 @@ namespace Scripts.Player.States
 
 		public override void PhysicsUpdate(double delta)
 		{
-			var _movement = Entity.GetComponent<MovementComponent>();
+			var _movement = Entity.GetComponent<PlayerMovementComponent>();
 			var _stamina = Entity.GetComponent<StaminaComponent>();
 			var _input = Entity.GetComponent<InputComponent>();
 
@@ -54,7 +54,7 @@ namespace Scripts.Player.States
 
 		public override bool CanEnter()
 		{
-			var _movement = Entity.GetComponent<MovementComponent>();
+			var _movement = Entity.GetComponent<PlayerMovementComponent>();
 			// Can only enter if we have enough stamina for at least one frame
 			return _movement.CanSprint(1f / 60f); // Assume 60 FPS check
 		}

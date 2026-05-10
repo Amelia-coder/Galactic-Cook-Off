@@ -23,7 +23,7 @@ namespace Scripts.Player.Abilities
 		// Tick — called by Player
 		// =========================================================
 
-		public void PhysicsProcess(double delta)
+		public override void _PhysicsProcess(double delta)
 		{
 			bool blocked = IsAnyAbilityBlocking();
 

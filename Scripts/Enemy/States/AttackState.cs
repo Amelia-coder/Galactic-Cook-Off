@@ -1,22 +1,24 @@
 using Scripts.Game;
-using Scripts.Player.Components;
+using Scripts.Player.Components; //remove this and intorice genrilzed component is Scripts.Game namespace!
 
-
-public partial class AttackState : State<IEntity>
+namespace Scripts.Enemy.States
 {
-	public override void Enter()
+	public partial class AttackState : State<IEntity>
 	{
-		//y play animation
-	}
+		public override void Enter()
+		{
+			//y play animation
+		}
 
 
-	public override void PhysicsUpdate(double delta)
-	{
-		var _movement = Entity.GetComponent<MovementComponent>();
-		var _stamina = Entity.GetComponent<StaminaComponent>();
-		var _input = Entity.GetComponent<InputComponent>();
-		_input.Update();
+		public override void PhysicsUpdate(double delta)
+		{
+			var _movement = Entity.GetComponent<PlayerMovementComponent>();
+			//var _stamina = Entity.GetComponent<StaminaComponent>();
+			//var _input = Entity.GetComponent<InputComponent>();
+			//_input.Update();
 
-		
+
+		}
 	}
 }

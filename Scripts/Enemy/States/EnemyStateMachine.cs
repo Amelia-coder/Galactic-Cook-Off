@@ -1,6 +1,6 @@
 using Scripts.Game;
 
-namespace Scripts.Enemy.Enemy
+namespace Scripts.Enemy.States
 {
 	public partial class EnemyStateMachine : StateMachine<IEntity> { }
    

@@ -41,7 +41,7 @@ namespace Scripts.Player.Abilities
 
 		public override void Update(double delta)
 		{
-			_input.Update();
+			//_input.Update();
 
 			if (_cancelCooldownTimer > 0)
 			{

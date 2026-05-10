@@ -9,14 +9,13 @@ namespace Scripts.Player.States
 		[Export] public float Speed { get; set; } = 0.0f;
 		public override void Enter()
 		{
-			var movementComponent = Entity.GetComponent<MovementComponent>();
-			GD.Print($"is entity null?", Entity == null);
+			var movementComponent = Entity.GetComponent<PlayerMovementComponent>();
 		}
 
 		public override void PhysicsUpdate(double delta)
 		{
 			//better add sometying like initiliaze for sppeding up logic and escaping search on each tick
-			var _movement = Entity.GetComponent<MovementComponent>();
+			var _movement = Entity.GetComponent<PlayerMovementComponent>();
 			var _stamina = Entity.GetComponent<StaminaComponent>();
 			var _input = Entity.GetComponent<InputComponent>();
 			// 1. Read from InputComponent (not raw Input)

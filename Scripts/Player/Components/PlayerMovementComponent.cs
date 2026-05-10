@@ -3,18 +3,13 @@ using Scripts.Game.GenericComponents;
 
 namespace Scripts.Player.Components
 {
-	public partial class MovementComponent : GenericMovementComponent
+	public partial class PlayerMovementComponent : GenericMovementComponent
 	{
 		private CharacterBody3D _body;
 		private StaminaComponent _stamina;
 
-		[Export] public float Gravity { get; set; } = 7.8f;
-		[Export] public float JumpForce { get; set; } = 5f;
 		[Export] public float JumpStaminaCost { get; set; } = 10f; // think about moving stamina elsewhere
 		[Export] public float SprintStaminaPerSecond { get; set; } = 15f;
-
-		public Vector3 Velocity { get; private set; }
-		public bool IsGrounded { get; private set; }
 
 		public void Initialize(CharacterBody3D body, StaminaComponent stamina)
 		{
@@ -54,19 +49,8 @@ namespace Scripts.Player.Components
 			return _stamina.CanConsume(staminaCost);
 		}
 
-		// Simple velocity setter (for walk, idle, etc.)
-		public void SetHorizontalVelocity(Vector3 horizontal)
-		{
-			Velocity = new Vector3(horizontal.X, Velocity.Y, horizontal.Z);
-		}
-
-		public void SetVerticalVelocity(float vertical)
-		{
-			Velocity = new Vector3(Velocity.X, vertical, Velocity.Z);
-		}
-
-
-		public void Update(float delta)
+		
+		public override void Update(float delta)
 		{
 			UpdateGroundedState();
 			ApplyGravity(delta);

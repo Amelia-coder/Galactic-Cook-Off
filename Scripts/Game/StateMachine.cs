@@ -36,7 +36,7 @@ namespace Scripts.Game
 		private void OnStateFinished(string nextStatePath)
 		{
 			var nextState = GetNodeOrNull<State<T>>(nextStatePath);
-			GD.Print($"State finished:", CurrentState.GetType());
+			//GD.Print($"State finished:", CurrentState.GetType());
 			if (nextState == null)
 			{
 				GD.PrintErr($"State not found: {nextStatePath}");

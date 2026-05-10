@@ -1,26 +1,30 @@
-[gd_scene load_steps=21 format=3 uid="uid://blw3xgniwfe0f"]
+[gd_scene load_steps=23 format=3 uid="uid://blw3xgniwfe0f"]
 
 [ext_resource type="Script" uid="uid://dnvesphlqsyh3" path="res://Scripts/Player/Player.cs" id="1_s0eop"]
 [ext_resource type="Script" uid="uid://c30rv0lcu05f3" path="res://Scripts/Player/States/MovementStateMachine.cs" id="2_ft8w5"]
+[ext_resource type="Script" uid="uid://b0ndsrqvqgyx7" path="res://Scripts/Game/GenericComponents/GenericHealthComponent.cs" id="2_spxdj"]
 [ext_resource type="Script" uid="uid://dqm7kq4nq7gvs" path="res://Scripts/Player/States/IdleState.cs" id="3_jmcll"]
 [ext_resource type="Script" uid="uid://brol76wadreig" path="res://Scripts/Player/States/JumpState.cs" id="4_4wape"]
 [ext_resource type="Script" uid="uid://cpf2ncav5ovqy" path="res://Scripts/Player/States/RunState.cs" id="5_t26db"]
+[ext_resource type="Script" uid="uid://yghk8r5uqe18" path="res://Scripts/Player/Components/PlayerMovementComponent.cs" id="5_w71ue"]
 [ext_resource type="Script" uid="uid://cym00vx4fdfge" path="res://Scripts/Player/States/WalkState.cs" id="6_4wape"]
 [ext_resource type="Script" uid="uid://cxmgx0bhyf7ew" path="res://Scripts/Player/Components/ThrowableDetectorComponent.cs" id="7_0objx"]
 [ext_resource type="Script" uid="uid://cqtvht5hf1oac" path="res://Scripts/Player/Components/StaminaComponent.cs" id="7_t26db"]
 [ext_resource type="Script" uid="uid://nf1w6ym7fyis" path="res://Scripts/Player/Components/CameraComponent.cs" id="8_0objx"]
-[ext_resource type="Script" uid="uid://b2q4tmgslsooa" path="res://Scripts/Player/Components/HealthComponent.cs" id="8_fk5o5"]
 [ext_resource type="Script" uid="uid://dgc83lfd4ndc0" path="res://Scripts/Player/Components/ItemHolderComponent.cs" id="8_w71ue"]
 [ext_resource type="Script" uid="uid://dd0y0e7ai6bdi" path="res://Scripts/Player/Abilities/PickupAbility.cs" id="9_ji083"]
 [ext_resource type="Script" uid="uid://yopkxmxxft7h" path="res://Scripts/Player/Components/CameraControllerComponent.cs" id="9_w71ue"]
 [ext_resource type="Script" uid="uid://mtk0uirvtkvc" path="res://Scripts/Player/Abilities/ThrowAbility.cs" id="10_0kmp4"]
-[ext_resource type="Script" uid="uid://dsxbxj4i4cmc1" path="res://Scripts/Player/Components/MovementComponent.cs" id="10_1e6p3"]
 [ext_resource type="Script" uid="uid://dnww8y37ulu3a" path="res://Scripts/Player/Abilities/AbilitySystem.cs" id="11_epg6k"]
 [ext_resource type="Script" uid="uid://c14xqg41v0ujd" path="res://Scripts/Player/Components/InputComponent.cs" id="12_8cj01"]
+[ext_resource type="Script" uid="uid://cym0dhqdivmqw" path="res://Scripts/Player/Abilities/RunAbility.cs" id="18_w71ue"]
+[ext_resource type="Script" uid="uid://b4kksgwsngyvp" path="res://Scripts/Player/Abilities/JumpAbility.cs" id="19_1e6p3"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_0u84n"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_s0eop"]
+radius = 0.56933594
+height = 2.1000977
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_epg6k"]
 size = Vector3(3.769043, 2, 0.38984376)
@@ -32,7 +36,7 @@ script = ExtResource("1_s0eop")
 [node name="ComponentRegistry" type="Node" parent="."]
 
 [node name="HealthComponent" type="Node" parent="ComponentRegistry"]
-script = ExtResource("8_fk5o5")
+script = ExtResource("2_spxdj")
 
 [node name="StaminaComponent" type="Node" parent="ComponentRegistry"]
 script = ExtResource("7_t26db")
@@ -41,7 +45,7 @@ script = ExtResource("7_t26db")
 script = ExtResource("12_8cj01")
 
 [node name="MovementComponent" type="Node" parent="ComponentRegistry"]
-script = ExtResource("10_1e6p3")
+script = ExtResource("5_w71ue")
 
 [node name="CameraControllerComponent" type="Node" parent="ComponentRegistry"]
 script = ExtResource("9_w71ue")
@@ -73,7 +77,8 @@ script = ExtResource("6_4wape")
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 mesh = SubResource("CapsuleMesh_0u84n")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="Hitbox" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.050048828, 0)
 shape = SubResource("CapsuleShape3D_s0eop")
 
 [node name="CameraPivot" type="Node3D" parent="."]
@@ -87,7 +92,8 @@ spring_length = 3.0
 transform = Transform3D(1, 0, 0, 0, 0.979526, 0.201317, 0, -0.201317, 0.979526, 0, 1.50708, 2.37539)
 
 [node name="BodyDetector" type="Area3D" parent="."]
-collision_mask = 3
+collision_layer = 64
+collision_mask = 9
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="BodyDetector"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.051757813, 0.20355225, -0.4029785)
@@ -115,3 +121,9 @@ script = ExtResource("9_ji083")
 
 [node name="ThrowAbility" type="Node" parent="AbilitySystem"]
 script = ExtResource("10_0kmp4")
+
+[node name="RunAbility" type="Node" parent="AbilitySystem"]
+script = ExtResource("18_w71ue")
+
+[node name="JumpAbility" type="Node" parent="AbilitySystem" groups=["Player"]]
+script = ExtResource("19_1e6p3")
