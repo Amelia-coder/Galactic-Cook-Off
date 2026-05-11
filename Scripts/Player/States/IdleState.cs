@@ -19,7 +19,6 @@ namespace Scripts.Player.States
 			var _stamina = Entity.GetComponent<StaminaComponent>();
 			var _input = Entity.GetComponent<InputComponent>();
 			// 1. Read from InputComponent (not raw Input)
-;
 
 			// 2. Try actions based on input
 			if (_input.JumpPressed && _movement.TryJump())

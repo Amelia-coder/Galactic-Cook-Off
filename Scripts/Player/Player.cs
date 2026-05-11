@@ -58,8 +58,6 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 
 		_healthComponent = GetNode<GenericHealthComponent>("ComponentRegistry/HealthComponent");
 
-		//_movementStateMachine = GetNode<MovementStateMachine>("MovementStateMachine");
-
 		List<Ability> abilities = new List<Ability>();
 		PickupAbility pickupAbility = GetNode<PickupAbility>("AbilitySystem/PickupAbility");
 		pickupAbility.Initialize(this);
@@ -80,6 +78,7 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 
 		_chargeBar = GetNode<ProgressBar>("CanvasLayer/ChargeBar");
 		_chargeBar.Visible = false;
+
 	}
 
 	private void InitAndRegisterComponents()

@@ -29,7 +29,7 @@ height = 2.1000977
 [sub_resource type="BoxShape3D" id="BoxShape3D_epg6k"]
 size = Vector3(3.769043, 2, 0.38984376)
 
-[node name="Player" type="CharacterBody3D"]
+[node name="Player" type="CharacterBody3D" groups=["Player"]]
 collision_mask = 7
 script = ExtResource("1_s0eop")
 

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Scripts.Enemy.Components
 {
-	public partial class AttackComponent : GenericAttackComponent
+	public partial class EnemyAttackComponent : GenericAttackComponent
 	{
 		private readonly List<AttackStrategy> _strategies = new();
 

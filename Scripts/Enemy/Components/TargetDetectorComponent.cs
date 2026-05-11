@@ -27,8 +27,8 @@ namespace Scripts.Enemy.Components
 		{
 			_detectionArea = detectionArea;
 
-			_detectionArea.AreaEntered += OnAreaEntered;
-			_detectionArea.AreaExited += OnAreaExited;
+			_detectionArea.BodyEntered += OnBodyEntered;
+			_detectionArea.BodyExited += OnBodyExited;
 		}
 
 		public bool HasTargets()
@@ -37,37 +37,40 @@ namespace Scripts.Enemy.Components
 			return _targets.Count > 0;
 		}
 
-		private void OnAreaEntered(Area3D area)
+		private void OnBodyEntered(Node3D body)
 		{
-			Node owner = area.GetOwner();
-
-			if (owner is not Node3D node3D)
+			if (body == null)
 				return;
 
-			// Replace with your actual faction/team logic later
-			if (!owner.IsInGroup("PlayerTeam"))
+			Node3D entity = ResolveEntity(body);
+
+			if (entity == null)
 				return;
 
-			if (_targets.Add(node3D))
+			if (!entity.IsInGroup("Player"))
+				return;
+
+			if (_targets.Add(entity))
 			{
-				TargetEntered?.Invoke(node3D);
-
-				GD.Print($"[TargetDetector] Entered: {node3D.Name}");
+				TargetEntered?.Invoke(entity);
+				GD.Print($"[Detector] Entered: {entity.Name}");
 			}
 		}
 
-		private void OnAreaExited(Area3D area)
+		private void OnBodyExited(Node3D body)
 		{
-			Node owner = area.GetOwner();
-
-			if (owner is not Node3D node3D)
+			if (body == null)
 				return;
 
-			if (_targets.Remove(node3D))
-			{
-				TargetExited?.Invoke(node3D);
+			Node3D entity = ResolveEntity(body);
 
-				GD.Print($"[TargetDetector] Exited: {node3D.Name}");
+			if (entity == null)
+				return;
+
+			if (_targets.Remove(entity))
+			{
+				TargetExited?.Invoke(entity);
+				GD.Print($"[Detector] Exited: {entity.Name}");
 			}
 		}
 
@@ -81,12 +84,26 @@ namespace Scripts.Enemy.Components
 				target == null || !GodotObject.IsInstanceValid(target));
 		}
 
+		private Node3D ResolveEntity(Node3D node)
+		{
+			while (node != null)
+			{
+				if (node is IEntity)
+					return node;
+
+				GD.Print("Node type is: ", node.GetType());
+				node = node.GetParent<Node3D>();
+			}
+
+			return null;
+		}
+
 		public override void _ExitTree()
 		{
 			if (_detectionArea != null)
 			{
-				_detectionArea.AreaEntered -= OnAreaEntered;
-				_detectionArea.AreaExited -= OnAreaExited;
+				_detectionArea.BodyEntered -= OnBodyEntered;
+				_detectionArea.BodyExited -= OnBodyExited;
 			}
 
 			base._ExitTree();

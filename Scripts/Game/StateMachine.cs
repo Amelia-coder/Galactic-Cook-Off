@@ -1,4 +1,5 @@
 using Godot;
+using Scripts.Player.States;
 
 /// <summary>
 /// Обобщенная стейт-машина. В нашей реализации, если у нас появлятся машина состояний, 
@@ -29,8 +30,10 @@ namespace Scripts.Game
 			}
 
 			CurrentState = InitialState ?? GetChild(0) as State<T>;
+			GD.Print(CurrentState);
 			CurrentState.Enter();
-
+			GD.Print("Child is:", GetChild(0).GetType());
+			GD.Print("Script is: ", GetChild(0).GetScript());
 		}
 
 		private void OnStateFinished(string nextStatePath)

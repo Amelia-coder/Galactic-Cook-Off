@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://wju1adqciolp"]
+[gd_scene load_steps=16 format=3 uid="uid://wju1adqciolp"]
 
 [ext_resource type="Script" uid="uid://c76uww3y1cyuf" path="res://Scripts/Enemy/MelleEnemy.cs" id="1_ytxpm"]
 [ext_resource type="Script" uid="uid://vyqbph3u4h28" path="res://Scripts/Enemy/States/EnemyStateMachine.cs" id="2_26bol"]
@@ -6,9 +6,11 @@
 [ext_resource type="Script" uid="uid://b0ndsrqvqgyx7" path="res://Scripts/Game/GenericComponents/GenericHealthComponent.cs" id="2_us81c"]
 [ext_resource type="Script" uid="uid://dkg8gl6sr7s0x" path="res://Scripts/Enemy/Components/PathFindingComponent.cs" id="3_0eus3"]
 [ext_resource type="Script" uid="uid://dnggfhtp1nw41" path="res://Scripts/Enemy/States/IdleState.cs" id="4_8o2ik"]
+[ext_resource type="Script" uid="uid://tptg73743g1a" path="res://Scripts/Enemy/Components/EnemyAttackComponent.cs" id="4_ki88w"]
 [ext_resource type="Script" uid="uid://be0dwrte8sqnw" path="res://Scripts/Enemy/Components/TargetSelectorComponent.cs" id="5_l17vo"]
 [ext_resource type="Script" uid="uid://dcsepk4j0hgne" path="res://Scripts/Enemy/States/ChaseState.cs" id="5_us81c"]
 [ext_resource type="Script" uid="uid://dbc58emat3ckc" path="res://Scripts/Enemy/States/AttackState.cs" id="6_0eus3"]
+[ext_resource type="Script" uid="uid://4wncvtcae86k" path="res://Scripts/Enemy/Components/MovementComponent.cs" id="6_1iyb3"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_g8078"]
 radius = 0.7324219
@@ -18,7 +20,7 @@ height = 2.130127
 radius = 0.7
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_8o2ik"]
-radius = 0.99744403
+radius = 25.770876
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_l17vo"]
 radius = 1.1127774
@@ -29,6 +31,7 @@ script = ExtResource("1_ytxpm")
 
 [node name="Hitbox" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.072387695, 0)
+visible = false
 shape = SubResource("CapsuleShape3D_g8078")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
@@ -43,6 +46,7 @@ script = ExtResource("2_us81c")
 script = ExtResource("3_0eus3")
 
 [node name="AttackComponent" type="Node" parent="ComponentRegistry"]
+script = ExtResource("4_ki88w")
 
 [node name="TargetDetectorComponent" type="Node" parent="ComponentRegistry"]
 script = ExtResource("2_nwxiv")
@@ -50,14 +54,17 @@ script = ExtResource("2_nwxiv")
 [node name="TargetSelectorComponent" type="Node" parent="ComponentRegistry"]
 script = ExtResource("5_l17vo")
 
+[node name="MovementComponent" type="Node" parent="ComponentRegistry"]
+script = ExtResource("6_1iyb3")
+
 [node name="StateMachine" type="Node" parent="."]
 script = ExtResource("2_26bol")
 
-[node name="IdleState" type="Node" parent="StateMachine"]
-script = ExtResource("4_8o2ik")
-
 [node name="ChaseState" type="Node" parent="StateMachine"]
 script = ExtResource("5_us81c")
+
+[node name="IdleState" type="Node" parent="StateMachine"]
+script = ExtResource("4_8o2ik")
 
 [node name="AttackState" type="Node" parent="StateMachine"]
 script = ExtResource("6_0eus3")
@@ -73,6 +80,7 @@ shape = SubResource("SphereShape3D_8o2ik")
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
 
 [node name="HurtArea" type="Area3D" parent="."]
+visible = false
 collision_layer = 2
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="HurtArea"]

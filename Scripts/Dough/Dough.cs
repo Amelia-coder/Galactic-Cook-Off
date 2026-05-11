@@ -1,7 +1,10 @@
 using Godot;
 using Scripts.Game;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
+using static System.Formats.Asn1.AsnWriter;
 public partial class Dough : RigidBody3D, IThrowable
 {
 
@@ -36,6 +39,17 @@ public partial class Dough : RigidBody3D, IThrowable
 	{
 		_homeScene = GetParent();
 		_hurtbox = GetNodeOrNull<Area3D>("Hurtbox");
+		_hurtbox.SetMonitoring(false);
+
+		///to fix - expecvtion on emey collision E 0:00:06:399   NativeCalls.cs:140 @ void Godot.NativeCalls.godot_icall_1_14(nint, nint, Godot.NativeInterop.godot_bool): Function blocked during in/out signal. Use set_deferred("monitoring", true/false).
+	  //< C++ Error > Condition "locked" is true.
+	  //< C++ Source > scene / 3d / physics / area_3d.cpp:379 @ set_monitoring()
+	  //              Area3D.cs:679 @ void Godot.Area3D.SetMonitoring(bool)
+	  //              Area3D.cs:52 @ void Godot.Area3D.set_Monitoring(bool)
+	  //              Dough.cs:90 @ void Dough.OnImpact(Godot.Area3D)
+	  //              Dough_ScriptMethods.generated.cs:84 @ bool Dough.InvokeGodotClassMethod(Godot.NativeInterop.godot_string_name &, Godot.NativeInterop.NativeVariantPtrArgs, Godot.NativeInterop.godot_variant &)
+	  //              CSharpInstanceBridge.cs:24 @ Godot.NativeInterop.godot_bool Godot.Bridge.CSharpInstanceBridge.Call(nint, Godot.NativeInterop.godot_string_name *, Godot.NativeInterop.godot_variant * *, int, Godot.NativeInterop.godot_variant_call_error *, Godot.NativeInterop.godot_variant *)
+
 
 		// PickupZone fires PickupAvailabilityChanged for the HUD prompt only.
 		// Detection/tracking is handled by BodyDetector on the player side.
@@ -70,7 +84,7 @@ public partial class Dough : RigidBody3D, IThrowable
 		ReturnToScene();
 		_inFlight = true;
 		Freeze = false;
-		_hurtbox.Monitoring = true;
+		_hurtbox.SetMonitoring(true);
 		ApplyCentralImpulse(impulse);
 	}
 
@@ -86,7 +100,7 @@ public partial class Dough : RigidBody3D, IThrowable
 	// =========================================================
 	private void OnImpact(Area3D area)
 	{
-		_hurtbox.Monitoring = true;
+		_hurtbox.SetMonitoring(false);
 		GD.Print("ON IMPACT FIRED: " + area?.Name);
 		GD.Print("Area hit triggered...");
 		GD.Print($"Area is null: {area == null}");

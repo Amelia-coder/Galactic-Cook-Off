@@ -24,6 +24,8 @@ public partial class MelleEnemy : CharacterBody3D, IEntity
 	private GenericHealthComponent _healthComponent;
 	private TargetDetectorComponent _targetDetectorComponent;
 	private TargetSelectorComponent _targetSelectorComponent;
+	private PathFindingComponent _pathfindingComponent;
+	private EnemyAttackComponent _attackComponent;
 
 	public override void _Ready()
 	{
@@ -43,8 +45,20 @@ public partial class MelleEnemy : CharacterBody3D, IEntity
 		_targetDetectorComponent.Initialize(targetDetector);
 		RegisterComponent(_targetDetectorComponent);
 
+		_pathfindingComponent = GetNode<PathFindingComponent>("ComponentRegistry/NavigationComponent");
+		_pathfindingComponent.Initialize(this);
+		RegisterComponent(_pathfindingComponent);
+		
 		_targetSelectorComponent = GetNode<TargetSelectorComponent>("ComponentRegistry/TargetSelectorComponent");
 		RegisterComponent(_targetSelectorComponent);
+
+		_attackComponent = GetNode<EnemyAttackComponent>("ComponentRegistry/AttackComponent");
+		//_attackComponent.Initialize(this);
+		RegisterComponent(_attackComponent);
+
+		var fsm = GetNode<EnemyStateMachine>("StateMachine");
+		fsm.InitialState = GetNode<ChaseState>("StateMachine/ChaseState");
+		GD.Print($"Initial emy state is: {fsm.InitialState}, fsm is null: {fsm == null}");
 
 	}
 

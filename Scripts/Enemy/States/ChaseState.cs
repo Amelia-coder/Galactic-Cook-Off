@@ -20,8 +20,9 @@ namespace Scripts.Enemy.States
 			var _selector = Entity.GetComponent<TargetSelectorComponent>();
 			var _pathfinding = Entity.GetComponent<PathFindingComponent>();
 			var _movement = Entity.GetComponent<MovementComponent>();
-			var _attackComponent = Entity.GetComponent<AttackComponent>();
+			var _attackComponent = Entity.GetComponent<EnemyAttackComponent>();
 
+			GD.Print($"Detector has targets: {_detector.HasTargets()}");
 			if (_detector == null || !_detector.HasTargets())
 				return;
 
