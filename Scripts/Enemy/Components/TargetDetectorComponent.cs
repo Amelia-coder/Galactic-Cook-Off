@@ -42,18 +42,18 @@ namespace Scripts.Enemy.Components
 			if (body == null)
 				return;
 
-			Node3D entity = ResolveEntity(body);
+			//Node3D entity = ResolveEntity(body);
 
-			if (entity == null)
+			//if (entity == null)
+			//	return;
+
+			if (!body.IsInGroup("Player"))
 				return;
 
-			if (!entity.IsInGroup("Player"))
-				return;
-
-			if (_targets.Add(entity))
+			if (_targets.Add(body))
 			{
-				TargetEntered?.Invoke(entity);
-				GD.Print($"[Detector] Entered: {entity.Name}");
+				TargetEntered?.Invoke(body);
+				GD.Print($"[Detector] Entered: {body.Name}");
 			}
 		}
 
@@ -62,15 +62,15 @@ namespace Scripts.Enemy.Components
 			if (body == null)
 				return;
 
-			Node3D entity = ResolveEntity(body);
+			//Node3D entity = ResolveEntity(body);
 
-			if (entity == null)
-				return;
+			//if (entity == null)
+			//	return;
 
-			if (_targets.Remove(entity))
+			if (_targets.Remove(body))
 			{
-				TargetExited?.Invoke(entity);
-				GD.Print($"[Detector] Exited: {entity.Name}");
+				TargetExited?.Invoke(body);
+				GD.Print($"[Detector] Exited: {body.Name}");
 			}
 		}
 
@@ -82,20 +82,6 @@ namespace Scripts.Enemy.Components
 		{
 			_targets.RemoveWhere(target =>
 				target == null || !GodotObject.IsInstanceValid(target));
-		}
-
-		private Node3D ResolveEntity(Node3D node)
-		{
-			while (node != null)
-			{
-				if (node is IEntity)
-					return node;
-
-				GD.Print("Node type is: ", node.GetType());
-				node = node.GetParent<Node3D>();
-			}
-
-			return null;
 		}
 
 		public override void _ExitTree()
