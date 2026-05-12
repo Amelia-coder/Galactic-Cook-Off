@@ -24,9 +24,7 @@ namespace Scripts.Enemy.Components
 			return false;
 		}
 
-		public AttackStrategy GetAvailableAttack(
-			Node3D self,
-			Node3D target)
+		public AttackStrategy GetAvailableAttack(Node3D self, Node3D target)
 		{
 			foreach (var strategy in _strategies)
 			{
@@ -35,6 +33,14 @@ namespace Scripts.Enemy.Components
 			}
 
 			return null;
+		}
+
+		public void UpdateStrategies(double delta)
+		{
+			foreach (var strategy in _strategies)
+			{
+				strategy.Update(delta);
+			}
 		}
 	}
 }

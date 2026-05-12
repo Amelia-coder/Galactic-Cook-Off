@@ -1,5 +1,9 @@
+using Godot;
+using Scripts.Enemy.Components;
 using Scripts.Game;
 using Scripts.Player.Components; //remove this and intorice genrilzed component is Scripts.Game namespace!
+using Scripts.Enemy.Strategies;
+using Scripts.Enemy;
 
 namespace Scripts.Enemy.States
 {
@@ -7,18 +11,59 @@ namespace Scripts.Enemy.States
 	{
 		public override void Enter()
 		{
+			GD.Print("Enmey entered attck state");
 			//y play animation
 		}
 
 
 		public override void PhysicsUpdate(double delta)
 		{
-			var _movement = Entity.GetComponent<PlayerMovementComponent>();
-			//var _stamina = Entity.GetComponent<StaminaComponent>();
-			//var _input = Entity.GetComponent<InputComponent>();
-			//_input.Update();
+			var detector = Entity.GetComponent<TargetDetectorComponent>();
+			var selector = Entity.GetComponent<TargetSelectorComponent>();
+			var attack = Entity.GetComponent<EnemyAttackComponent>();
 
+			if (detector == null ||
+				selector == null ||
+				attack == null)
+			{
+				TransitionTo("ChaseState");
+				return;
+			}
 
+			// IMPORTANT:
+			// update cooldowns
+			attack.UpdateStrategies(delta);
+
+			if (!detector.HasTargets())
+			{
+				TransitionTo("ChaseState");
+				return;
+			}
+
+			Node3D target = selector.SelectTarget(
+				detector.Targets,
+				(Node3D)Entity);
+
+			if (target == null)
+			{
+				TransitionTo("ChaseState");
+				return;
+			}
+
+			AttackStrategy strategy =
+				attack.GetAvailableAttack(
+					(Node3D)Entity,
+					target);
+
+			if (strategy == null)
+			{
+				TransitionTo("ChaseState");
+				return;
+			}
+
+			strategy.Execute(
+				(Node3D)Entity,
+				target);
 		}
 	}
 }

@@ -10,6 +10,7 @@ namespace Scripts.Enemy.States
 		private float _speed = 1.0f;
 		public override void Enter()
 		{
+			GD.Print("Enmey entered chase state");
 			//GD.Print("");
 			//_jumpReleased = false;
 		}
@@ -22,7 +23,7 @@ namespace Scripts.Enemy.States
 			var _movement = Entity.GetComponent<MovementComponent>();
 			var _attackComponent = Entity.GetComponent<EnemyAttackComponent>();
 
-			GD.Print($"Detector has targets: {_detector.HasTargets()}");
+			//GD.Print($"Detector has targets: {_detector.HasTargets()}");
 			if (_detector == null || !_detector.HasTargets())
 				return;
 
@@ -35,6 +36,8 @@ namespace Scripts.Enemy.States
 			if (target == null)
 				return;
 
+			_attackComponent.UpdateStrategies(delta);
+
 			// 2. Feed target into pathfinding system
 			_pathfinding.Target = target.GlobalPosition;
 
@@ -43,7 +46,8 @@ namespace Scripts.Enemy.States
 				((Node3D)Entity).GlobalPosition.DistanceSquaredTo(
 					target.GlobalPosition);
 
-			
+			GD.Print("Can attack: ", _attackComponent.CanAttack((Node3D)Entity, target));
+
 			if (_attackComponent.CanAttack((Node3D)Entity, target))
 			{
 				TransitionTo("AttackState");

@@ -5,6 +5,7 @@ namespace Scripts.Game
 {
 	public partial class GenericHealthComponent : Component
 	{
+		[Signal] public delegate void DiedEventHandler();
 		[Signal] public delegate void HealthConsumedEventHandler(float consumedHealth);
 		[Signal] public delegate void HealthChangedEventHandler(float consumedHealth, float maxHealth);
 
@@ -26,7 +27,15 @@ namespace Scripts.Game
 		{
 			CurrentHealth -= damage;
 			GD.Print($"Now current health is: {CurrentHealth} ");
-			return CurrentHealth > 0;
+			if (CurrentHealth <= 0)
+			{
+				CurrentHealth = 0;
+				EmitSignal(SignalName.Died);
+				return false;
+			}
+
+
+			return true;
 		}
 	}
 }

@@ -8,6 +8,7 @@ using Scripts.Enemy.States;
 using Scripts.Game;
 using Scripts.Player.Components;
 using Scripts.Game.GenericComponents;
+using Scripts.Enemy.Strategies;
 
 public partial class MelleEnemy : CharacterBody3D, IEntity
 {
@@ -38,6 +39,7 @@ public partial class MelleEnemy : CharacterBody3D, IEntity
 		//_cameraControllerComponent.Initialize(this, _camera, GetNode<Node3D>("CameraPivot"), GetNode<SpringArm3D>("CameraPivot/SpringArm3D"), true);
 		//RegisterComponent(_cameraControllerComponent);
 		_healthComponent = GetNode<GenericHealthComponent>("ComponentRegistry/HealthComponent");
+		_healthComponent.Died += OnDied;
 		RegisterComponent(_healthComponent);
 
 		var targetDetector = GetNode<Area3D>("DetectionArea");
@@ -52,8 +54,9 @@ public partial class MelleEnemy : CharacterBody3D, IEntity
 		_targetSelectorComponent = GetNode<TargetSelectorComponent>("ComponentRegistry/TargetSelectorComponent");
 		RegisterComponent(_targetSelectorComponent);
 
+
 		_attackComponent = GetNode<EnemyAttackComponent>("ComponentRegistry/AttackComponent");
-		//_attackComponent.Initialize(this);
+		_attackComponent.RegisterStrategy(new MeleeAttackStrategy());
 		RegisterComponent(_attackComponent);
 
 		var fsm = GetNode<EnemyStateMachine>("StateMachine");
@@ -62,6 +65,10 @@ public partial class MelleEnemy : CharacterBody3D, IEntity
 
 	}
 
+	private void OnDied()
+	{
+		Die();
+	}
 
 	private void Die()
 	{
