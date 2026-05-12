@@ -13,8 +13,9 @@ namespace Scripts.Player.Components
 		public bool PickupPressed { get; private set; }
 		public bool ThrowHeld { get; private set; }
 		public bool ThrowReleased { get; private set; }
+        public bool InteractPressed { get; private set; }
 
-		public void Initialize(Node3D transform)
+        public void Initialize(Node3D transform)
 		{
 			_transform = transform;
 		}
@@ -49,6 +50,7 @@ namespace Scripts.Player.Components
 			PickupPressed = Input.IsActionJustPressed("pickup");
 			ThrowHeld = Input.IsActionPressed("throw");
 			ThrowReleased = Input.IsActionJustReleased("throw");
+			InteractPressed = Input.IsActionPressed("add_piece_to_kitchen");
 		}
 
 		public void Reset()

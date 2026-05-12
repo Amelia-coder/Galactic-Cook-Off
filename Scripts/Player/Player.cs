@@ -34,6 +34,7 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 	private CameraControllerComponent _cameraControllerComponent;
 	private ItemHolderComponent _itemHolderComponent;
 	private StaminaComponent _staminaComponent;
+	private PlayerInteractionComponent _playerInteractionCompenent;
 	
 	private Camera3D _camera;
 	private Area3D _bodyDetector;
@@ -117,6 +118,11 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 		_cameraControllerComponent = GetNode<CameraControllerComponent>("ComponentRegistry/CameraControllerComponent");
 		_cameraControllerComponent.Initialize(this, _camera, GetNode<Node3D>("CameraPivot"), GetNode<SpringArm3D>("CameraPivot/SpringArm3D"), true);
 		RegisterComponent(_cameraControllerComponent);
+
+		_playerInteractionCompenent = GetNode<PlayerInteractionComponent>("ComponentRegistry/PlayerInteractionComponent");
+		_playerInteractionCompenent.Initialize(this, _itemHolderComponent);
+		RegisterComponent(_playerInteractionCompenent);
+
 	}
 
 	public void RegisterComponent(Component component)
@@ -150,6 +156,7 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 
 		_cameraControllerComponent.Update((float)delta); // TODO: think about moving this to _PhysicsProcess in some system/component
 		_movementComponent.Update((float)delta);
+		_playerInteractionCompenent.Update(_inputComponent);
 	}
 
 	public override void _Process(double delta)

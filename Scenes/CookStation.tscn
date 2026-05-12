@@ -1,0 +1,28 @@
+[gd_scene load_steps=5 format=3 uid="uid://cufniptvrwvfn"]
+
+[ext_resource type="Script" uid="uid://bpnhdpfk5ey5d" path="res://Scripts/CookStation/CookStation.cs" id="1_puvr8"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_puvr8"]
+size = Vector3(2.0718994, 0.852829, 1.5434723)
+
+[sub_resource type="BoxMesh" id="BoxMesh_pvax4"]
+size = Vector3(2, 0.75, 1.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_pvax4"]
+size = Vector3(3.582615, 1.5426025, 3.5110207)
+
+[node name="CookStation" type="StaticBody3D"]
+script = ExtResource("1_puvr8")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.039367676, -0.06299591, -0.00844574)
+shape = SubResource("BoxShape3D_puvr8")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_pvax4")
+
+[node name="InteractionArea" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="InteractionArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.002779007, 0.27130127, 0.1777134)
+shape = SubResource("BoxShape3D_pvax4")

@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://blw3xgniwfe0f"]
+[gd_scene load_steps=24 format=3 uid="uid://blw3xgniwfe0f"]
 
 [ext_resource type="Script" uid="uid://dnvesphlqsyh3" path="res://Scripts/Player/Player.cs" id="1_s0eop"]
 [ext_resource type="Script" uid="uid://c30rv0lcu05f3" path="res://Scripts/Player/States/MovementStateMachine.cs" id="2_ft8w5"]
@@ -15,6 +15,7 @@
 [ext_resource type="Script" uid="uid://dd0y0e7ai6bdi" path="res://Scripts/Player/Abilities/PickupAbility.cs" id="9_ji083"]
 [ext_resource type="Script" uid="uid://yopkxmxxft7h" path="res://Scripts/Player/Components/CameraControllerComponent.cs" id="9_w71ue"]
 [ext_resource type="Script" uid="uid://mtk0uirvtkvc" path="res://Scripts/Player/Abilities/ThrowAbility.cs" id="10_0kmp4"]
+[ext_resource type="Script" uid="uid://c6l6aelyid82r" path="res://Scripts/Player/Components/PlayerInteractionComponent.cs" id="10_1e6p3"]
 [ext_resource type="Script" uid="uid://dnww8y37ulu3a" path="res://Scripts/Player/Abilities/AbilitySystem.cs" id="11_epg6k"]
 [ext_resource type="Script" uid="uid://c14xqg41v0ujd" path="res://Scripts/Player/Components/InputComponent.cs" id="12_8cj01"]
 [ext_resource type="Script" uid="uid://cym0dhqdivmqw" path="res://Scripts/Player/Abilities/RunAbility.cs" id="18_w71ue"]
@@ -58,6 +59,9 @@ script = ExtResource("8_w71ue")
 
 [node name="ThrowableDetectorComponent" type="Node" parent="ComponentRegistry"]
 script = ExtResource("7_0objx")
+
+[node name="PlayerInteractionComponent" type="Node" parent="ComponentRegistry"]
+script = ExtResource("10_1e6p3")
 
 [node name="MovementStateMachine" type="Node" parent="."]
 script = ExtResource("2_ft8w5")

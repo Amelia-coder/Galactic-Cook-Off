@@ -46,7 +46,7 @@ namespace Scripts.Enemy.States
 				((Node3D)Entity).GlobalPosition.DistanceSquaredTo(
 					target.GlobalPosition);
 
-			GD.Print("Can attack: ", _attackComponent.CanAttack((Node3D)Entity, target));
+			//GD.Print("Can attack: ", _attackComponent.CanAttack((Node3D)Entity, target));
 
 			if (_attackComponent.CanAttack((Node3D)Entity, target))
 			{

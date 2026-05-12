@@ -5,7 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using static System.Formats.Asn1.AsnWriter;
-public partial class Dough : RigidBody3D, IThrowable
+public partial class Dough : RigidBody3D, IThrowable, IIngredient
 {
 
 	private List<IHitEffect> _effects = new(); //так мы можем дать любой набор эффеетов чему угдно, что долно их приент при попадании
