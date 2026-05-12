@@ -28,7 +28,6 @@ script = ExtResource("1_n6k0i")
 mesh = SubResource("SphereMesh_vvn1x")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-visible = false
 shape = SubResource("SphereShape3D_n6k0i")
 
 [node name="PickupZone" type="Area3D" parent="."]
