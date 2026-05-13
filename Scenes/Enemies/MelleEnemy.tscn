@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://wju1adqciolp"]
+[gd_scene load_steps=17 format=3 uid="uid://wju1adqciolp"]
 
 [ext_resource type="Script" uid="uid://c76uww3y1cyuf" path="res://Scripts/Enemy/MelleEnemy.cs" id="1_ytxpm"]
 [ext_resource type="Script" uid="uid://vyqbph3u4h28" path="res://Scripts/Enemy/States/EnemyStateMachine.cs" id="2_26bol"]
@@ -11,6 +11,7 @@
 [ext_resource type="Script" uid="uid://dcsepk4j0hgne" path="res://Scripts/Enemy/States/ChaseState.cs" id="5_us81c"]
 [ext_resource type="Script" uid="uid://dbc58emat3ckc" path="res://Scripts/Enemy/States/AttackState.cs" id="6_0eus3"]
 [ext_resource type="Script" uid="uid://4wncvtcae86k" path="res://Scripts/Enemy/Components/MovementComponent.cs" id="6_1iyb3"]
+[ext_resource type="Script" uid="uid://dcvv32jxnjygf" path="res://Scripts/Enemy/Components/LootDropComponent.cs" id="8_d8r1e"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_g8078"]
 radius = 0.7324219
@@ -55,6 +56,9 @@ script = ExtResource("5_l17vo")
 
 [node name="MovementComponent" type="Node" parent="ComponentRegistry"]
 script = ExtResource("6_1iyb3")
+
+[node name="LootDropComponent" type="Node" parent="ComponentRegistry"]
+script = ExtResource("8_d8r1e")
 
 [node name="StateMachine" type="Node" parent="."]
 script = ExtResource("2_26bol")

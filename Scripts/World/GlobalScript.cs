@@ -9,7 +9,7 @@ public partial class GlobalScript : Node3D
 	[Export] public PackedScene EnemyScene;
 	[Export] public PackedScene ThrowableScene;
 	//Note: spawn postiton of player is temporary and will be removed in multuplayer - or left for convinience
-	//of testing. Consider making is exportable
+	//of testingд. Consider making is exportable
 	private Vector3 SpawnPoint = new Vector3(0, 3.657f, 0);  
 	[Export] public StaminaUIComponent StaminaUI;
 	

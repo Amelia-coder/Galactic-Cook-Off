@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://bb3oahwy7pgdk"]
+[gd_scene load_steps=17 format=3 uid="uid://bb3oahwy7pgdk"]
 
 [ext_resource type="Script" uid="uid://i3i5uvrgphq5" path="res://Scripts/World/GlobalScript.cs" id="1_ek0gv"]
 [ext_resource type="PackedScene" uid="uid://blw3xgniwfe0f" path="res://Scenes/Player/Player.tscn" id="1_lh3uc"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://wju1adqciolp" path="res://Scenes/Enemies/MelleEnemy.tscn" id="3_ek0gv"]
 [ext_resource type="Script" uid="uid://cq6emehb6aq6a" path="res://Scripts/Game/StaminaUIComponent.cs" id="4_fl7xt"]
 [ext_resource type="PackedScene" uid="uid://cufniptvrwvfn" path="res://Scenes/CookStation.tscn" id="6_ner4r"]
+[ext_resource type="Script" uid="uid://8ksnooelg2yg" path="res://Scripts/Game/EnemyWavesController.cs" id="7_csujq"]
 
 [sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_ek0gv"]
 
@@ -117,3 +118,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 3, 0)
 
 [node name="CookStation" parent="." instance=ExtResource("6_ner4r")]
 transform = Transform3D(0.99952984, -0.03066063, 0, 0.03066063, 0.99952984, 0, 0, 0, 1, 10.934, 2, 9)
+
+[node name="WaveController" type="Node" parent="."]
+script = ExtResource("7_csujq")

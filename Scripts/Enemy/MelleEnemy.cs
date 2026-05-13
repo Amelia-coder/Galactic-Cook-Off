@@ -27,6 +27,7 @@ public partial class MelleEnemy : CharacterBody3D, IEntity
 	private TargetSelectorComponent _targetSelectorComponent;
 	private PathFindingComponent _pathfindingComponent;
 	private EnemyAttackComponent _attackComponent;
+	private LootDropComponent _lootDropComponent;
 
 	public override void _Ready()
 	{
@@ -59,6 +60,9 @@ public partial class MelleEnemy : CharacterBody3D, IEntity
 		_attackComponent.RegisterStrategy(new MeleeAttackStrategy());
 		RegisterComponent(_attackComponent);
 
+		_lootDropComponent= GetNode<LootDropComponent>("ComponentRegistry/LootDropComponent");
+		_lootDropComponent.Initilaize(this);
+		RegisterComponent(_lootDropComponent);
 		var fsm = GetNode<EnemyStateMachine>("StateMachine");
 		fsm.InitialState = GetNode<ChaseState>("StateMachine/ChaseState");
 		GD.Print($"Initial emy state is: {fsm.InitialState}, fsm is null: {fsm == null}");
@@ -72,6 +76,7 @@ public partial class MelleEnemy : CharacterBody3D, IEntity
 
 	private void Die()
 	{
+		_lootDropComponent.Drop();
 		// Optional: spawn death effect, drop loot, play animation, etc.
 		QueueFree();
 	}
