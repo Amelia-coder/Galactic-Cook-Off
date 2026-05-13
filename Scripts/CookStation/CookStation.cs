@@ -159,7 +159,86 @@ namespace Scripts.Game
 		}
 
 		// IInteractable fallback (not used for deposit flow)
-		public void Interact(IEntity actor) { }
+		public void Interact(IEntity actor) //что будет при готовке, когда в руках у игрка есть игнедет? продумать
+		{
+			// No recipes available
+			if (_availableRecipes.Count == 0)
+			{
+				GD.Print("No recipes available yet.");
+				return;
+			}
+
+			// Only one recipe → auto cook suggestion
+			if (_availableRecipes.Count == 1)
+			{
+				GD.Print($"Only one recipe available: {_availableRecipes[0].Id}");
+				Cook(_availableRecipes[0]);
+				return;
+			}
+
+			// Multiple recipes → selection mode (stub)
+			GD.Print("Multiple recipes available:");
+
+			foreach (var recipe in _availableRecipes)
+			{
+				GD.Print($"- {recipe.Id}");
+			}
+
+			GD.Print("Player should select a recipe (UI stub).");
+
+		}
+		public void Cook(Recipe recipe)
+		{
+			if (recipe == null)
+				return;
+
+			if (!Matches(recipe, _ingredientCounts))
+			{
+				GD.Print($"Cannot cook {recipe.Id}");
+				return;
+			}
+
+			GD.Print($"Cooking {recipe.Id}...");
+
+			// =====================================================
+			// CONSUME INGREDIENTS
+			// =====================================================
+			foreach (var req in recipe.Ingredients)
+			{
+				_ingredientCounts[req.Id] -= req.Amount;
+
+				// remove from list too (physical representation)
+				for (int i = _storedIngredients.Count - 1; i >= 0; i--)
+				{
+					if (_storedIngredients[i].Id == req.Id && req.Amount > 0)
+					{
+						_storedIngredients.RemoveAt(i);
+						req.Amount--;
+					}
+				}
+			}
+
+			// =====================================================
+			// CLEAN ZERO ENTRIES
+			// =====================================================
+			var keysToRemove = new List<string>();
+
+			foreach (var kv in _ingredientCounts)
+			{
+				if (kv.Value <= 0)
+					keysToRemove.Add(kv.Key);
+			}
+
+			foreach (var key in keysToRemove)
+				_ingredientCounts.Remove(key);
+
+			// =====================================================
+			// RESET AVAILABLE RECIPES
+			// =====================================================
+			UpdateCookingState();
+
+			GD.Print($"Finished cooking {recipe.Id}");
+		}
 
 		// =========================================================
 		// Minigame + state transitions

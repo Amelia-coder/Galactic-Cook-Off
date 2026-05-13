@@ -14,6 +14,7 @@ namespace Scripts.Player.Components
 		public bool ThrowHeld { get; private set; }
 		public bool ThrowReleased { get; private set; }
         public bool InteractPressed { get; private set; }
+		///
 
         public void Initialize(Node3D transform)
 		{
@@ -50,7 +51,7 @@ namespace Scripts.Player.Components
 			PickupPressed = Input.IsActionJustPressed("pickup");
 			ThrowHeld = Input.IsActionPressed("throw");
 			ThrowReleased = Input.IsActionJustReleased("throw");
-			InteractPressed = Input.IsActionPressed("add_piece_to_kitchen");
+			InteractPressed = Input.IsActionPressed("add_piece_to_kitchen");//maybe make intecation - cook andf putting to station  - same; but netter do it as separat actrions
 		}
 
 		public void Reset()
