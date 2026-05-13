@@ -22,6 +22,7 @@ namespace Scripts.Game.RecipeSystem.Ingredients
 		// Called when the node enters the scene tree for the first time.
 		public override void _Ready()
 		{
+			_homeScene = GetParent();
 			var pickupZone = GetNode<Area3D>("PickupZone");
 			pickupZone.BodyEntered += OnPickupZoneBodyEntered;
 			pickupZone.BodyExited += OnPickupZoneBodyExited;
@@ -60,7 +61,7 @@ namespace Scripts.Game.RecipeSystem.Ingredients
 
 		public void Drop()
 		{
-			ReturnToScene();
+			ReturnToScene(); //check out why it deisppaers
 			_inFlight = false;
 			Freeze = false;
 		}
@@ -88,6 +89,7 @@ namespace Scripts.Game.RecipeSystem.Ingredients
 		{
 			Vector3 worldPos = GlobalPosition;
 			GetParent().RemoveChild(this);
+			GD.Print(GetParent());
 			_homeScene.AddChild(this);
 			GlobalPosition = worldPos;
 			SetPickupZoneActive(true); // возмжно, в полете это стоит отключить. Но не факт

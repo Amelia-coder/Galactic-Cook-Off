@@ -144,34 +144,6 @@ public partial class Dough : RigidBody3D, IThrowable, IIngredient
 			health.TryTakeDamage(Damage);
 			GD.Print("Hit enemy");
 		}
-		//if (body is IEntity entity)
-		//{
-		//	var healthComponent = entity.GetComponent<GenericHealthComponent>();
-
-
-		//	if (healthComponent != null)
-		//	{
-		//		GD.Print("I guess it really is called");
-		//		//body.Call("TakeDamage", Damage);
-		//		if (body.IsInGroup("Player"))
-		//		{
-		//			//	ApplyStun();
-		//			GD.Print("We've hit a player with dough");
-		//		}
-		//		else if (body.IsInGroup("Enemy"))
-		//		{
-		//			healthComponent.TryTakeDamage(Damage);
-		//			GD.Print("We've hit an enemy with dough");
-		//		}
-
-		//	}
-		//}
-		// Stick to static geometry, keep bouncing off dynamic bodies
-		//if (body is StaticBody3D)
-		//{
-		//	Freeze = true;
-		//	_inFlight = false;
-		//}
 	}
 
 	// =========================================================
@@ -199,6 +171,7 @@ public partial class Dough : RigidBody3D, IThrowable, IIngredient
 	{
 		Vector3 worldPos = GlobalPosition;
 		GetParent().RemoveChild(this);
+		GD.Print(GetParent());
 		_homeScene.AddChild(this);
 		GlobalPosition = worldPos;
 		SetPickupZoneActive(true); // возмжно, в полете это стоит отключить. Но не факт
