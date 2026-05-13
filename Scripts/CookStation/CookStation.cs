@@ -33,6 +33,7 @@ namespace Scripts.Game
 
 		private List<IngredientData> _storedIngredients = new List<IngredientData>();
 		private List<Recipe> _availableRecipes = new();
+		private readonly Dictionary<string, int> _ingredientCounts = new();
 
 		private bool _hasValidRecipe;
 		private IEntity _cookingOwner; //на будущее - первый, кто провзаимоедйствует, сможет готвоить, остальные - только приносить ингредиенты
@@ -66,9 +67,9 @@ namespace Scripts.Game
 			if (!body.IsInGroup("Player") || body is not IEntity entity)
 				return;
 
-            _playersInZone.Add(entity);
+			_playersInZone.Add(entity);
 
-            // Wire up — PlayerInteractionComponent will now route
+			// Wire up — PlayerInteractionComponent will now route
 			// pickup input to this station's TryInsert()
 			entity.GetComponent<PlayerInteractionComponent>()
 				  ?.SetCurrentInteractable(this);
@@ -98,13 +99,14 @@ namespace Scripts.Game
 			if (ingredient == null)
 				return false;
 
-			_storedIngredients.Add(ingredient.getIngredientIdentData);
-			foreach (var ing in _storedIngredients)
-			{
-				GD.Print($"{ing.DisplayName} ({ing.Id})");
-			}
+			var data = ingredient.getIngredientIdentData;
 
-			// IMPORTANT: store IngredientData or Id, not IIngredient
+			_storedIngredients.Add(data);
+
+			if (!_ingredientCounts.TryGetValue(data.Id, out int count))
+				count = 0;
+
+			_ingredientCounts[data.Id] = count + 1;
 
 			UpdateCookingState();
 
@@ -119,45 +121,39 @@ namespace Scripts.Game
 				SignalName.CookOptionsChanged,
 				_availableRecipes.Count);
 
-			// optional: immediate suggestion
 			if (_availableRecipes.Count > 0)
-			{
 				GD.Print("Cook is now possible!");
-			}
 		}
 
 		private List<Recipe> FindMatchingRecipes()
 		{
 			var result = new List<Recipe>();
 
-			var storedIds = _storedIngredients
-				.Select(i => i.Id)
-				.ToHashSet();
-
-			foreach (var si in storedIds)
-			{
-				GD.Print(si);
-			}
-
 			foreach (var recipe in _recipes)
 			{
-				if (Matches(recipe, storedIds))
+				if (Matches(recipe, _ingredientCounts))
 					result.Add(recipe);
 			}
 
 			return result;
 		}
-		private bool Matches(Recipe recipe, HashSet<string> storedIds)
+		private bool Matches(Recipe recipe, Dictionary<string, int> storedCounts)
 		{
 			foreach (var ingredient in recipe.Ingredients)
 			{
-				if (!storedIds.Contains(ingredient.Id))
+				storedCounts.TryGetValue(ingredient.Id, out int count);
+
+				if (count < ingredient.Amount)
 				{
-					GD.Print($"Can't cook {recipe} beacuse ingredient ins;t in cook station {ingredient.DisplayName}");
+					GD.Print(
+						$"Can't cook {recipe.Id} because missing " +
+						$"{ingredient.Id}: need {ingredient.Amount}, have {count}");
+
 					return false;
 				}
 			}
-			GD.Print($"Can cook {recipe.Id} beacuse ingredient ins;t in cook station");
+
+			GD.Print($"Can cook {recipe.Id}");
 
 			return true;
 		}

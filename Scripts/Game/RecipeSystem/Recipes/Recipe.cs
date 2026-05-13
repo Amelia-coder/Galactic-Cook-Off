@@ -11,17 +11,17 @@ namespace Scripts.Game.RecipeSystem.Recipes
     {
         public string Id { get; init; }
 
-        public List<IngredientData> Ingredients { get; init; }
+        public List<RecipeIngredient> Ingredients;
 
         public float CookTime { get; init; }
 
         public string ResultId { get; init; }
 
         public Recipe(
-            string id,
-            float cookTime,
-            string resultId,
-            List<IngredientData> ingredients)
+        string id,
+        float cookTime,
+        string resultId,
+        List<RecipeIngredient> ingredients)
         {
             Id = id;
             CookTime = cookTime;

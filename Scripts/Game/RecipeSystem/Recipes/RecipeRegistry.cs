@@ -26,9 +26,9 @@ namespace Scripts.Game.RecipeSystem.Recipes
                 resultId: "burger_item",
                 ingredients: new()
                 {
-                IngredientRegistry.Get("bread"),
-                IngredientRegistry.Get("meat"),
-                IngredientRegistry.Get("cheese")
+            new RecipeIngredient("bread", 1),
+            new RecipeIngredient("meat", 1),
+            new RecipeIngredient("cheese", 1)
                 }
             ));
 
@@ -38,9 +38,9 @@ namespace Scripts.Game.RecipeSystem.Recipes
                 resultId: "pizza_item",
                 ingredients: new()
                 {
-                IngredientRegistry.Get("dough"),
-                IngredientRegistry.Get("cheese"),
-                IngredientRegistry.Get("tomato")
+            new RecipeIngredient("dough", 1),
+            new RecipeIngredient("cheese", 1),
+            new RecipeIngredient("tomato", 1)
                 }
             ));
 
@@ -50,20 +50,19 @@ namespace Scripts.Game.RecipeSystem.Recipes
                 resultId: "toast_item",
                 ingredients: new()
                 {
-                IngredientRegistry.Get("bread")
+            new RecipeIngredient("bread", 1)
                 }
             ));
 
             Register(new Recipe(
-               id: "mega_dough",
-               cookTime: 8f,
-               resultId: "mega_dough_item",
-               ingredients: new()
-               {
-                IngredientRegistry.Get("dough"),
-                IngredientRegistry.Get("dough")
-               }
-           ));
+                id: "mega_dough",
+                cookTime: 8f,
+                resultId: "mega_dough_item",
+                ingredients: new()
+                {
+            new RecipeIngredient("dough", 2)
+                }
+            ));
         }
 
         // =========================================================
