@@ -1,10 +1,7 @@
 using Godot;
 using Scripts.Game;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Scripts.Game.RecipeSystem.Ingredients;
+
 
 namespace Scripts.Player.Components
 {
@@ -49,8 +46,10 @@ namespace Scripts.Player.Components
 			if (_currentInteractable is IItemReceiver receiver)
 			{
 				if (!_holder.IsHoldingItem)
+				{
+					_currentInteractable.Interact(_entity); // елси у нас ингредиентов на руках, нам это не запрещает готовить
 					return;
-
+				}
 				var item = _holder.HeldItem;
 
 				if (item is not IIngredient ingredient)

@@ -11,6 +11,6 @@ namespace Scripts.Game
         event Action<IEntity> PlayerEnteredInteractionZone;
         event Action<IEntity> PlayerExitedInteractionZone;
 
-        void Interact(IEntity actor) { }  // ← default empty body, no class is forced to override
+        void Interact(IEntity actor) { }  // default empty body, no class is forced to override
     }
 }

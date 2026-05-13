@@ -1,0 +1,29 @@
+[gd_scene load_steps=5 format=3 uid="uid://bi6vhy73cuqrr"]
+
+[ext_resource type="Script" uid="uid://dcqkjavyhe2b4" path="res://Scripts/Game/RecipeSystem/Ingredients/Cheese.cs" id="1_f5lsx"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_ngisr"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_ngisr"]
+radius = 0.15234375
+height = 0.5784607
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_ngisr"]
+radius = 0.8149404
+
+[node name="Cheese" type="RigidBody3D"]
+script = ExtResource("1_f5lsx")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, 0, 0, 0)
+mesh = SubResource("CapsuleMesh_ngisr")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0121484995, -0.01073432, -0.0060679913)
+shape = SubResource("CapsuleShape3D_ngisr")
+
+[node name="PickupZone" type="Area3D" parent="."]
+collision_layer = 8
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PickupZone"]
+shape = SubResource("SphereShape3D_ngisr")

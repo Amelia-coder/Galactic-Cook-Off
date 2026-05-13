@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Godot;
 
 using Scripts.Player.Components;
+using Scripts.Game.RecipeSystem.Ingredients;
+using Scripts.Game.RecipeSystem.Recipes;
 
 namespace Scripts.Game
 {
@@ -20,21 +21,36 @@ namespace Scripts.Game
 		[Signal] public delegate void MinigameStartedEventHandler(int wave);
 		[Signal] public delegate void MinigameFailedEventHandler();
 		[Signal] public delegate void StationDestroyedEventHandler();
+		[Signal] public delegate void CookOptionsChangedEventHandler();
 
 		// IInteractable — zone awareness events (used externally if needed)
 		public event Action<IEntity> PlayerEnteredInteractionZone;
 		public event Action<IEntity> PlayerExitedInteractionZone;
 
+				
 		[Export] public int RequiredGoods = 10;
-
 		private int _storedGoods = 0;
-		private IEntity _player;
+
+		private List<IngredientData> _storedIngredients = new List<IngredientData>();
+		private List<Recipe> _availableRecipes = new();
+
+		private bool _hasValidRecipe;
+		private IEntity _cookingOwner; //на будущее - первый, кто провзаимоедйствует, сможет готвоить, остальные - только приносить ингредиенты
+		private IReadOnlyCollection<Recipe> _recipes = RecipeRegistry.GetAll();
+		private bool _canCook;
+		private bool _isCooking;
+
+
+		private readonly HashSet<IEntity> _playersInZone = new();
 
 		// =========================================================
 		// Lifecycle
 		// =========================================================
 		public override void _Ready()
 		{
+			//Recipe cheesePizza = new Recipe(2.0f, new List<IngredientData>());
+
+
 			var area = GetNode<Area3D>("InteractionArea");
 			area.BodyEntered += OnBodyEntered;
 			area.BodyExited += OnBodyExited;
@@ -50,9 +66,9 @@ namespace Scripts.Game
 			if (!body.IsInGroup("Player") || body is not IEntity entity)
 				return;
 
-			_player = entity;
+            _playersInZone.Add(entity);
 
-			// Wire up — PlayerInteractionComponent will now route
+            // Wire up — PlayerInteractionComponent will now route
 			// pickup input to this station's TryInsert()
 			entity.GetComponent<PlayerInteractionComponent>()
 				  ?.SetCurrentInteractable(this);
@@ -62,13 +78,14 @@ namespace Scripts.Game
 
 		private void OnBodyExited(Node3D body)
 		{
-			if (body != _player as Node3D)
+			if (!body.IsInGroup("Player") || body is not IEntity entity)
 				return;
 
-			_player.GetComponent<PlayerInteractionComponent>()
-				   ?.ClearCurrentInteractable(this);
-			PlayerExitedInteractionZone?.Invoke(_player);
-			_player = null;
+			var interaction = entity.GetComponent<PlayerInteractionComponent>();
+
+			interaction?.ClearCurrentInteractable(this);
+
+			PlayerExitedInteractionZone?.Invoke(entity);
 		}
 
 		// =========================================================
@@ -78,16 +95,71 @@ namespace Scripts.Game
 		// =========================================================
 		public bool TryInsert(IIngredient ingredient, IEntity actor)
 		{
-			_storedGoods++;
+			if (ingredient == null)
+				return false;
 
-			// Broadcast current progress — UI, game manager etc. listen here
-			EmitSignal(SignalName.GoodsChanged, _storedGoods, RequiredGoods);
-			GD.Print($"[CookStation] Goods: {_storedGoods}/{RequiredGoods}");
+			_storedIngredients.Add(ingredient.getIngredientIdentData);
+			foreach (var ing in _storedIngredients)
+			{
+				GD.Print($"{ing.DisplayName} ({ing.Id})");
+			}
 
-			if (_storedGoods >= RequiredGoods)
-				StartMinigame();
+			// IMPORTANT: store IngredientData or Id, not IIngredient
 
-			return true; // true = accepted, PlayerInteractionComponent destroys the item
+			UpdateCookingState();
+
+			return true;
+		}
+
+		private void UpdateCookingState()
+		{
+			_availableRecipes = FindMatchingRecipes();
+
+			EmitSignal(
+				SignalName.CookOptionsChanged,
+				_availableRecipes.Count);
+
+			// optional: immediate suggestion
+			if (_availableRecipes.Count > 0)
+			{
+				GD.Print("Cook is now possible!");
+			}
+		}
+
+		private List<Recipe> FindMatchingRecipes()
+		{
+			var result = new List<Recipe>();
+
+			var storedIds = _storedIngredients
+				.Select(i => i.Id)
+				.ToHashSet();
+
+			foreach (var si in storedIds)
+			{
+				GD.Print(si);
+			}
+
+			foreach (var recipe in _recipes)
+			{
+				if (Matches(recipe, storedIds))
+					result.Add(recipe);
+			}
+
+			return result;
+		}
+		private bool Matches(Recipe recipe, HashSet<string> storedIds)
+		{
+			foreach (var ingredient in recipe.Ingredients)
+			{
+				if (!storedIds.Contains(ingredient.Id))
+				{
+					GD.Print($"Can't cook {recipe} beacuse ingredient ins;t in cook station {ingredient.DisplayName}");
+					return false;
+				}
+			}
+			GD.Print($"Can cook {recipe.Id} beacuse ingredient ins;t in cook station");
+
+			return true;
 		}
 
 		// IInteractable fallback (not used for deposit flow)

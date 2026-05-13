@@ -4,7 +4,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Scripts.Game.RecipeSystem.Ingredients;
 using static System.Formats.Asn1.AsnWriter;
+
 public partial class Dough : RigidBody3D, IThrowable, IIngredient
 {
 
@@ -24,13 +26,18 @@ public partial class Dough : RigidBody3D, IThrowable, IIngredient
 	// Raised for UI only ("Press F to pick up") — NOT for tracking.
 	// BodyDetector on the player owns the nearby-items list.
 	public event Action<bool> PickupAvailabilityChanged;
-	public bool CanBePickedUpBy(IEntity actor) => actor is Player;
+	public bool CanBePickedUpBy(IEntity actor) => ((Node3D)actor).IsInGroup("Player");
 
 	// =========================================================
 	// Private state
 	// =========================================================
 	private Node _homeScene;   // scene to return to after being dropped/thrown
 	private bool _inFlight = false;
+
+	public IngredientData getIngredientIdentData => _ingredientIdentData;
+
+
+	private IngredientData _ingredientIdentData;
 
 	// =========================================================
 	// Lifecycle
@@ -41,14 +48,15 @@ public partial class Dough : RigidBody3D, IThrowable, IIngredient
 		_hurtbox = GetNodeOrNull<Area3D>("Hurtbox");
 		_hurtbox.SetMonitoring(false);
 
+		_ingredientIdentData = IngredientRegistry.Get("dough");
 		///to fix - expecvtion on emey collision E 0:00:06:399   NativeCalls.cs:140 @ void Godot.NativeCalls.godot_icall_1_14(nint, nint, Godot.NativeInterop.godot_bool): Function blocked during in/out signal. Use set_deferred("monitoring", true/false).
-	  //< C++ Error > Condition "locked" is true.
-	  //< C++ Source > scene / 3d / physics / area_3d.cpp:379 @ set_monitoring()
-	  //              Area3D.cs:679 @ void Godot.Area3D.SetMonitoring(bool)
-	  //              Area3D.cs:52 @ void Godot.Area3D.set_Monitoring(bool)
-	  //              Dough.cs:90 @ void Dough.OnImpact(Godot.Area3D)
-	  //              Dough_ScriptMethods.generated.cs:84 @ bool Dough.InvokeGodotClassMethod(Godot.NativeInterop.godot_string_name &, Godot.NativeInterop.NativeVariantPtrArgs, Godot.NativeInterop.godot_variant &)
-	  //              CSharpInstanceBridge.cs:24 @ Godot.NativeInterop.godot_bool Godot.Bridge.CSharpInstanceBridge.Call(nint, Godot.NativeInterop.godot_string_name *, Godot.NativeInterop.godot_variant * *, int, Godot.NativeInterop.godot_variant_call_error *, Godot.NativeInterop.godot_variant *)
+		//< C++ Error > Condition "locked" is true.
+		//< C++ Source > scene / 3d / physics / area_3d.cpp:379 @ set_monitoring()
+		//              Area3D.cs:679 @ void Godot.Area3D.SetMonitoring(bool)
+		//              Area3D.cs:52 @ void Godot.Area3D.set_Monitoring(bool)
+		//              Dough.cs:90 @ void Dough.OnImpact(Godot.Area3D)
+		//              Dough_ScriptMethods.generated.cs:84 @ bool Dough.InvokeGodotClassMethod(Godot.NativeInterop.godot_string_name &, Godot.NativeInterop.NativeVariantPtrArgs, Godot.NativeInterop.godot_variant &)
+		//              CSharpInstanceBridge.cs:24 @ Godot.NativeInterop.godot_bool Godot.Bridge.CSharpInstanceBridge.Call(nint, Godot.NativeInterop.godot_string_name *, Godot.NativeInterop.godot_variant * *, int, Godot.NativeInterop.godot_variant_call_error *, Godot.NativeInterop.godot_variant *)
 
 
 		// PickupZone fires PickupAvailabilityChanged for the HUD prompt only.
@@ -96,7 +104,7 @@ public partial class Dough : RigidBody3D, IThrowable, IIngredient
 	}
 
 	// =========================================================
-	// Impact — called by BodyEntered (RigidBody3D signal)
+	// Impact — called by BodyEntered (Hurtbox - Aread3d -signal)
 	// =========================================================
 	private void OnImpact(Area3D area)
 	{

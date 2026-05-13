@@ -6,6 +6,10 @@
     <RootNamespace>GalacticCookOff</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Scripts\Ingredietns\**" />
+    <EmbeddedResource Remove="Scripts\Ingredietns\**" />
+  </ItemGroup>
+  <ItemGroup>
     <Folder Include="Scenes\Player\" />
   </ItemGroup>
 </Project>

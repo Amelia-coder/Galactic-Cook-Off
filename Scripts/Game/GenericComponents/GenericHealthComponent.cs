@@ -34,7 +34,6 @@ namespace Scripts.Game
 				return false;
 			}
 
-
 			return true;
 		}
 	}
