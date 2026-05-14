@@ -1,10 +1,11 @@
-[gd_scene load_steps=17 format=3 uid="uid://bb3oahwy7pgdk"]
+[gd_scene load_steps=18 format=3 uid="uid://bb3oahwy7pgdk"]
 
 [ext_resource type="Script" uid="uid://i3i5uvrgphq5" path="res://Scripts/World/GlobalScript.cs" id="1_ek0gv"]
 [ext_resource type="PackedScene" uid="uid://blw3xgniwfe0f" path="res://Scenes/Player/Player.tscn" id="1_lh3uc"]
 [ext_resource type="PackedScene" uid="uid://bpu84pqtndpww" path="res://Scenes/Dough/Dough.tscn" id="2_mugxw"]
 [ext_resource type="PackedScene" uid="uid://wju1adqciolp" path="res://Scenes/Enemies/MelleEnemy.tscn" id="3_ek0gv"]
 [ext_resource type="Script" uid="uid://cq6emehb6aq6a" path="res://Scripts/Game/StaminaUIComponent.cs" id="4_fl7xt"]
+[ext_resource type="Script" uid="uid://djefjxdnjr880" path="res://Scripts/World/KillZone.cs" id="5_wcn2d"]
 [ext_resource type="PackedScene" uid="uid://cufniptvrwvfn" path="res://Scenes/CookStation.tscn" id="6_ner4r"]
 [ext_resource type="Script" uid="uid://8ksnooelg2yg" path="res://Scripts/Game/EnemyWavesController.cs" id="7_csujq"]
 
@@ -68,10 +69,12 @@ light_color = Color(0.5833795, 0.46525705, 0.038366947, 1)
 light_energy = 14.446
 
 [node name="KillZone" type="Area3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -7.53337, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.175, -11, 95.283)
+collision_layer = 32768
+collision_mask = 15
+script = ExtResource("5_wcn2d")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="KillZone"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -6.56321, 0)
 shape = SubResource("BoxShape3D_2fwkt")
 
 [node name="Dough" parent="." instance=ExtResource("2_mugxw")]
@@ -128,3 +131,5 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 6, 0)
 
 [node name="MelleEnemy3" parent="." instance=ExtResource("3_ek0gv")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40, 12, 0)
+
+[connection signal="body_entered" from="KillZone" to="KillZone" method="OnPlayerEntered"]

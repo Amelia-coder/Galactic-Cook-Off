@@ -4,6 +4,7 @@ using Scripts.Game.RecipeSystem.Recipes;
 using Scripts.Player.Components;
 using System;
 
+
 public partial class GlobalScript : Node3D
 {
 	[Export] public PackedScene PlayerScene;
@@ -23,8 +24,9 @@ public partial class GlobalScript : Node3D
 		var player = PlayerScene.Instantiate<Player>();
 		AddChild(player);
 		player.GlobalPosition = SpawnPoint;
+		((IEntity)player).GetComponent<GenericHealthComponent>().Died += () => StaminaUI.Hide(); //dity; place this in player later
 		//if (player.IsMultiplayerAuthority())
-		StaminaUI =  GetNode<StaminaUIComponent>("UIElements/Stamina");
+		StaminaUI =  GetNode<StaminaUIComponent>("UIElements/Stamina"); //link wit player's death signla
 		StaminaUI.Bind(player.GetComponent<StaminaComponent>());
 
 		var station = GetNode<CookStation>("CookStation");

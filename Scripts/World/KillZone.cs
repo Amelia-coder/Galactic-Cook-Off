@@ -1,11 +1,13 @@
 using Godot;
 using System;
+using Scripts.Game;
 
-public partial class KillZone : Node
+public partial class KillZone : Area3D
 {
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
+
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -13,21 +15,13 @@ public partial class KillZone : Node
 	{
 	}
 
-    private void OnBodyEnered(Node body)
-    {
-        if (body.IsInGroup("player"))
-        {
-            GD.Print("Playered entered the box area!");
-            ///applyEffect();
-        }
-        //if body.has_method("die")
-        //body.die()
-        //if (body is Player)
-        //{
-        ////body.die();
-        //GD.Print("Playered entered the box area!");
-        //QueueFree();
-        /////applyEffect();
-        //}
-    }
+	private void OnPlayerEntered(Node3D body)
+	{
+		if (body.IsInGroup("Player"))
+		{
+			GD.Print("Playered entered the box area!");
+			((IEntity)body).GetComponent<GenericHealthComponent>().TryTakeDamage(10000f);
+			///applyEffect();
+		}
+	}
 }

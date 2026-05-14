@@ -57,7 +57,6 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 
 		InitAndRegisterComponents();
 
-		_healthComponent = GetNode<GenericHealthComponent>("ComponentRegistry/HealthComponent");
 
 		List<Ability> abilities = new List<Ability>();
 		PickupAbility pickupAbility = GetNode<PickupAbility>("AbilitySystem/PickupAbility");
@@ -107,6 +106,12 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 		_detectionComponent.Initialize(_bodyDetector);
 		RegisterComponent(_detectionComponent);
 
+		_healthComponent = GetNode<GenericHealthComponent>("ComponentRegistry/HealthComponent");
+		_healthComponent.Died += OnDied;
+		_healthComponent.Died += () => _chargeBar.Visible = false;
+
+		RegisterComponent(_healthComponent);
+
 		_itemHolderComponent = GetNode<ItemHolderComponent>("ComponentRegistry/ItemHolderComponent");
 		RegisterComponent(_itemHolderComponent);
 
@@ -124,6 +129,7 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 		RegisterComponent(_playerInteractionCompenent);
 
 	}
+
 
 	public void RegisterComponent(Component component)
 	{
@@ -146,6 +152,13 @@ public partial class Player : CharacterBody3D, IEntity, IThrowable
 	{
 		//GD.Print("[Player] _UnhandledInput fired"); // Add this
 		_cameraControllerComponent.HandleInput(@event);
+	}
+
+	private void OnDied()
+	{
+		_chargeBar.Visible = false;
+		//temporary; emit signals taht will increase counter and if it reaches limit, game finishes
+		QueueFree();
 	}
 
 	public override void _PhysicsProcess(double delta)
