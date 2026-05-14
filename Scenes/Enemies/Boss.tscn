@@ -1,6 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://cigabv5wg6iuw"]
+[gd_scene load_steps=5 format=3 uid="uid://cigabv5wg6iuw"]
 
 [ext_resource type="Script" uid="uid://tk55i0vkt6cv" path="res://Scripts/Enemy/Bosses/EvilRamsy/EvilRamsy.cs" id="1_l82wv"]
+[ext_resource type="Script" uid="uid://tptg73743g1a" path="res://Scripts/Enemy/Components/EnemyAttackComponent.cs" id="2_wetjm"]
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_4pntv"]
 
@@ -12,6 +13,9 @@ script = ExtResource("1_l82wv")
 [node name="ComponentRegistry" type="Node" parent="."]
 
 [node name="AttackComponent" type="Node" parent="ComponentRegistry"]
+script = ExtResource("2_wetjm")
+
+[node name="TargetSelectorComponent" type="Node" parent="ComponentRegistry"]
 
 [node name="StateMachine" type="Node" parent="."]
 
