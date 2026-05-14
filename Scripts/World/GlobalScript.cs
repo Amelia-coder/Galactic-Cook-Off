@@ -10,6 +10,7 @@ public partial class GlobalScript : Node3D
 	[Export] public PackedScene PlayerScene;
 	[Export] public PackedScene EnemyScene;
 	[Export] public PackedScene ThrowableScene;
+	//[Export] public PackedScene BossScene;
 	//Note: spawn postiton of player is temporary and will be removed in multuplayer - or left for convinience
 	//of testingд. Consider making is exportable
 	private Vector3 SpawnPoint = new Vector3(0, 3.657f, 0);  
@@ -32,23 +33,6 @@ public partial class GlobalScript : Node3D
 		var station = GetNode<CookStation>("CookStation");
 
 		station.DishCooked += OnDishCooked;
-
-		//TODO: replacer with correct initialization logic
-		//var enemy = EnemyScene.Instantiate<MelleEnemy>();
-		//enemy.SetTarget(player);
-		//enemy.GlobalPosition = new Vector3(2, 5, -9);
-		//AddChild(enemy);
-		//
-		//enemy = EnemyScene.Instantiate<MelleEnemy>();
-		//enemy.GlobalPosition = new Vector3(4, 5, -7);
-		//enemy.SetTarget(player);
-		//AddChild(enemy);
-		//
-		//enemy = EnemyScene.Instantiate<MelleEnemy>();
-		//enemy.SetTarget(player);
-		//enemy.GlobalPosition = new Vector3(-4, 5, -8);
-		//AddChild(enemy);
-
 
 		//TODO: spawn enemies on sthe start OR on timer timeout. TImer can be seen in tutorial project!
 	}
@@ -82,8 +66,17 @@ public partial class GlobalScript : Node3D
 				break;
 
 			case 5:
+				{
+					SummonBoss();
 				//StartBossPhase();
+				}
 				break;
 		}
 	}
+	private void SummonBoss()
+	{
+		///var boss = BossScene.Instantiate<EvilRamsy>();
+		///AddChild(boss);
+		///boss.GlobalPostion = <some vector 3d>
+	} 
 }
