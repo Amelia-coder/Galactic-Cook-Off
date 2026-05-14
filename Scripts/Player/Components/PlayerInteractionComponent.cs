@@ -47,6 +47,7 @@ namespace Scripts.Player.Components
 			{
 				if (!_holder.IsHoldingItem)
 				{
+					GD.Print("We are using ntercat beqacuse have no items");
 					_currentInteractable.Interact(_entity); // елси у нас ингредиентов на руках, нам это не запрещает готовить
 					return;
 				}
@@ -67,7 +68,7 @@ namespace Scripts.Player.Components
 			}
 
 			// CASE 2: simple interaction (doors, buttons, etc.)
-			_currentInteractable.Interact(_entity);
+			//_currentInteractable.Interact(_entity);
 		}
 	}
 }

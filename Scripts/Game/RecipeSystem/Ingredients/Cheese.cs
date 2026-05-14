@@ -89,7 +89,6 @@ namespace Scripts.Game.RecipeSystem.Ingredients
 		{
 			Vector3 worldPos = GlobalPosition;
 			GetParent().RemoveChild(this);
-			GD.Print(GetParent());
 			_homeScene.AddChild(this);
 			GlobalPosition = worldPos;
 			SetPickupZoneActive(true); // возмжно, в полете это стоит отключить. Но не факт

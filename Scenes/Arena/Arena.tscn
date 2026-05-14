@@ -58,7 +58,7 @@ shape = SubResource("BoxShape3D_lh3uc")
 debug_fill = false
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.01459692, -3.9810252, -0.025175063)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.014596928, -3.9810252, -0.025175063)
 mesh = SubResource("CylinderMesh_ner4r")
 metadata/_edit_group_ = true
 

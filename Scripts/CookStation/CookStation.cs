@@ -22,6 +22,7 @@ namespace Scripts.Game
 		[Signal] public delegate void MinigameFailedEventHandler();
 		[Signal] public delegate void StationDestroyedEventHandler();
 		[Signal] public delegate void CookOptionsChangedEventHandler();
+		public event Action<Recipe> DishCooked;
 
 		// IInteractable — zone awareness events (used externally if needed)
 		public event Action<IEntity> PlayerEnteredInteractionZone;
@@ -145,9 +146,9 @@ namespace Scripts.Game
 
 				if (count < ingredient.Amount)
 				{
-					GD.Print(
-						$"Can't cook {recipe.Id} because missing " +
-						$"{ingredient.Id}: need {ingredient.Amount}, have {count}");
+					//GD.Print(
+					//	$"Can't cook {recipe.Id} because missing " +
+					//	$"{ingredient.Id}: need {ingredient.Amount}, have {count}");
 
 					return false;
 				}
@@ -164,7 +165,7 @@ namespace Scripts.Game
 			// No recipes available
 			if (_availableRecipes.Count == 0)
 			{
-				GD.Print("No recipes available yet.");
+				//GD.Print("No recipes available yet.");
 				return;
 			}
 
@@ -187,6 +188,7 @@ namespace Scripts.Game
 			GD.Print("Player should select a recipe (UI stub).");
 
 		}
+		//if we want cook to create scenes baes on recide id, we better come u with Fabric of cook results
 		public void Cook(Recipe recipe)
 		{
 			if (recipe == null)
@@ -205,39 +207,50 @@ namespace Scripts.Game
 			// =====================================================
 			foreach (var req in recipe.Ingredients)
 			{
-				_ingredientCounts[req.Id] -= req.Amount;
-
-				// remove from list too (physical representation)
-				for (int i = _storedIngredients.Count - 1; i >= 0; i--)
+				// ---------------------------------------------
+				// Update ingredient counts safely
+				// ---------------------------------------------
+				if (_ingredientCounts.TryGetValue(req.Id, out int count))
 				{
-					if (_storedIngredients[i].Id == req.Id && req.Amount > 0)
+					count -= req.Amount;
+
+					if (count <= 0)
+						_ingredientCounts.Remove(req.Id);
+					else
+						_ingredientCounts[req.Id] = count;
+				}
+
+				// ---------------------------------------------
+				// Remove physical stored ingredient entries
+				// ---------------------------------------------
+				int remainingToRemove = req.Amount;
+
+				for (int i = _storedIngredients.Count - 1;
+					 i >= 0 && remainingToRemove > 0;
+					 i--)
+				{
+					if (_storedIngredients[i].Id == req.Id)
 					{
 						_storedIngredients.RemoveAt(i);
-						req.Amount--;
+						remainingToRemove--;
 					}
 				}
 			}
+			//var keysToRemove = new List<string>();
 
-			// =====================================================
-			// CLEAN ZERO ENTRIES
-			// =====================================================
-			var keysToRemove = new List<string>();
+			//foreach (var kv in _ingredientCounts)
+			//{
+			//	if (kv.Value <= 0)
+			//		keysToRemove.Add(kv.Key);
+			//}
 
-			foreach (var kv in _ingredientCounts)
-			{
-				if (kv.Value <= 0)
-					keysToRemove.Add(kv.Key);
-			}
+			//foreach (var key in keysToRemove)
+			//	_ingredientCounts.Remove(key);
 
-			foreach (var key in keysToRemove)
-				_ingredientCounts.Remove(key);
-
-			// =====================================================
-			// RESET AVAILABLE RECIPES
-			// =====================================================
 			UpdateCookingState();
 
 			GD.Print($"Finished cooking {recipe.Id}");
+			DishCooked?.Invoke(recipe);
 		}
 
 		// =========================================================

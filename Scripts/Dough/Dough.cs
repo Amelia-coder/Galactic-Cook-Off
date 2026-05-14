@@ -15,7 +15,7 @@ public partial class Dough : RigidBody3D, IThrowable, IIngredient
 	// =========================================================
 	// Exports
 	// =========================================================
-	[Export] public float Damage = 100f; //for omneshting enemises
+	[Export] public float Damage = 100f; //for one shoting enemies
 	[Export] public float StunDuration = 1.5f;
 	[Export] public float DisappearTimeout = 115f;
 
@@ -109,9 +109,6 @@ public partial class Dough : RigidBody3D, IThrowable, IIngredient
 	private void OnImpact(Area3D area)
 	{
 		_hurtbox.SetMonitoring(false);
-		GD.Print("ON IMPACT FIRED: " + area?.Name);
-		GD.Print("Area hit triggered...");
-		GD.Print($"Area is null: {area == null}");
 
 		if (!_inFlight)
 			return;
@@ -171,7 +168,6 @@ public partial class Dough : RigidBody3D, IThrowable, IIngredient
 	{
 		Vector3 worldPos = GlobalPosition;
 		GetParent().RemoveChild(this);
-		GD.Print(GetParent());
 		_homeScene.AddChild(this);
 		GlobalPosition = worldPos;
 		SetPickupZoneActive(true); // возмжно, в полете это стоит отключить. Но не факт
