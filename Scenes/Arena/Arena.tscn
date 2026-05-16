@@ -1,9 +1,10 @@
-[gd_scene load_steps=18 format=3 uid="uid://bb3oahwy7pgdk"]
+[gd_scene load_steps=19 format=3 uid="uid://bb3oahwy7pgdk"]
 
-[ext_resource type="Script" uid="uid://i3i5uvrgphq5" path="res://Scripts/World/GlobalScript.cs" id="1_ek0gv"]
+[ext_resource type="Script" uid="uid://cxrs34gthg6qq" path="res://Scripts/World/Arena.cs" id="1_csujq"]
 [ext_resource type="PackedScene" uid="uid://blw3xgniwfe0f" path="res://Scenes/Player/Player.tscn" id="1_lh3uc"]
 [ext_resource type="PackedScene" uid="uid://bpu84pqtndpww" path="res://Scenes/Dough/Dough.tscn" id="2_mugxw"]
 [ext_resource type="PackedScene" uid="uid://wju1adqciolp" path="res://Scenes/Enemies/MelleEnemy.tscn" id="3_ek0gv"]
+[ext_resource type="PackedScene" uid="uid://bi6vhy73cuqrr" path="res://Scenes/Ingredients/Сheese.tscn" id="4_bga1v"]
 [ext_resource type="Script" uid="uid://cq6emehb6aq6a" path="res://Scripts/Game/StaminaUIComponent.cs" id="4_fl7xt"]
 [ext_resource type="Script" uid="uid://djefjxdnjr880" path="res://Scripts/World/KillZone.cs" id="5_wcn2d"]
 [ext_resource type="PackedScene" uid="uid://cufniptvrwvfn" path="res://Scenes/CookStation.tscn" id="6_ner4r"]
@@ -40,10 +41,10 @@ size = Vector3(500, 1, 500)
 
 [node name="Arena" type="Node3D"]
 transform = Transform3D(0.99952984, 0.03066063, 0, -0.03066063, 0.99952984, 0, 0, 0, 1, 0, 0, 0)
-script = ExtResource("1_ek0gv")
+script = ExtResource("1_csujq")
 PlayerScene = ExtResource("1_lh3uc")
 EnemyScene = ExtResource("3_ek0gv")
-ThrowableScene = ExtResource("2_mugxw")
+ThrowableScene = ExtResource("4_bga1v")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_csujq")

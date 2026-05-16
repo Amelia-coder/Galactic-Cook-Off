@@ -5,7 +5,7 @@ using Scripts.Player.Components;
 using System;
 
 
-public partial class GlobalScript : Node3D
+public partial class Arena : Node3D
 {
 	[Export] public PackedScene PlayerScene;
 	[Export] public PackedScene EnemyScene;

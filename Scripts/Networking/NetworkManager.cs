@@ -11,39 +11,22 @@ namespace Scripts.Networking
 {
     public partial class NetworkManager : Node
     {
-        [Export]
-        PackedScene LanBroadcasterScene;
-
-        [Export]
-        PackedScene LanListenerScene;
-
-        private LanBroadcaster _broadcaster;
-        private LanListener _listener;
-
+        public event Action Connected;
+        public event Action ConnectionFailed;
         public void Host()
         {
-            // start ENet server
+            var peer = new ENetMultiplayerPeer();
+            peer.CreateServer(7777);
 
-            _broadcaster =
-                LanBroadcasterScene
-                    .Instantiate<LanBroadcaster>();
-
-            AddChild(_broadcaster);
+            Multiplayer.MultiplayerPeer = peer;
         }
 
-        public void StartSearching()
+        public void Join(string ip, int port)
         {
-            _listener =
-                LanListenerScene
-                    .Instantiate<LanListener>();
+            var peer = new ENetMultiplayerPeer();
+            peer.CreateClient(ip, port);
 
-            AddChild(_listener);
-        }
-
-        public void StopSearching()
-        {
-            _listener?.QueueFree();
-            _listener = null;
+            Multiplayer.MultiplayerPeer = peer;
         }
     }
 }
