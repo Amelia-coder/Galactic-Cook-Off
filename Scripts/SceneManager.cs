@@ -20,11 +20,13 @@ namespace Scripts
 
 		public void LoadSceneAsync(PackedScene scene)
 		{
+			GD.Print("Area loading");
 			LoadSceneAsync(scene.ResourcePath);
 		}
 
 		public void LoadSceneAsync(string path)
 		{
+			GD.Print("Area is loading");
 			if (_loading)
 			{
 				GD.PrintErr("Scene already loading");

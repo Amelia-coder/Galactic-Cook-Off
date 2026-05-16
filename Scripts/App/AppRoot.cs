@@ -35,7 +35,9 @@ namespace Scripts.App
 			// -------------------------
 			if (scene is Menu menu)
 			{
+				GD.Print($"[AppRoot] wiring menu: {menu.GetInstanceId()}");
 				menu.HostRequested += StartHost;
+				GD.Print("[AppRoot] subscribed to HostRequested");
 				menu.JoinRequested += StartClient;
 				menu.ExitRequested += ExitGame;
 
