@@ -1,0 +1,50 @@
+[gd_scene load_steps=2 format=3 uid="uid://bg5vc3y4aawue"]
+
+[ext_resource type="Script" uid="uid://bohu84fa57pio" path="res://Scripts/UI/Menu.cs" id="1_tij55"]
+
+[node name="Menu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_tij55")
+
+[node name="HostButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.31500003
+anchor_top = 0.028
+anchor_right = 0.569
+anchor_bottom = 0.1
+offset_left = 0.1199646
+offset_top = -0.144001
+offset_right = 0.5119629
+offset_bottom = 0.19999695
+text = "Host
+"
+
+[node name="JoinButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.57900006
+anchor_top = 0.031000001
+anchor_right = 0.827
+anchor_bottom = 0.1
+offset_left = -0.008056641
+offset_top = -0.08800125
+offset_right = 2.2959595
+offset_bottom = 0.19999695
+text = "Join"
+
+[node name="IPLineEdit" type="LineEdit" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.060000002
+anchor_bottom = 0.048
+offset_right = -0.55750275
+offset_bottom = -0.10400009
+
+[connection signal="pressed" from="HostButton" to="." method="OnHostButtonPressed"]
+[connection signal="pressed" from="JoinButton" to="." method="OnJoinButtonPressed"]

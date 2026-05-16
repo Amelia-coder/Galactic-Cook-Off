@@ -5,3 +5,4 @@
 logs/
 .import/
 *.uid
+*.old*

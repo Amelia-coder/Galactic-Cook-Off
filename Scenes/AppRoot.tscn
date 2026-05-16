@@ -1,0 +1,10 @@
+[gd_scene load_steps=4 format=3 uid="uid://d2b57u68cry4o"]
+
+[ext_resource type="Script" uid="uid://5u2l7a1g8lm8" path="res://Scripts/App/AppRoot.cs" id="1_im132"]
+[ext_resource type="PackedScene" uid="uid://bb3oahwy7pgdk" path="res://Scenes/Arena/Arena.tscn" id="2_22rva"]
+[ext_resource type="PackedScene" uid="uid://bg5vc3y4aawue" path="res://Scenes/UI/Menu.tscn" id="2_q3c7a"]
+
+[node name="AppRoot" type="Node"]
+script = ExtResource("1_im132")
+ArenaScene = ExtResource("2_22rva")
+MenuScene = ExtResource("2_q3c7a")
