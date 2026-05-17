@@ -22,17 +22,16 @@ namespace Scripts.App
 			SceneManager.LoadFailed += OnSceneLoadFailed;
 
 			SceneManager.LoadSceneAsync(MenuScene);
+
+
 		}
 
-	   private void OnSceneLoaded(Node scene)
+		private void OnSceneLoaded(Node scene)
 		{
 			GD.Print($"Loaded scene: {scene.Name}");
 
 			_currentScene = scene;
 
-			// -------------------------
-			// MENU
-			// -------------------------
 			if (scene is Menu menu)
 			{
 				GD.Print($"[AppRoot] wiring menu: {menu.GetInstanceId()}");
@@ -65,19 +64,21 @@ namespace Scripts.App
 
 			LanDiscovery.StartHostBroadcast(
 				"Cooking Chaos",
-				7777
+				9999
 			);
 
-			SceneManager.LoadSceneAsync(ArenaScene);
+			//load lobby instead
+			//SceneManager.LoadSceneAsync(ArenaScene);
 		}
 
 		private void StartClient(string ip)
 		{
 			GD.Print($"Joining {ip}");
 
-			NetworkManager.Join(ip, 7777);
+			NetworkManager.Join(ip, 9999);
 
-			SceneManager.LoadSceneAsync(ArenaScene);
+			
+			//SceneManager.LoadSceneAsync(ArenaScene);
 		}
 
 		private void ExitGame()

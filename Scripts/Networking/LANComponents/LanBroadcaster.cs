@@ -5,7 +5,7 @@ namespace Scripts.Networking.LANComponents
 {
     public partial class LanBroadcaster : Node
     {
-        [Export] public int BroadcastPort = 7777;
+        [Export] public int BroadcastPort = 9999;
 
         [Export] public string ServerName = "Cooking Server";
 

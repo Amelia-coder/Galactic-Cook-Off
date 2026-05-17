@@ -37,7 +37,7 @@ namespace Scripts.Networking
 
 			Listener.StopListening();
 
-			_servers.Clear();
+			//_servers.Clear();
 		}
 
 		public void StartHostBroadcast(string serverName, int gamePort)
@@ -74,7 +74,7 @@ namespace Scripts.Networking
 			}
 
 			//ServersUpdated?.Invoke(
-			//    _servers.Values.ToList());
+				//_servers.Values.ToList());
 		}
 	}
 }

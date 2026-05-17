@@ -10,7 +10,7 @@ namespace Scripts.Enemy.States
 		private float _speed = 1.0f;
 		public override void Enter()
 		{
-			GD.Print("Enmey entered chase state");
+			//GD.Print("Enmey entered chase state");
 			//GD.Print("");
 			//_jumpReleased = false;
 		}

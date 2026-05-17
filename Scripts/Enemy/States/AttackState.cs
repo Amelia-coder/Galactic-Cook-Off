@@ -11,7 +11,7 @@ namespace Scripts.Enemy.States
 	{
 		public override void Enter()
 		{
-			GD.Print("Enmey entered attck state");
+			//GD.Print("Enmey entered attck state");
 			//y play animation
 		}
 
