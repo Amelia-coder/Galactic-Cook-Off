@@ -36,7 +36,10 @@ namespace Scripts.Player.Components
 			float staminaCost = SprintStaminaPerSecond * delta;
 
 			if (!_stamina.TryConsume(staminaCost))
-				return false;
+			{
+                GD.Print("QWWWWWWWWWWWW");
+                return false;
+			}
 
 			SetHorizontalVelocity(direction * speed);
 			return true;

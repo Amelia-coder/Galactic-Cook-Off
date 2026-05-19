@@ -9,6 +9,10 @@ namespace Scripts.Player.States
 
 		public override void Enter()
 		{
+			var _movement = Entity.GetComponent<PlayerMovementComponent>();
+			var _input = Entity.GetComponent<InputComponent>();
+			_movement.SetHorizontalVelocity(_input.MoveDirection * WalkSpeed);
+
 			GD.Print("Entered WalkState");
 		}
 
@@ -27,7 +31,7 @@ namespace Scripts.Player.States
 			}
 
 			// Check for sprint
-			if (_input.SprintPressed && _input.MoveDirection.LengthSquared() > 0.01f)
+			if (_stamina.CanConsume(0.1f) && _input.SprintPressed && _input.MoveDirection.LengthSquared() > 0.01f)
 			{
 				TransitionTo("RunState");
 				return;

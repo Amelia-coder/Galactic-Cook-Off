@@ -10,6 +10,14 @@ namespace Scripts.Player.States
 
 		public override void Enter()
 		{
+			var _movement = Entity.GetComponent<PlayerMovementComponent>();
+			var _input = Entity.GetComponent<InputComponent>();
+			if (!_movement.TrySetSprintVelocity(_input.MoveDirection, SprintSpeed, (float)0.01))
+			{
+				GD.Print("will have to enter wal state");
+				TransitionTo("WalkState");
+				return;
+			}
 			GD.Print("Entered RunState");
 		}
 
@@ -18,6 +26,8 @@ namespace Scripts.Player.States
 			var _movement = Entity.GetComponent<PlayerMovementComponent>();
 			var _stamina = Entity.GetComponent<StaminaComponent>();
 			var _input = Entity.GetComponent<InputComponent>();
+			
+			GD.Print(_input.MoveDirection); 
 
 
 			// Try jump
@@ -47,6 +57,7 @@ namespace Scripts.Player.States
 			// Try to sprint - if stamina runs out, fall back to walk
 			if (!_movement.TrySetSprintVelocity(_input.MoveDirection, SprintSpeed, (float)delta))
 			{
+				GD.Print("will have to enter wal state");
 				TransitionTo("WalkState");
 				return;
 			}
