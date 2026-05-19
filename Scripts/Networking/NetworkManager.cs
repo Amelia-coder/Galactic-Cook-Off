@@ -78,6 +78,9 @@ namespace Scripts.Networking
 		private void OnConnectedToServer()
 		{
 			GD.Print("[NET] Connected to server");
+
+			Connected?.Invoke();
+
 		}
 
 		private void OnConnectionFailed()

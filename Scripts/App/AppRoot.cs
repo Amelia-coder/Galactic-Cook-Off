@@ -66,20 +66,29 @@ namespace Scripts.App
 
 			NetworkManager.Host();
 
-			
+
 
 			//load lobby instead
-			//SceneManager.LoadSceneAsync(ArenaScene);
+			SceneManager.LoadSceneAsync(ArenaScene);
 		}
 
 		private void StartClient(string ip)
 		{
 			GD.Print($"Joining {ip}");
 
+			NetworkManager.Connected += OnClientConnected;
+
 			NetworkManager.Join(ip, 65000);
 
 			
 			//SceneManager.LoadSceneAsync(ArenaScene);
+		}
+
+		private void OnClientConnected()
+		{
+			NetworkManager.Connected -= OnClientConnected;
+
+			SceneManager.LoadSceneAsync(ArenaScene);
 		}
 
 		private void ExitGame()

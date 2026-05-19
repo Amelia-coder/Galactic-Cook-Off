@@ -3,11 +3,10 @@ using Scripts.Game;
 using Scripts.Game.RecipeSystem.Recipes;
 using Scripts.Player.Components;
 using System;
-
+using Scripts.Networking;
 
 public partial class Arena : Node3D
 {
-	[Export] public PackedScene PlayerScene;
 	[Export] public PackedScene EnemyScene;
 	[Export] public PackedScene ThrowableScene;
 	//[Export] public PackedScene BossScene;
@@ -16,19 +15,22 @@ public partial class Arena : Node3D
 	private Vector3 SpawnPoint = new Vector3(0, 3.657f, 0);  
 	[Export] public StaminaUIComponent StaminaUI;
 	
+	private MultiplayerSpawner _playerManager;
+	
 	private int _currentStage = 0;
 	private int _dishesCooked = 0;
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		var player = PlayerScene.Instantiate<Player>();
-		AddChild(player);
-		player.GlobalPosition = SpawnPoint;
-		((IEntity)player).GetComponent<GenericHealthComponent>().Died += () => StaminaUI.Hide(); //dity; place this in player later
+		
+		//var player = PlayerScene.Instantiate<Player>();
+		//AddChild(player);
+		//player.GlobalPosition = SpawnPoint;
+		////((IEntity)player).GetComponent<GenericHealthComponent>().Died += () => StaminaUI.Hide(); //dity; place this in player later
 		//if (player.IsMultiplayerAuthority())
 		StaminaUI =  GetNode<StaminaUIComponent>("UIElements/Stamina"); //link wit player's death signla
-		StaminaUI.Bind(player.GetComponent<StaminaComponent>());
+		//StaminaUI.Bind(player.GetComponent<StaminaComponent>());
 
 		var station = GetNode<CookStation>("CookStation");
 

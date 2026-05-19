@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://bb3oahwy7pgdk"]
+[gd_scene load_steps=20 format=3 uid="uid://bb3oahwy7pgdk"]
 
 [ext_resource type="Script" uid="uid://cxrs34gthg6qq" path="res://Scripts/World/Arena.cs" id="1_csujq"]
 [ext_resource type="PackedScene" uid="uid://blw3xgniwfe0f" path="res://Scenes/Player/Player.tscn" id="1_lh3uc"]
@@ -9,6 +9,7 @@
 [ext_resource type="Script" uid="uid://djefjxdnjr880" path="res://Scripts/World/KillZone.cs" id="5_wcn2d"]
 [ext_resource type="PackedScene" uid="uid://cufniptvrwvfn" path="res://Scenes/CookStation.tscn" id="6_ner4r"]
 [ext_resource type="Script" uid="uid://8ksnooelg2yg" path="res://Scripts/Game/EnemyWavesController.cs" id="7_csujq"]
+[ext_resource type="Script" uid="uid://dv2xgdevxwj75" path="res://Scripts/Networking/PlayerSpawner.cs" id="10_ramf0"]
 
 [sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_ek0gv"]
 
@@ -42,7 +43,6 @@ size = Vector3(500, 1, 500)
 [node name="Arena" type="Node3D"]
 transform = Transform3D(0.99952984, 0.03066063, 0, -0.03066063, 0.99952984, 0, 0, 0, 1, 0, 0, 0)
 script = ExtResource("1_csujq")
-PlayerScene = ExtResource("1_lh3uc")
 EnemyScene = ExtResource("3_ek0gv")
 ThrowableScene = ExtResource("4_bga1v")
 
@@ -132,5 +132,14 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 6, 0)
 
 [node name="MelleEnemy3" parent="." instance=ExtResource("3_ek0gv")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40, 12, 0)
+
+[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="." node_paths=PackedStringArray("PlayersContainer")]
+spawn_path = NodePath("../Players")
+spawn_limit = 4
+script = ExtResource("10_ramf0")
+PlayerScene = ExtResource("1_lh3uc")
+PlayersContainer = NodePath("../Players")
+
+[node name="Players" type="Node" parent="."]
 
 [connection signal="body_entered" from="KillZone" to="KillZone" method="OnPlayerEntered"]

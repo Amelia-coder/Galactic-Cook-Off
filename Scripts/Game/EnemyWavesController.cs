@@ -7,32 +7,32 @@ using System.Threading.Tasks;
 
 namespace Scripts.Game
 {
-    public partial class EnemyWavesController
-    {
-        //[Export] public PackedScene EnemyScene;
+    //public partial class EnemyWavesController
+    //{
+    //    //[Export] public PackedScene EnemyScene;
 
-        //public async Task RunWave(WaveDefinition wave)
-        //{
-        //    for (int i = 0; i < wave.EnemyCount; i++)
-        //    {
-        //        SpawnEnemy(wave);
+    //    //public async Task RunWave(WaveDefinition wave)
+    //    //{
+    //    //    for (int i = 0; i < wave.EnemyCount; i++)
+    //    //    {
+    //    //        SpawnEnemy(wave);
 
-        //        await ToSignal(
-        //            GetTree().CreateTimer(wave.SpawnInterval),
-        //            "timeout");
-        //    }
-        //}
+    //    //        await ToSignal(
+    //    //            GetTree().CreateTimer(wave.SpawnInterval),
+    //    //            "timeout");
+    //    //    }
+    //    //}
 
-        //private void SpawnEnemy(WaveDefinition wave)
-        //{
-        //    var enemy = EnemyScene.Instantiate<Node3D>();
+    //    //private void SpawnEnemy(WaveDefinition wave)
+    //    //{
+    //    //    var enemy = EnemyScene.Instantiate<Node3D>();
 
-        //    AddChild(enemy);
+    //    //    AddChild(enemy);
 
-        //    enemy.GlobalPosition = GetRandomSpawnPoint();
+    //    //    enemy.GlobalPosition = GetRandomSpawnPoint();
 
-        //    // later:
-        //    // enemy.Health *= wave.HealthMultiplier;
-        //}
-    }
+    //    //    // later:
+    //    //    // enemy.Health *= wave.HealthMultiplier;
+    //    //}
+    //}
 }
