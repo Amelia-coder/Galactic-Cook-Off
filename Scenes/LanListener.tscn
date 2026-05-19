@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://bydpw8qe6028i"]
+
+[ext_resource type="Script" path="res://Scripts/Networking/LANComponents/LanListener.cs" id="1_cwflp"]
+
+[node name="LanListener" type="Node"]
+script = ExtResource("1_cwflp")
+
+[node name="Node3D" type="Node3D" parent="."]

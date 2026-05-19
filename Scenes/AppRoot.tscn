@@ -1,0 +1,38 @@
+[gd_scene load_steps=9 format=3 uid="uid://c3rvurw7l8nmy"]
+
+[ext_resource type="Script" path="res://Scripts/App/AppRoot.cs" id="1_im132"]
+[ext_resource type="PackedScene" uid="uid://bb3oahwy7pgdk" path="res://Scenes/Arena/Arena.tscn" id="2_22rva"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/Menu.tscn" id="2_q3c7a"]
+[ext_resource type="Script" path="res://Scripts/SceneManager.cs" id="4_mts0o"]
+[ext_resource type="Script" path="res://Scripts/Networking/NetworkManager.cs" id="5_y7k8n"]
+[ext_resource type="Script" path="res://Scripts/Networking/LanDiscovery.cs" id="6_nhixq"]
+[ext_resource type="Script" path="res://Scripts/Networking/LANComponents/LanBroadcaster.cs" id="7_agabq"]
+[ext_resource type="Script" path="res://Scripts/Networking/LANComponents/LanListener.cs" id="8_0k6t6"]
+
+[node name="AppRoot" type="Node" node_paths=PackedStringArray("SceneManager", "NetworkManager", "LanDiscovery")]
+script = ExtResource("1_im132")
+MenuScene = ExtResource("2_q3c7a")
+ArenaScene = ExtResource("2_22rva")
+SceneManager = NodePath("SceneManager")
+NetworkManager = NodePath("NetworkManager")
+LanDiscovery = NodePath("LanDiscovery")
+
+[node name="SceneManager" type="Node" parent="." node_paths=PackedStringArray("SceneContainer")]
+script = ExtResource("4_mts0o")
+SceneContainer = NodePath("../Node")
+
+[node name="NetworkManager" type="Node" parent="."]
+script = ExtResource("5_y7k8n")
+
+[node name="LanDiscovery" type="Node" parent="." node_paths=PackedStringArray("Listener", "Broadcaster")]
+script = ExtResource("6_nhixq")
+Listener = NodePath("LanListener")
+Broadcaster = NodePath("LanBroadcaster")
+
+[node name="LanBroadcaster" type="Node" parent="LanDiscovery"]
+script = ExtResource("7_agabq")
+
+[node name="LanListener" type="Node" parent="LanDiscovery"]
+script = ExtResource("8_0k6t6")
+
+[node name="Node" type="Node" parent="."]
