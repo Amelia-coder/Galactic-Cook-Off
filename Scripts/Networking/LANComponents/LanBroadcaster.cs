@@ -5,11 +5,11 @@ namespace Scripts.Networking.LANComponents
 {
     public partial class LanBroadcaster : Node
     {
-        [Export] public int BroadcastPort = 9999;
+        [Export] public int BroadcastPort = 65000;
 
         [Export] public string ServerName = "Cooking Server";
 
-        [Export] public int GamePort = 9999;
+        [Export] public int GamePort = 65000;
 
         private PacketPeerUdp _udp;
 
@@ -59,7 +59,7 @@ namespace Scripts.Networking.LANComponents
         private void Broadcast()
         {
             // Example:
-            // GAME_SERVER|KitchenWar|9999
+            // GAME_SERVER|KitchenWar|65000
 
             string message =
                 $"GAME_SERVER|{ServerName}|{GamePort}";

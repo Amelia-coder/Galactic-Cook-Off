@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://cufkx747uo4jp"]
+
+[node name="Row" type="Control"]
+layout_mode = 3
+anchor_right = 1.0
+anchor_bottom = 0.38700002
+offset_bottom = 0.22398376
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Columns" type="Node" parent="."]
+
+[node name="ServerIP" type="Label" parent="Columns"]
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="PlayerCount" type="Label" parent="Columns"]
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="Label3" type="Label" parent="Columns"]
+offset_right = 40.0
+offset_bottom = 23.0

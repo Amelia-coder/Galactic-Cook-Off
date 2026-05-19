@@ -7,7 +7,7 @@ namespace Scripts.Networking.LANComponents
 {
     public partial class LanListener : Node
     {
-        [Export] public int ListenPort = 9999;
+        [Export] public int ListenPort = 65000;
 
         private PacketPeerUdp _udp;
 
@@ -57,7 +57,7 @@ namespace Scripts.Networking.LANComponents
         private void ParsePacket(string message, string ip)
         {
             // Example:
-            // GAME_SERVER|KitchenWar|9999
+            // GAME_SERVER|KitchenWar|65000
 
             var split = message.Split('|');
 

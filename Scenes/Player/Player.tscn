@@ -103,20 +103,6 @@ collision_mask = 9
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.051757813, 0.20355225, -0.4029785)
 shape = SubResource("BoxShape3D_epg6k")
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
-
-[node name="ChargeBar" type="ProgressBar" parent="CanvasLayer"]
-anchors_preset = -1
-anchor_left = 0.51600003
-anchor_top = 0.42100003
-anchor_right = 0.51600003
-anchor_bottom = 0.42100003
-offset_left = -334.432
-offset_top = -15.808014
-offset_right = 334.568
-offset_bottom = 16.191986
-max_value = 1.0
-
 [node name="AbilitySystem" type="Node" parent="."]
 script = ExtResource("11_epg6k")
 
@@ -131,3 +117,17 @@ script = ExtResource("18_w71ue")
 
 [node name="JumpAbility" type="Node" parent="AbilitySystem" groups=["Player"]]
 script = ExtResource("19_1e6p3")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="ChargeBar" type="ProgressBar" parent="CanvasLayer"]
+anchors_preset = -1
+anchor_left = 0.51600003
+anchor_top = 0.42100003
+anchor_right = 0.51600003
+anchor_bottom = 0.42100003
+offset_left = -334.432
+offset_top = -15.808014
+offset_right = 334.568
+offset_bottom = 16.191986
+max_value = 1.0

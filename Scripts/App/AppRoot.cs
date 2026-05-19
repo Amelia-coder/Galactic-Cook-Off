@@ -22,8 +22,6 @@ namespace Scripts.App
 			SceneManager.LoadFailed += OnSceneLoadFailed;
 
 			SceneManager.LoadSceneAsync(MenuScene);
-
-
 		}
 
 		private void OnSceneLoaded(Node scene)
@@ -60,12 +58,15 @@ namespace Scripts.App
 		{
 			GD.Print("Starting host");
 
-			NetworkManager.Host();
 
 			LanDiscovery.StartHostBroadcast(
 				"Cooking Chaos",
-				9999
+				65000
 			);
+
+			NetworkManager.Host();
+
+			
 
 			//load lobby instead
 			//SceneManager.LoadSceneAsync(ArenaScene);
@@ -75,7 +76,7 @@ namespace Scripts.App
 		{
 			GD.Print($"Joining {ip}");
 
-			NetworkManager.Join(ip, 9999);
+			NetworkManager.Join(ip, 65000);
 
 			
 			//SceneManager.LoadSceneAsync(ArenaScene);

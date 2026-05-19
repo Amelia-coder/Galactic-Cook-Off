@@ -23,10 +23,11 @@ namespace Scripts.UI
 
 		private void OnJoinButtonPressed()
 		{
+			GD.Print("join was pressed");
 			var ip = _ipInput?.Text;
 
 			if (string.IsNullOrWhiteSpace(ip))
-				ip = "127.0.0.1";
+				ip = "127.0.0.1"; ///set other for ability to connect form other machines
 
 			GD.Print($"[Menu] Join requested: {ip}");
 			JoinRequested?.Invoke(ip);
