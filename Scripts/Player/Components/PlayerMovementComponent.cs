@@ -37,8 +37,8 @@ namespace Scripts.Player.Components
 
 			if (!_stamina.TryConsume(staminaCost))
 			{
-                GD.Print("QWWWWWWWWWWWW");
-                return false;
+				GD.Print("QWWWWWWWWWWWW");
+				return false;
 			}
 
 			SetHorizontalVelocity(direction * speed);

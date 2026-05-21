@@ -1,84 +1,115 @@
 using Godot;
+using System;
+
 using Scripts.Game;
 using Scripts.Game.RecipeSystem.Recipes;
 using Scripts.Player.Components;
-using System;
 using Scripts.Networking;
+using Scripts.Player;
 
 public partial class Arena : Node3D
 {
-	[Export] public PackedScene EnemyScene;
-	[Export] public PackedScene ThrowableScene;
-	//[Export] public PackedScene BossScene;
-	//Note: spawn postiton of player is temporary and will be removed in multuplayer - or left for convinience
-	//of testingд. Consider making is exportable
-	private Vector3 SpawnPoint = new Vector3(0, 3.657f, 0);  
+
+	[Export] public PackedScene PlayerScene;
+	[Export] public Node PlayersContainer; // the "Players" node
+	
 	[Export] public StaminaUIComponent StaminaUI;
-	
-	private MultiplayerSpawner _playerManager;
-	
-	private int _currentStage = 0;
+
 	private int _dishesCooked = 0;
 
-	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		
-		//var player = PlayerScene.Instantiate<Player>();
-		//AddChild(player);
-		//player.GlobalPosition = SpawnPoint;
-		////((IEntity)player).GetComponent<GenericHealthComponent>().Died += () => StaminaUI.Hide(); //dity; place this in player later
-		//if (player.IsMultiplayerAuthority())
-		StaminaUI =  GetNode<StaminaUIComponent>("UIElements/Stamina"); //link wit player's death signla
-		//StaminaUI.Bind(player.GetComponent<StaminaComponent>());
+		if (!Multiplayer.IsServer())
+			return;
+
+		Multiplayer.PeerConnected += AddPlayer;
+		Multiplayer.PeerDisconnected += DelPlayer;
+
+		// Spawn already connected peers
+		foreach (int id in Multiplayer.GetPeers())
+			AddPlayer(id);
+
+		// Spawn the host's own player
+		AddPlayer(Multiplayer.GetUniqueId());
+
+		StaminaUI = GetNode<StaminaUIComponent>("UIElements/Stamina");
+
+		// CLIENTS do nothing gameplay-related here
+		if (!Multiplayer.IsServer())
+			return;
 
 		var station = GetNode<CookStation>("CookStation");
-
 		station.DishCooked += OnDishCooked;
 
-		//TODO: spawn enemies on sthe start OR on timer timeout. TImer can be seen in tutorial project!
-	}
-
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta)
-	{
+		GD.Print("[Arena] Server game logic initialized");
 	}
 
 	private void OnDishCooked(Recipe recipe)
 	{
+		if (!Multiplayer.IsServer())
+			return;
+
 		_dishesCooked++;
 
-		GD.Print(
-			$"Dish cooked: {recipe.Id} " +
-			$"({_dishesCooked} total)");
+		GD.Print($"Dish cooked: {recipe.Id} ({_dishesCooked})");
 
+		HandleGameFlow();
+	}
+
+	private void HandleGameFlow()
+	{
 		switch (_dishesCooked)
 		{
 			case 1:
-				{
-					GD.Print("Wave 1 is starting!");
-
-
-				//StartWave1();
-				}
+				GD.Print("Wave 1 starting");
 				break;
-				
+
 			case 3:
-				//StartWave2();
+				GD.Print("Wave 2 starting");
 				break;
 
 			case 5:
-				{
-					SummonBoss();
-				//StartBossPhase();
-				}
+				SummonBoss();
 				break;
 		}
 	}
+
 	private void SummonBoss()
 	{
-		///var boss = BossScene.Instantiate<EvilRamsy>();
-		///AddChild(boss);
-		///boss.GlobalPostion = <some vector 3d>
-	} 
+		GD.Print("Boss spawn trigger");
+		// actual spawn handled by EnemySpawner system later
+	}
+
+
+	public override void _ExitTree()
+	{
+		if (!Multiplayer.IsServer())
+			return;
+
+		Multiplayer.PeerConnected -= AddPlayer;
+		Multiplayer.PeerDisconnected -= DelPlayer;
+	}
+
+	private void AddPlayer(long id)
+	{
+		GD.Print($"[Arena] PlayerScene null? {PlayerScene == null}");
+		GD.Print($"[Arena] PlayersContainer null? {PlayersContainer == null}");
+
+		var player = PlayerScene.Instantiate<Player>();
+		player.Name = id.ToString();
+
+		// Set the player ID BEFORE adding to tree.
+		// This export is synced as a "Spawn" property by the
+		// MultiplayerSynchronizer, so clients get it on spawn.
+		player.PlayerId = (int)id;
+
+		PlayersContainer.AddChild(player, true);
+		GD.Print($"[Arena] Spawned player {id}");
+	}
+
+	private void DelPlayer(long id)
+	{
+		var node = PlayersContainer.GetNodeOrNull(id.ToString());
+		node?.QueueFree();
+	}
 }

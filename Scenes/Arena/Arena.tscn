@@ -1,15 +1,12 @@
-[gd_scene load_steps=20 format=3 uid="uid://bb3oahwy7pgdk"]
+[gd_scene load_steps=17 format=3 uid="uid://bb3oahwy7pgdk"]
 
-[ext_resource type="Script" uid="uid://cxrs34gthg6qq" path="res://Scripts/World/Arena.cs" id="1_csujq"]
+[ext_resource type="Script" uid="uid://mn38m5x8mqwm" path="res://Scripts/World/Arena.cs" id="1_csujq"]
 [ext_resource type="PackedScene" uid="uid://blw3xgniwfe0f" path="res://Scenes/Player/Player.tscn" id="1_lh3uc"]
 [ext_resource type="PackedScene" uid="uid://bpu84pqtndpww" path="res://Scenes/Dough/Dough.tscn" id="2_mugxw"]
 [ext_resource type="PackedScene" uid="uid://wju1adqciolp" path="res://Scenes/Enemies/MelleEnemy.tscn" id="3_ek0gv"]
-[ext_resource type="PackedScene" uid="uid://bi6vhy73cuqrr" path="res://Scenes/Ingredients/Сheese.tscn" id="4_bga1v"]
 [ext_resource type="Script" uid="uid://cq6emehb6aq6a" path="res://Scripts/Game/StaminaUIComponent.cs" id="4_fl7xt"]
 [ext_resource type="Script" uid="uid://djefjxdnjr880" path="res://Scripts/World/KillZone.cs" id="5_wcn2d"]
 [ext_resource type="PackedScene" uid="uid://cufniptvrwvfn" path="res://Scenes/CookStation.tscn" id="6_ner4r"]
-[ext_resource type="Script" uid="uid://8ksnooelg2yg" path="res://Scripts/Game/EnemyWavesController.cs" id="7_csujq"]
-[ext_resource type="Script" uid="uid://dv2xgdevxwj75" path="res://Scripts/Networking/PlayerSpawner.cs" id="10_ramf0"]
 
 [sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_ek0gv"]
 
@@ -40,18 +37,18 @@ size = Vector3(500, 1, 500)
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_ek0gv"]
 
-[node name="Arena" type="Node3D"]
+[node name="Arena" type="Node3D" node_paths=PackedStringArray("PlayersContainer", "StaminaUI")]
 transform = Transform3D(0.99952984, 0.03066063, 0, -0.03066063, 0.99952984, 0, 0, 0, 1, 0, 0, 0)
 script = ExtResource("1_csujq")
-EnemyScene = ExtResource("3_ek0gv")
-ThrowableScene = ExtResource("4_bga1v")
+PlayerScene = ExtResource("1_lh3uc")
+PlayersContainer = NodePath("Players")
+StaminaUI = NodePath("UIElements/Stamina")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_csujq")
 compositor = SubResource("Compositor_wcn2d")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.85924, 0)
 physics_material_override = SubResource("PhysicsMaterial_lh3uc")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
@@ -125,7 +122,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 3, 0)
 transform = Transform3D(0.99952984, -0.03066063, 0, 0.03066063, 0.99952984, 0, 0, 0, 1, 10.934, 2, 9)
 
 [node name="WaveController" type="Node" parent="."]
-script = ExtResource("7_csujq")
 
 [node name="MelleEnemy2" parent="." instance=ExtResource("3_ek0gv")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 6, 0)
@@ -133,12 +129,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 6, 0)
 [node name="MelleEnemy3" parent="." instance=ExtResource("3_ek0gv")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40, 12, 0)
 
-[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="." node_paths=PackedStringArray("PlayersContainer")]
+[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
+_spawnable_scenes = PackedStringArray("uid://blw3xgniwfe0f")
 spawn_path = NodePath("../Players")
-spawn_limit = 4
-script = ExtResource("10_ramf0")
-PlayerScene = ExtResource("1_lh3uc")
-PlayersContainer = NodePath("../Players")
+spawn_limit = 1
 
 [node name="Players" type="Node" parent="."]
 

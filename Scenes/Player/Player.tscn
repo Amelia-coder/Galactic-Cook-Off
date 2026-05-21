@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://blw3xgniwfe0f"]
+[gd_scene load_steps=26 format=3 uid="uid://blw3xgniwfe0f"]
 
 [ext_resource type="Script" uid="uid://dnvesphlqsyh3" path="res://Scripts/Player/Player.cs" id="1_s0eop"]
 [ext_resource type="Script" uid="uid://c30rv0lcu05f3" path="res://Scripts/Player/States/MovementStateMachine.cs" id="2_ft8w5"]
@@ -29,6 +29,19 @@ height = 2.1000977
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_epg6k"]
 size = Vector3(3.769043, 2, 0.38984376)
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_1e6p3"]
+properties/0/path = NodePath("MovementStateMachine/JumpState:AirControl")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_yb677"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+properties/1/path = NodePath(".:rotation")
+properties/1/spawn = true
+properties/1/replication_mode = 1
 
 [node name="Player" type="CharacterBody3D" groups=["Player"]]
 collision_mask = 7
@@ -131,3 +144,9 @@ offset_top = -15.808014
 offset_right = 334.568
 offset_bottom = 16.191986
 max_value = 1.0
+
+[node name="PlayerInput" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_1e6p3")
+
+[node name="ServerSync" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_yb677")

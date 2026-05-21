@@ -19,83 +19,58 @@ namespace Scripts
 		public event Action<string> LoadFailed;
 
 		public void LoadSceneAsync(PackedScene scene)
-		{
-			GD.Print("Area loading");
-			LoadSceneAsync(scene.ResourcePath);
-		}
+			=> LoadSceneAsync(scene.ResourcePath);
 
 		public void LoadSceneAsync(string path)
 		{
-			GD.Print("Area is loading");
 			if (_loading)
 			{
-				GD.PrintErr("Scene already loading");
+				GD.PrintErr("[SceneManager] Already loading, ignoring request");
 				return;
 			}
 
+			GD.Print($"[SceneManager] Loading: {path}");
 			_loading = true;
 			_path = path;
-
 			ResourceLoader.LoadThreadedRequest(path);
 		}
 
 		public override void _Process(double delta)
 		{
-			if (!_loading)
+			if (!_loading) return;
+
+			var progressArray = new Godot.Collections.Array();
+			var status = ResourceLoader.LoadThreadedGetStatus(_path, progressArray);
+			float progress = progressArray.Count > 0 ? (float)progressArray[0] : 0f;
+			ProgressChanged?.Invoke(progress);
+
+			if (status == ResourceLoader.ThreadLoadStatus.InProgress)
 				return;
 
-			var status =
-				ResourceLoader.LoadThreadedGetStatus(_path);
+			_loading = false;
 
-			ProgressChanged?.Invoke(
-				GetProgress(status));
-
-			if (status ==
-				ResourceLoader.ThreadLoadStatus.InProgress)
-			{
-				return;
-			}
-
-			if (status ==
-				ResourceLoader.ThreadLoadStatus.Loaded)
+			if (status == ResourceLoader.ThreadLoadStatus.Loaded)
 			{
 				var resource = ResourceLoader.LoadThreadedGet(_path);
-
 				if (resource is PackedScene scene)
 				{
 					var instance = scene.Instantiate();
-
-					SwitchScene(instance);
-
-					_loading = false;
-
-					SceneLoaded?.Invoke(instance);
+					SwitchScene(instance, () => SceneLoaded?.Invoke(instance));
 				}
 			}
-			else if (status ==
-				ResourceLoader.ThreadLoadStatus.Failed)
+			else if (status == ResourceLoader.ThreadLoadStatus.Failed)
 			{
-				_loading = false;
-
 				LoadFailed?.Invoke(_path);
 			}
 		}
 
-		private void SwitchScene(Node instance)
+		private void SwitchScene(Node instance, Action onAdded)
 		{
 			foreach (Node child in SceneContainer.GetChildren())
 				child.QueueFree();
 
-			SceneContainer.AddChild(instance);
-		}
-
-		private float GetProgress(
-			ResourceLoader.ThreadLoadStatus status)
-		{
-			return status ==
-				ResourceLoader.ThreadLoadStatus.InProgress
-				? 0.5f
-				: 1f;
+			SceneContainer.CallDeferred(Node.MethodName.AddChild, instance);
+			Callable.From(onAdded).CallDeferred();
 		}
 	}
 }

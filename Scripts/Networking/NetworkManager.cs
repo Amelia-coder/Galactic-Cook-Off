@@ -11,86 +11,55 @@ namespace Scripts.Networking
 {
 	public partial class NetworkManager : Node
 	{
-		public event Action Connected;
-		public event Action ConnectionFailed;
-		private ENetMultiplayerPeer _peer;
-		private bool _bound;
+		[Export] public int MaxPlayers = 8;
 
+		public event Action Connected;
+		public event Action Disconnected;
+		public event Action ConnectionFailed;
+		public event Action<long> PlayerJoined;
+		public event Action<long> PlayerLeft;
+
+		private ENetMultiplayerPeer _peer;
+
+		public bool IsServer => Multiplayer.IsServer();
+		public long MyId => Multiplayer.GetUniqueId();
 
 		public override void _Ready()
 		{
-			if (_bound)
-				return;
-
-			_bound = true;
-			Multiplayer.PeerConnected += OnPeerConnected;
-			Multiplayer.PeerDisconnected += OnPeerDisconnected;
-
-			Multiplayer.ConnectedToServer += OnConnectedToServer;
-			Multiplayer.ConnectionFailed += OnConnectionFailed;
-			Multiplayer.ServerDisconnected += OnServerDisconnected;
+			Multiplayer.PeerConnected += id => PlayerJoined?.Invoke(id);
+			Multiplayer.PeerDisconnected += id => PlayerLeft?.Invoke(id);
+			Multiplayer.ConnectedToServer += () => Connected?.Invoke();
+			Multiplayer.ConnectionFailed += () => ConnectionFailed?.Invoke();
+			Multiplayer.ServerDisconnected += () => Disconnected?.Invoke();
 		}
 
-		public void Host()
+		public Error Host(int port)
 		{
-			Multiplayer.MultiplayerPeer = null;
-			GD.Print("[NET] Host() called");
+			Disconnect();
 			_peer = new ENetMultiplayerPeer();
 			_peer.SetBindIP("0.0.0.0");
-
-			var err = _peer.CreateServer(65000, 5);
-
-			if (err != Error.Ok)
-			{
-				GD.PrintErr(
-					$"[NET] Failed to create host: {err}");
-
-				return;
-			}
-			else
-			{
-				GD.Print("!!!!!!!!!!!!");
-			}
-
-			Multiplayer.MultiplayerPeer = _peer;
+			var err = _peer.CreateServer(port, MaxPlayers);
+			if (err == Error.Ok)
+				Multiplayer.MultiplayerPeer = _peer;
+			return err;
 		}
 
-		public void Join(string ip, int port)
+		public Error Join(string ip, int port)
 		{
-			Multiplayer.MultiplayerPeer = null;
+			Disconnect();
 			_peer = new ENetMultiplayerPeer();
-			_peer.CreateClient(ip, port);
-
-			Multiplayer.MultiplayerPeer = _peer;
-		
+			var err = _peer.CreateClient(ip, port);
+			if (err == Error.Ok)
+				Multiplayer.MultiplayerPeer = _peer;
+			GD.Print("We joined!");
+			return err;
 		}
 
-		private void OnPeerConnected(long id)
+		public void Disconnect()
 		{
-			GD.Print($"[NET] Peer connected: {id}, MyID: {Multiplayer.GetUniqueId()}");
-		}
-
-		private void OnPeerDisconnected(long id)
-		{
-			GD.Print($"[NET] Peer disconnected: {id}");
-		}
-
-		private void OnConnectedToServer()
-		{
-			GD.Print("[NET] Connected to server");
-
-			Connected?.Invoke();
-
-		}
-
-		private void OnConnectionFailed()
-		{
-			GD.PrintErr("[NET] Connection failed");
-		}
-
-		private void OnServerDisconnected()
-		{
-			GD.PrintErr("[NET] Disconnected from server");
+			_peer?.Close();
+			_peer = null;
+			Multiplayer.MultiplayerPeer = null;
 		}
 	}
 }

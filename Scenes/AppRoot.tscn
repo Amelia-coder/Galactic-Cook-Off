@@ -1,28 +1,35 @@
 [gd_scene load_steps=9 format=3 uid="uid://d2b57u68cry4o"]
 
-[ext_resource type="Script" uid="uid://5u2l7a1g8lm8" path="res://Scripts/App/AppRoot.cs" id="1_im132"]
+[ext_resource type="Script" uid="uid://cm0fo5dyuavss" path="res://Scripts/App/AppRoot.cs" id="1_im132"]
 [ext_resource type="PackedScene" uid="uid://bb3oahwy7pgdk" path="res://Scenes/Arena/Arena.tscn" id="2_22rva"]
 [ext_resource type="PackedScene" uid="uid://bg5vc3y4aawue" path="res://Scenes/UI/Menu.tscn" id="2_q3c7a"]
-[ext_resource type="Script" uid="uid://deir22x5r2ky4" path="res://Scripts/SceneManager.cs" id="4_mts0o"]
-[ext_resource type="Script" uid="uid://dedwf48lmij3h" path="res://Scripts/Networking/NetworkManager.cs" id="5_y7k8n"]
-[ext_resource type="Script" uid="uid://cwskroe8wubj2" path="res://Scripts/Networking/LanDiscovery.cs" id="6_nhixq"]
-[ext_resource type="Script" uid="uid://cwmfbd0kigvoe" path="res://Scripts/Networking/LANComponents/LanBroadcaster.cs" id="7_agabq"]
-[ext_resource type="Script" uid="uid://cuadjb402x3xy" path="res://Scripts/Networking/LANComponents/LanListener.cs" id="8_0k6t6"]
+[ext_resource type="Script" uid="uid://cx351ibnkjyv7" path="res://Scripts/SceneManager.cs" id="4_mts0o"]
+[ext_resource type="Script" uid="uid://batmshha4eauj" path="res://Scripts/Networking/NetworkManager.cs" id="5_y7k8n"]
+[ext_resource type="Script" uid="uid://v2a738rgleu6" path="res://Scripts/Networking/LanDiscovery.cs" id="6_nhixq"]
+[ext_resource type="Script" uid="uid://btxvrytbqxst6" path="res://Scripts/Networking/LANComponents/LanBroadcaster.cs" id="7_agabq"]
+[ext_resource type="Script" uid="uid://due0ygle1x0wa" path="res://Scripts/Networking/LANComponents/LanListener.cs" id="8_0k6t6"]
 
-[node name="AppRoot" type="Node" node_paths=PackedStringArray("SceneManager", "NetworkManager", "LanDiscovery")]
+[node name="AppRoot" type="Node" node_paths=PackedStringArray("MenuScene", "NetworkManager", "LanDiscovery", "LevelContainer")]
 script = ExtResource("1_im132")
-MenuScene = ExtResource("2_q3c7a")
+MenuScene = NodePath("Menu")
 ArenaScene = ExtResource("2_22rva")
-SceneManager = NodePath("SceneManager")
 NetworkManager = NodePath("NetworkManager")
 LanDiscovery = NodePath("LanDiscovery")
+LevelContainer = NodePath("Level")
+
+[node name="Menu" parent="." instance=ExtResource("2_q3c7a")]
+
+[node name="LevelSpawner" type="MultiplayerSpawner" parent="."]
+_spawnable_scenes = PackedStringArray("uid://bb3oahwy7pgdk")
+spawn_path = NodePath("../Level")
 
 [node name="SceneManager" type="Node" parent="." node_paths=PackedStringArray("SceneContainer")]
 script = ExtResource("4_mts0o")
-SceneContainer = NodePath("../Node")
+SceneContainer = NodePath("../SceneContainer")
 
 [node name="NetworkManager" type="Node" parent="."]
 script = ExtResource("5_y7k8n")
+MaxPlayers = 4
 
 [node name="LanDiscovery" type="Node" parent="." node_paths=PackedStringArray("Listener", "Broadcaster")]
 script = ExtResource("6_nhixq")
@@ -35,4 +42,6 @@ script = ExtResource("7_agabq")
 [node name="LanListener" type="Node" parent="LanDiscovery"]
 script = ExtResource("8_0k6t6")
 
-[node name="Node" type="Node" parent="."]
+[node name="SceneContainer" type="Node" parent="."]
+
+[node name="Level" type="Node" parent="."]

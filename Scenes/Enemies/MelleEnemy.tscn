@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://wju1adqciolp"]
+[gd_scene load_steps=20 format=3 uid="uid://wju1adqciolp"]
 
 [ext_resource type="Script" uid="uid://c76uww3y1cyuf" path="res://Scripts/Enemy/MelleEnemy.cs" id="1_ytxpm"]
 [ext_resource type="Script" uid="uid://vyqbph3u4h28" path="res://Scripts/Enemy/States/EnemyStateMachine.cs" id="2_26bol"]
@@ -27,6 +27,17 @@ radius = 25.770876
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_l17vo"]
 radius = 1.1127774
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_p5ss0"]
+properties/0/path = NodePath(".:rotation")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+properties/1/path = NodePath(".:position")
+properties/1/spawn = true
+properties/1/replication_mode = 1
+properties/2/path = NodePath("ComponentRegistry/HealthComponent:MaxHealth")
+properties/2/spawn = true
+properties/2/replication_mode = 1
 
 [node name="MelleEnemy" type="CharacterBody3D" groups=["Enemy"]]
 collision_layer = 2
@@ -90,3 +101,6 @@ collision_layer = 2
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="HurtArea"]
 shape = SubResource("SphereShape3D_l17vo")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_p5ss0")

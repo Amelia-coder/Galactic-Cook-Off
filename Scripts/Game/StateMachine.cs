@@ -1,21 +1,19 @@
 using Godot;
-using Scripts.Player.States;
 
-/// <summary>
-/// Обобщенная стейт-машина. В нашей реализации, если у нас появлятся машина состояний, 
-/// то она будет менеджерить какой-то отдельную систему
-/// </summary>
-/// <typeparam name="T"> Тип компонента который мы хотим менеджерить</typeparam>
-/// 
 namespace Scripts.Game
 {
 	public partial class StateMachine<T> : Node
 	{
 		public State<T> InitialState { get; set; }
-
 		public State<T> CurrentState;
 
 		public override void _Ready()
+		{
+			SetProcess(false);
+			SetPhysicsProcess(false);
+		}
+
+		public void ManualInitialize()
 		{
 			if (GetParent() is not T entity)
 				throw new System.Exception($"StateMachine must be a child of {typeof(T).Name}");
@@ -30,40 +28,22 @@ namespace Scripts.Game
 			}
 
 			CurrentState = InitialState ?? GetChild(0) as State<T>;
-			GD.Print(CurrentState);
 			CurrentState.Enter();
-			GD.Print("Child is:", GetChild(0).GetType());
-			GD.Print("Script is: ", GetChild(0).GetScript());
+			SetProcess(true);
+			SetPhysicsProcess(true);
+			GD.Print($"[SM] Started with {CurrentState}");
 		}
 
 		private void OnStateFinished(string nextStatePath)
 		{
-			var nextState = GetNodeOrNull<State<T>>(nextStatePath);
-			//GD.Print($"State finished:", CurrentState.GetType());
-			if (nextState == null)
-			{
-				GD.PrintErr($"State not found: {nextStatePath}");
-				GD.Print("Current node:", GetPath());
-				GD.Print("Looking for:", nextStatePath);
-				return;
-			}
-
-			if (!nextState.CanEnter())
-				return;
-
+			var next = GetNodeOrNull<State<T>>(nextStatePath);
+			if (next == null || !next.CanEnter()) return;
 			CurrentState?.Exit();
-			CurrentState = nextState;
+			CurrentState = next;
 			CurrentState.Enter();
 		}
 
-		public override void _Process(double delta)
-		{
-			CurrentState?.Update(delta);
-		}
-
-		public override void _PhysicsProcess(double delta)
-		{
-			CurrentState?.PhysicsUpdate(delta);
-		}
+		public override void _Process(double delta) => CurrentState?.Update(delta);
+		public override void _PhysicsProcess(double delta) => CurrentState?.PhysicsUpdate(delta);
 	}
 }
