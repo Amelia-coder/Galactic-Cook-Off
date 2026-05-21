@@ -111,7 +111,15 @@ public partial class Arena : Node3D
 	private void DelPlayer(long id)
 	{
 		var node = PlayersContainer.GetNodeOrNull(id.ToString());
-		node?.QueueFree();
+        if (node == null) return;
+
+        // Disable syncs before removal to avoid "node not found" errors
+        var input = node.GetNodeOrNull<MultiplayerSynchronizer>("PlayerInput");
+        if (input != null) input.PublicVisibility = false;
+
+        var sync = node.GetNodeOrNull<MultiplayerSynchronizer>("ServerSync");
+        if (sync != null) sync.PublicVisibility = false;
+        node?.QueueFree();
 	}
 
 

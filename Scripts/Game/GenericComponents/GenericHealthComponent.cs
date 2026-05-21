@@ -43,7 +43,5 @@ namespace Scripts.Game
 		{
 			Rpc(MethodName.TakeDamageRpc, damage);
 		}
-
-		
 	}
 }

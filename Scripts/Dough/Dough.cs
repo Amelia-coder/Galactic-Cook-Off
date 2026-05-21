@@ -1,11 +1,9 @@
 using Godot;
-using Scripts.Game;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
+
+using Scripts.Game;
 using Scripts.Game.RecipeSystem.Ingredients;
-using static System.Formats.Asn1.AsnWriter;
 
 public partial class Dough : RigidBody3D, IThrowable, IIngredient
 {
@@ -51,8 +49,22 @@ public partial class Dough : RigidBody3D, IThrowable, IIngredient
 
 	public override void _PhysicsProcess(double delta)
 	{
-		if (_carrier != null)
-			GlobalPosition = _carrier.GlobalPosition + Vector3.Up * 1.5f;
+		//if (_carrier != null)
+		//	GlobalPosition = _carrier.GlobalPosition + Vector3.Up * 1.5f;
+	}
+
+	public override void _Process(double delta)
+	{
+		if (_carrier == null) return;
+
+		if (!GodotObject.IsInstanceValid(_carrier))
+		{
+			_carrier = null;
+			Freeze = false;
+			return;
+		}
+
+		GlobalPosition = _carrier.GlobalPosition + Vector3.Up * 1.5f;
 	}
 
 	// =========================================================
@@ -89,6 +101,10 @@ public partial class Dough : RigidBody3D, IThrowable, IIngredient
 		LinearVelocity = Vector3.Zero;
 		AngularVelocity = Vector3.Zero;
 		SetPickupZoneActive(false);
+
+		// All peers compute position locally from carrier — no sync needed
+		var sync = GetNodeOrNull<MultiplayerSynchronizer>("MultiplayerSynchronizer");
+		if (sync != null) sync.SetProcess(false);
 	}
 
 	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
@@ -99,6 +115,9 @@ public partial class Dough : RigidBody3D, IThrowable, IIngredient
 		Freeze = false;
 		_hurtbox.CallDeferred(Area3D.MethodName.SetMonitoring, true);
 		ApplyCentralImpulse(impulse);
+
+		var sync = GetNodeOrNull<MultiplayerSynchronizer>("MultiplayerSynchronizer");
+		if (sync != null) sync.SetProcess(true);
 	}
 
 	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
@@ -107,6 +126,9 @@ public partial class Dough : RigidBody3D, IThrowable, IIngredient
 		_carrier = null;
 		_inFlight = false;
 		Freeze = false;
+
+		var sync = GetNodeOrNull<MultiplayerSynchronizer>("MultiplayerSynchronizer");
+		if (sync != null) sync.SetProcess(true);
 	}
 
 
@@ -117,30 +139,36 @@ public partial class Dough : RigidBody3D, IThrowable, IIngredient
 	// =========================================================
 	private void OnImpact(Area3D area)
 	{
+		if (!Multiplayer.IsServer()) return;
+
 		_hurtbox.CallDeferred(Area3D.MethodName.SetMonitoring, false);
 
 		if (!_inFlight)
 			return;
+
+		GD.Print($"[Dough] OnImpact fired, area={area.Name}, parent={area.GetParent()?.Name}");
 
 		Node entity = area;
 		while (entity != null && entity is not IEntity)
 			entity = entity.GetParent();
 
 		if (entity is not IEntity ie)
+		{
+			GD.Print("[Dough] No IEntity found in parents");
 			return;
+		}
 
 		var health = ie.GetComponent<GenericHealthComponent>();
 		if (health == null)
+		{
+			GD.Print("[Dough] No health component found");
 			return;
+		}
 
 		if (entity.IsInGroup("Enemy"))
 		{
 			health.DealDamage(Damage);
 			GD.Print("Hit enemy");
-		}
-		else if (entity.IsInGroup("Player"))
-		{
-			GD.Print("Hit player");
 		}
 	}
 
