@@ -20,7 +20,7 @@ public partial class KillZone : Area3D
 		if (body.IsInGroup("Player"))
 		{
 			GD.Print("Playered entered the box area!");
-			((IEntity)body).GetComponent<GenericHealthComponent>().TryTakeDamage(10000f);
+			((IEntity)body).GetComponent<GenericHealthComponent>().DealDamage(10000f);
 			///applyEffect();
 		}
 	}

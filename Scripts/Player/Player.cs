@@ -213,6 +213,7 @@ namespace Scripts.Player
 
 		private void OnDied()
 		{
+			if (!Multiplayer.IsServer()) return;
 			_chargeBar.Visible = false;
 			//temporary; emit signals taht will increase counter and if it reaches limit, game finishes
 			QueueFree();

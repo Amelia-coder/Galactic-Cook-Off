@@ -37,12 +37,19 @@ size = Vector3(500, 1, 500)
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_ek0gv"]
 
-[node name="Arena" type="Node3D" node_paths=PackedStringArray("PlayersContainer", "StaminaUI")]
+[node name="Arena" type="Node3D" node_paths=PackedStringArray("PlayersContainer", "StaminaUI", "EnemiesContainer")]
 transform = Transform3D(0.99952984, 0.03066063, 0, -0.03066063, 0.99952984, 0, 0, 0, 1, 0, 0, 0)
 script = ExtResource("1_csujq")
 PlayerScene = ExtResource("1_lh3uc")
 PlayersContainer = NodePath("Players")
 StaminaUI = NodePath("UIElements/Stamina")
+MeleeEnemyScene = ExtResource("3_ek0gv")
+EnemiesContainer = NodePath("Enemies")
+
+[node name="EnemySpawner" type="MultiplayerSpawner" parent="."]
+_spawnable_scenes = PackedStringArray("uid://wju1adqciolp")
+spawn_path = NodePath("../Enemies")
+spawn_limit = 121
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_csujq")
@@ -115,19 +122,10 @@ navigation_layers = 65535
 [node name="GridMap" type="GridMap" parent="NavigationRegion3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.009, -1.14076, -0.016)
 
-[node name="MelleEnemy" parent="." instance=ExtResource("3_ek0gv")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 3, 0)
-
 [node name="CookStation" parent="." instance=ExtResource("6_ner4r")]
 transform = Transform3D(0.99952984, -0.03066063, 0, 0.03066063, 0.99952984, 0, 0, 0, 1, 10.934, 2, 9)
 
 [node name="WaveController" type="Node" parent="."]
-
-[node name="MelleEnemy2" parent="." instance=ExtResource("3_ek0gv")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 6, 0)
-
-[node name="MelleEnemy3" parent="." instance=ExtResource("3_ek0gv")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40, 12, 0)
 
 [node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
 _spawnable_scenes = PackedStringArray("uid://blw3xgniwfe0f")
@@ -135,5 +133,7 @@ spawn_path = NodePath("../Players")
 spawn_limit = 1
 
 [node name="Players" type="Node" parent="."]
+
+[node name="Enemies" type="Node" parent="."]
 
 [connection signal="body_entered" from="KillZone" to="KillZone" method="OnPlayerEntered"]

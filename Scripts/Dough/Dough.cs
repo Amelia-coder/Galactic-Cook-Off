@@ -138,7 +138,7 @@ public partial class Dough : RigidBody3D, IThrowable, IIngredient
 		}
 		else if (entity.IsInGroup("Enemy"))
 		{
-			health.TryTakeDamage(Damage);
+			health.DealDamage(Damage);
 			GD.Print("Hit enemy");
 		}
 	}

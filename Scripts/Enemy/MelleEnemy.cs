@@ -65,11 +65,19 @@ public partial class MelleEnemy : CharacterBody3D, IEntity
 		_lootDropComponent= GetNode<LootDropComponent>("ComponentRegistry/LootDropComponent");
 		_lootDropComponent.Initilaize(this);
 		RegisterComponent(_lootDropComponent);
-		var fsm = GetNode<EnemyStateMachine>("StateMachine");
-		fsm.InitialState = GetNode<ChaseState>("StateMachine/ChaseState");
-		GD.Print($"Initial emy state is: {fsm.InitialState}, fsm is null: {fsm == null}");
+		if (!Multiplayer.IsServer())
+		{
+			SetPhysicsProcess(false);
+			// Disable the state machine on clients
+			var fsm = GetNode<EnemyStateMachine>("StateMachine");
+			fsm.SetProcess(false);
+			fsm.SetPhysicsProcess(false);
+			return; // skip FSM init on client
+		}
 
-		fsm.ManualInitialize();
+		var fsm2 = GetNode<EnemyStateMachine>("StateMachine");
+		fsm2.InitialState = GetNode<ChaseState>("StateMachine/ChaseState");
+		fsm2.ManualInitialize();
 
 	}
 
@@ -80,6 +88,7 @@ public partial class MelleEnemy : CharacterBody3D, IEntity
 
 	private void Die()
 	{
+		if (!Multiplayer.IsServer()) return;
 		_lootDropComponent.Drop();
 		// Optional: spawn death effect, drop loot, play animation, etc.
 		QueueFree();

@@ -15,6 +15,9 @@ public partial class Arena : Node3D
 	
 	[Export] public StaminaUIComponent StaminaUI;
 
+	[Export] public PackedScene MeleeEnemyScene;
+	[Export] public Node EnemiesContainer;
+
 	private int _dishesCooked = 0;
 
 	public override void _Ready()
@@ -42,7 +45,10 @@ public partial class Arena : Node3D
 		station.DishCooked += OnDishCooked;
 
 		GD.Print("[Arena] Server game logic initialized");
-	}
+
+        SpawnEnemy(new Vector3(5, 0, 5));
+        SpawnEnemy(new Vector3(-5, 0, 3));
+    }
 
 	private void OnDishCooked(Recipe recipe)
 	{
@@ -112,4 +118,12 @@ public partial class Arena : Node3D
 		var node = PlayersContainer.GetNodeOrNull(id.ToString());
 		node?.QueueFree();
 	}
+
+
+    private void SpawnEnemy(Vector3 position)
+    {
+        var enemy = MeleeEnemyScene.Instantiate<Node3D>();
+        enemy.Position = position;
+        EnemiesContainer.AddChild(enemy, true);
+    }
 }

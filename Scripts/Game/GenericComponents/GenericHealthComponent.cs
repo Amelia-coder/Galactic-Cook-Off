@@ -23,18 +23,27 @@ namespace Scripts.Game
 		{
 		}
 
-		public bool TryTakeDamage(float damage)
+		[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+		private void TakeDamageRpc(float damage)
 		{
+			// Only server processes damage
+			if (!Multiplayer.IsServer()) return;
+
 			CurrentHealth -= damage;
-			GD.Print($"Now current health is: {CurrentHealth} ");
+			GD.Print($"[Health] {GetParent().GetParent().Name} took {damage}, now {CurrentHealth}");
+
 			if (CurrentHealth <= 0)
 			{
 				CurrentHealth = 0;
 				EmitSignal(SignalName.Died);
-				return false;
 			}
-
-			return true;
 		}
+
+		public void DealDamage(float damage)
+		{
+			Rpc(MethodName.TakeDamageRpc, damage);
+		}
+
+		
 	}
 }
