@@ -7,53 +7,48 @@ namespace Scripts.Game.RecipeSystem.Ingredients
 	public partial class Cheese : RigidBody3D, IIngredient, IThrowable
 	{
 		public IngredientData getIngredientIdentData => _data;
-
 		private IngredientData _data;
 
-		
-		// =========================================================
-		// Private state
-		// =========================================================
-		private Node _homeScene;   // scene to return to after being dropped/thrown
 		private bool _inFlight = false;
+		private Node3D _carrier = null;
 
 		public event Action<bool> PickupAvailabilityChanged;
 
-		// Called when the node enters the scene tree for the first time.
 		public override void _Ready()
 		{
-			_homeScene = GetParent();
 			var pickupZone = GetNode<Area3D>("PickupZone");
 			pickupZone.BodyEntered += OnPickupZoneBodyEntered;
 			pickupZone.BodyExited += OnPickupZoneBodyExited;
 			_data = IngredientRegistry.Get("cheese");
+
+			if (!Multiplayer.IsServer())
+				Freeze = true;
 		}
 
-		// Called every frame. 'delta' is the elapsed time since the previous frame.
-		public override void _Process(double delta)
+		public override void _PhysicsProcess(double delta)
 		{
+			// Follow the carrier instead of reparenting
+			if (_carrier != null)
+				GlobalPosition = _carrier.GlobalPosition + Vector3.Up * 1.5f;
 		}
 
-		public bool CanBePickedUpBy(IEntity actor) => ((Node3D)actor).IsInGroup("Player"); //in fufutire player is not only one who can pick up stuff - companions or other enirs in the same with player group caould
+		public bool CanBePickedUpBy(IEntity actor) =>
+			((Node3D)actor).IsInGroup("Player");
+
 		public void PickUp(IEntity actor)
 		{
 			if (actor is not Node3D actorNode) return;
-
+			_carrier = actorNode;
 			_inFlight = false;
 			Freeze = true;
 			LinearVelocity = Vector3.Zero;
 			AngularVelocity = Vector3.Zero;
-
 			SetPickupZoneActive(false);
-
-			Reparent(actorNode);
-
-			Position = Vector3.Up * 1.5f;
 		}
 
 		public void Throw(Vector3 impulse)
 		{
-			ReturnToScene();
+			_carrier = null;
 			_inFlight = true;
 			Freeze = false;
 			ApplyCentralImpulse(impulse);
@@ -61,11 +56,10 @@ namespace Scripts.Game.RecipeSystem.Ingredients
 
 		public void Drop()
 		{
-			ReturnToScene(); //check out why it deisppaers
+			_carrier = null;
 			_inFlight = false;
 			Freeze = false;
 		}
-
 		private void OnPickupZoneBodyEntered(Node3D body)
 		{
 			GD.Print("Someone entred!");
@@ -83,15 +77,6 @@ namespace Scripts.Game.RecipeSystem.Ingredients
 		{
 			var zone = GetNodeOrNull<Area3D>("PickupZone");
 			if (zone != null) zone.Monitoring = active;
-		}
-
-		private void ReturnToScene()
-		{
-			Vector3 worldPos = GlobalPosition;
-			GetParent().RemoveChild(this);
-			_homeScene.AddChild(this);
-			GlobalPosition = worldPos;
-			SetPickupZoneActive(true); // возмжно, в полете это стоит отключить. Но не факт
 		}
 
 	}

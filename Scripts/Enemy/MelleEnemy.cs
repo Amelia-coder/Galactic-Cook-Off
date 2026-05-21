@@ -63,7 +63,8 @@ public partial class MelleEnemy : CharacterBody3D, IEntity
 		RegisterComponent(_attackComponent);
 
 		_lootDropComponent= GetNode<LootDropComponent>("ComponentRegistry/LootDropComponent");
-		_lootDropComponent.Initilaize(this);
+		var itemsContainer = GetTree().Root.GetNode<Node>("AppRoot/Level/Arena/Items");
+		_lootDropComponent.Initilaize(this, itemsContainer);
 		RegisterComponent(_lootDropComponent);
 		if (!Multiplayer.IsServer())
 		{

@@ -93,6 +93,10 @@ namespace Scripts.Player
 
 			_abilitySystem = GetNode<AbilitySystem>("AbilitySystem");
 			_abilitySystem.Initialize(abilities);
+			if (!IsLocalPlayer)
+			{
+				_abilitySystem.SetPhysicsProcess(false);
+			}
 
 			_movementStateMachine = GetNode<MovementStateMachine>("MovementStateMachine"); // or whatever path
 			_movementStateMachine.ManualInitialize();

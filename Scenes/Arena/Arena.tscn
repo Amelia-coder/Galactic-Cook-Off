@@ -46,11 +46,6 @@ StaminaUI = NodePath("UIElements/Stamina")
 MeleeEnemyScene = ExtResource("3_ek0gv")
 EnemiesContainer = NodePath("Enemies")
 
-[node name="EnemySpawner" type="MultiplayerSpawner" parent="."]
-_spawnable_scenes = PackedStringArray("uid://wju1adqciolp")
-spawn_path = NodePath("../Enemies")
-spawn_limit = 121
-
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_csujq")
 compositor = SubResource("Compositor_wcn2d")
@@ -81,12 +76,6 @@ script = ExtResource("5_wcn2d")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="KillZone"]
 shape = SubResource("BoxShape3D_2fwkt")
-
-[node name="Dough" parent="." instance=ExtResource("2_mugxw")]
-transform = Transform3D(0.99812114, 0.061250653, 0.0016003783, 0.06125065, -0.9967575, -0.052171957, -0.0016003783, 0.052171983, -0.99863684, 0.9086795, 4.520682, 3.2817426)
-
-[node name="Dough2" parent="." instance=ExtResource("2_mugxw")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.9392023, 4.933073, 2.8144119)
 
 [node name="UIElements" type="CanvasLayer" parent="."]
 
@@ -132,8 +121,25 @@ _spawnable_scenes = PackedStringArray("uid://blw3xgniwfe0f")
 spawn_path = NodePath("../Players")
 spawn_limit = 1
 
+[node name="EnemySpawner" type="MultiplayerSpawner" parent="."]
+_spawnable_scenes = PackedStringArray("uid://wju1adqciolp")
+spawn_path = NodePath("../Enemies")
+spawn_limit = 121
+
+[node name="ItemSpawner" type="MultiplayerSpawner" parent="."]
+_spawnable_scenes = PackedStringArray("uid://bpu84pqtndpww", "uid://bi6vhy73cuqrr")
+spawn_path = NodePath("../Items")
+
 [node name="Players" type="Node" parent="."]
 
 [node name="Enemies" type="Node" parent="."]
+
+[node name="Items" type="Node" parent="."]
+
+[node name="Dough2" parent="Items" instance=ExtResource("2_mugxw")]
+transform = Transform3D(0.99952984, 0.03066063, 0, -0.03066063, 0.99952984, 0, 0, 0, 1, -2.7865694, 5.0208716, 2.8144119)
+
+[node name="Dough" parent="Items" instance=ExtResource("2_mugxw")]
+transform = Transform3D(0.99952984, 0.030660644, 9.313226e-10, 0.03061883, -0.99816686, -0.052196495, -0.0016003783, 0.052171983, -0.99863684, 1.0468591, 4.490696, 3.2817426)
 
 [connection signal="body_entered" from="KillZone" to="KillZone" method="OnPlayerEntered"]

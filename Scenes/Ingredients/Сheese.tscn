@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://bi6vhy73cuqrr"]
+[gd_scene load_steps=6 format=3 uid="uid://bi6vhy73cuqrr"]
 
 [ext_resource type="Script" uid="uid://dcqkjavyhe2b4" path="res://Scripts/Game/RecipeSystem/Ingredients/Cheese.cs" id="1_f5lsx"]
 
@@ -10,6 +10,17 @@ height = 0.5784607
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_ngisr"]
 radius = 0.8149404
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_f5lsx"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+properties/1/path = NodePath(".:rotation")
+properties/1/spawn = true
+properties/1/replication_mode = 1
+properties/2/path = NodePath(".:freeze")
+properties/2/spawn = true
+properties/2/replication_mode = 1
 
 [node name="Cheese" type="RigidBody3D"]
 script = ExtResource("1_f5lsx")
@@ -27,3 +38,6 @@ collision_layer = 8
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="PickupZone"]
 shape = SubResource("SphereShape3D_ngisr")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_f5lsx")
