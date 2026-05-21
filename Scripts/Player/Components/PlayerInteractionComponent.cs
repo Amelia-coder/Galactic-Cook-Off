@@ -42,33 +42,27 @@ namespace Scripts.Player.Components
 			if (_currentInteractable == null)
 				return;
 
-			// CASE 1: station-style interaction (insert item)
 			if (_currentInteractable is IItemReceiver receiver)
 			{
 				if (!_holder.IsHoldingItem)
 				{
-					GD.Print("We are using ntercat beqacuse have no items");
-					_currentInteractable.Interact(_entity); // елси у нас ингредиентов на руках, нам это не запрещает готовить
+					_currentInteractable.Interact(_entity);
 					return;
 				}
-				var item = _holder.HeldItem;
 
+				var item = _holder.HeldItem;
 				if (item is not IIngredient ingredient)
 					return;
 
 				bool accepted = receiver.TryInsert(ingredient, _entity);
-
 				if (accepted)
 				{
 					_holder.ClearHeldItem();
-					(item as Node)?.QueueFree();
+					item.Consume();  // just destroy — no need to drop first
 				}
-
 				return;
 			}
-
-			// CASE 2: simple interaction (doors, buttons, etc.)
-			//_currentInteractable.Interact(_entity);
 		}
+
 	}
 }

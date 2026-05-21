@@ -9,5 +9,7 @@ namespace Scripts.Game
         void PickUp(IEntity actor);
         void Throw(Vector3 impulse);
         void Drop();
+
+        void Consume();
     }
 }

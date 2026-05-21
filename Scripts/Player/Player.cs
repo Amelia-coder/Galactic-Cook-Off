@@ -11,6 +11,7 @@ namespace Scripts.Player
 	public partial class Player : CharacterBody3D, IEntity, IThrowable
 	{
 
+
 		private MultiplayerSynchronizer _playerInput;
 
 		// Является ли этот игрок локальным (управляемым с этого компьютера)
@@ -289,6 +290,8 @@ namespace Scripts.Player
 		{
 			//DetachFromCarrier();
 		}
+		
+		public void Consume(){}
 
 		public void PlayAnimation(string name) { } //уйдет в AnmationComponent
 		public void Throw(Vector3 impulse) // TODO: rename, bacues ethis actually describes

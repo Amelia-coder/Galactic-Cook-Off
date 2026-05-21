@@ -132,7 +132,22 @@ public partial class Dough : RigidBody3D, IThrowable, IIngredient
 	}
 
 
+	public void Consume()
+	{
+		Rpc(MethodName.ConsumeRpc);
+	}
 
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+	private void ConsumeRpc()
+	{
+		_carrier = null;
+		Visible = false;
+		SetProcess(false);
+		SetPhysicsProcess(false);
+
+		if (!Multiplayer.IsServer()) return;
+		QueueFree();
+	}
 
 	// =========================================================
 	// Impact

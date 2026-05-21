@@ -46,12 +46,22 @@ namespace Scripts.Game.RecipeSystem.Ingredients
             Rpc(MethodName.ThrowRpc, impulse);
         }
 
-		public void Drop()
+        public void Consume()
+        {
+            Rpc(MethodName.ConsumeRpc);
+        }
+
+        [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+        private void ConsumeRpc()
+        {
+            if (!Multiplayer.IsServer()) return;
+            QueueFree();
+        }
+
+
+        public void Drop()
 		{
             Rpc(MethodName.DropRpc);
-            //_carrier = null;
-            //_inFlight = false;
-            //Freeze = false;
         }
 
         [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
