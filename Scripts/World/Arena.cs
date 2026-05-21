@@ -12,8 +12,6 @@ public partial class Arena : Node3D
 
 	[Export] public PackedScene PlayerScene;
 	[Export] public Node PlayersContainer; // the "Players" node
-	
-	[Export] public StaminaUIComponent StaminaUI;
 
 	[Export] public PackedScene MeleeEnemyScene;
 	[Export] public Node EnemiesContainer;
@@ -34,9 +32,6 @@ public partial class Arena : Node3D
 
 		// Spawn the host's own player
 		AddPlayer(Multiplayer.GetUniqueId());
-
-		StaminaUI = GetNode<StaminaUIComponent>("UIElements/Stamina");
-
 		// CLIENTS do nothing gameplay-related here
 		if (!Multiplayer.IsServer())
 			return;

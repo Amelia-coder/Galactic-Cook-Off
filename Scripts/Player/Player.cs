@@ -110,10 +110,20 @@ namespace Scripts.Player
 				_cameraControllerComponent.SetProcess(false);
 				_cameraControllerComponent.SetPhysicsProcess(false);
 
-			}//if (!IsMultiplayerAuthority() && _camera != null)
-			 //{
-			 //	_camera.Current = false;
-			 //}
+			}
+			
+			var staminaUI = GetNode<StaminaUIComponent>("CanvasLayer/Stamina");
+			if (IsLocalPlayer)
+			{
+				staminaUI.Bind(_staminaComponent);
+				staminaUI.Visible = true;
+			}
+
+			else
+			{
+				staminaUI.Visible = false;
+			}
+
 			SetupCamera();
 			GD.Print($"[Player] Name={Name}, PlayerId={PlayerId}, MyId={Multiplayer.GetUniqueId()}, IsLocal={IsLocalPlayer}");
 		}

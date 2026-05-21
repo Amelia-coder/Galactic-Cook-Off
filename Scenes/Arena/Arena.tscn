@@ -1,10 +1,9 @@
-[gd_scene load_steps=17 format=3 uid="uid://bb3oahwy7pgdk"]
+[gd_scene load_steps=16 format=3 uid="uid://bb3oahwy7pgdk"]
 
 [ext_resource type="Script" uid="uid://mn38m5x8mqwm" path="res://Scripts/World/Arena.cs" id="1_csujq"]
 [ext_resource type="PackedScene" uid="uid://blw3xgniwfe0f" path="res://Scenes/Player/Player.tscn" id="1_lh3uc"]
 [ext_resource type="PackedScene" uid="uid://bpu84pqtndpww" path="res://Scenes/Dough/Dough.tscn" id="2_mugxw"]
 [ext_resource type="PackedScene" uid="uid://wju1adqciolp" path="res://Scenes/Enemies/MelleEnemy.tscn" id="3_ek0gv"]
-[ext_resource type="Script" uid="uid://cq6emehb6aq6a" path="res://Scripts/Game/StaminaUIComponent.cs" id="4_fl7xt"]
 [ext_resource type="Script" uid="uid://djefjxdnjr880" path="res://Scripts/World/KillZone.cs" id="5_wcn2d"]
 [ext_resource type="PackedScene" uid="uid://cufniptvrwvfn" path="res://Scenes/CookStation.tscn" id="6_ner4r"]
 
@@ -42,7 +41,7 @@ transform = Transform3D(0.99952984, 0.03066063, 0, -0.03066063, 0.99952984, 0, 0
 script = ExtResource("1_csujq")
 PlayerScene = ExtResource("1_lh3uc")
 PlayersContainer = NodePath("Players")
-StaminaUI = NodePath("UIElements/Stamina")
+StaminaUI = NodePath("")
 MeleeEnemyScene = ExtResource("3_ek0gv")
 EnemiesContainer = NodePath("Enemies")
 
@@ -78,31 +77,6 @@ script = ExtResource("5_wcn2d")
 shape = SubResource("BoxShape3D_2fwkt")
 
 [node name="UIElements" type="CanvasLayer" parent="."]
-
-[node name="Stamina" type="Control" parent="UIElements"]
-layout_mode = 3
-anchors_preset = 0
-offset_right = 136.0
-offset_bottom = 40.0
-script = ExtResource("4_fl7xt")
-
-[node name="StaminaLabel" type="Label" parent="UIElements/Stamina"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.41900003
-anchor_top = 0.2
-anchor_right = 1.9710001
-anchor_bottom = 0.70000005
-offset_left = 0.015995026
-offset_top = -3.0
-offset_right = -0.055999756
-horizontal_alignment = 1
-
-[node name="StaminaProgressBar" type="ProgressBar" parent="UIElements/Stamina"]
-layout_mode = 0
-offset_right = 309.0
-offset_bottom = 35.0
-show_percentage = false
 
 [node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
 navigation_mesh = SubResource("NavigationMesh_ek0gv")

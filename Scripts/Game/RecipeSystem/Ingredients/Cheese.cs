@@ -37,30 +37,56 @@ namespace Scripts.Game.RecipeSystem.Ingredients
 
 		public void PickUp(IEntity actor)
 		{
-			if (actor is not Node3D actorNode) return;
-			_carrier = actorNode;
-			_inFlight = false;
-			Freeze = true;
-			LinearVelocity = Vector3.Zero;
-			AngularVelocity = Vector3.Zero;
-			SetPickupZoneActive(false);
-		}
+            if (actor is not Node3D actorNode) return;
+            Rpc(MethodName.PickUpRpc, actorNode.GetPath());
+        }
 
 		public void Throw(Vector3 impulse)
 		{
-			_carrier = null;
-			_inFlight = true;
-			Freeze = false;
-			ApplyCentralImpulse(impulse);
-		}
+            Rpc(MethodName.ThrowRpc, impulse);
+        }
 
 		public void Drop()
 		{
-			_carrier = null;
-			_inFlight = false;
-			Freeze = false;
-		}
-		private void OnPickupZoneBodyEntered(Node3D body)
+            Rpc(MethodName.DropRpc);
+            //_carrier = null;
+            //_inFlight = false;
+            //Freeze = false;
+        }
+
+        [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+        private void PickUpRpc(string actorPath)
+        {
+            var actorNode = GetNodeOrNull<Node3D>(actorPath);
+            if (actorNode == null) return;
+            _carrier = actorNode;
+            _inFlight = false;
+            Freeze = true;
+            LinearVelocity = Vector3.Zero;
+            AngularVelocity = Vector3.Zero;
+            SetPickupZoneActive(false);
+        }
+
+        [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+        private void ThrowRpc(Vector3 impulse)
+        {
+            _carrier = null;
+            _inFlight = true;
+            Freeze = false;
+            ApplyCentralImpulse(impulse);
+        }
+
+        [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+        private void DropRpc()
+        {
+            _carrier = null;
+            _inFlight = false;
+            Freeze = false;
+        }
+
+
+
+        private void OnPickupZoneBodyEntered(Node3D body)
 		{
 			GD.Print("Someone entred!");
 			if (body is IEntity actor && CanBePickedUpBy(actor))

@@ -64,6 +64,25 @@ public partial class Dough : RigidBody3D, IThrowable, IIngredient
 	public void PickUp(IEntity actor)
 	{
 		if (actor is not Node3D actorNode) return;
+		Rpc(MethodName.PickUpRpc, actorNode.GetPath());
+	}
+
+	public void Throw(Vector3 impulse)
+	{
+		Rpc(MethodName.ThrowRpc, impulse);
+	}
+
+	public void Drop()
+	{
+		Rpc(MethodName.DropRpc);
+	}
+
+
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+	private void PickUpRpc(string actorPath)
+	{
+		var actorNode = GetNodeOrNull<Node3D>(actorPath);
+		if (actorNode == null) return;
 		_carrier = actorNode;
 		_inFlight = false;
 		Freeze = true;
@@ -72,7 +91,8 @@ public partial class Dough : RigidBody3D, IThrowable, IIngredient
 		SetPickupZoneActive(false);
 	}
 
-	public void Throw(Vector3 impulse)
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+	private void ThrowRpc(Vector3 impulse)
 	{
 		_carrier = null;
 		_inFlight = true;
@@ -81,12 +101,16 @@ public partial class Dough : RigidBody3D, IThrowable, IIngredient
 		ApplyCentralImpulse(impulse);
 	}
 
-	public void Drop()
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+	private void DropRpc()
 	{
 		_carrier = null;
 		_inFlight = false;
 		Freeze = false;
 	}
+
+
+
 
 	// =========================================================
 	// Impact

@@ -70,15 +70,12 @@ public partial class MelleEnemy : CharacterBody3D, IEntity
 		{
 			SetPhysicsProcess(false);
 			// Disable the state machine on clients
-			var fsm = GetNode<EnemyStateMachine>("StateMachine");
-			fsm.SetProcess(false);
-			fsm.SetPhysicsProcess(false);
 			return; // skip FSM init on client
 		}
 
-		var fsm2 = GetNode<EnemyStateMachine>("StateMachine");
-		fsm2.InitialState = GetNode<ChaseState>("StateMachine/ChaseState");
-		fsm2.ManualInitialize();
+		var fsm = GetNode<EnemyStateMachine>("StateMachine");
+		fsm.InitialState = GetNode<ChaseState>("StateMachine/ChaseState");
+		fsm.ManualInitialize();
 
 	}
 

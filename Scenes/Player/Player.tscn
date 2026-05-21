@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://blw3xgniwfe0f"]
+[gd_scene load_steps=27 format=3 uid="uid://blw3xgniwfe0f"]
 
 [ext_resource type="Script" uid="uid://dnvesphlqsyh3" path="res://Scripts/Player/Player.cs" id="1_s0eop"]
 [ext_resource type="Script" uid="uid://c30rv0lcu05f3" path="res://Scripts/Player/States/MovementStateMachine.cs" id="2_ft8w5"]
@@ -20,6 +20,7 @@
 [ext_resource type="Script" uid="uid://c14xqg41v0ujd" path="res://Scripts/Player/Components/InputComponent.cs" id="12_8cj01"]
 [ext_resource type="Script" uid="uid://cym0dhqdivmqw" path="res://Scripts/Player/Abilities/RunAbility.cs" id="18_w71ue"]
 [ext_resource type="Script" uid="uid://b4kksgwsngyvp" path="res://Scripts/Player/Abilities/JumpAbility.cs" id="19_1e6p3"]
+[ext_resource type="Script" uid="uid://cq6emehb6aq6a" path="res://Scripts/Game/StaminaUIComponent.cs" id="21_yb677"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_0u84n"]
 
@@ -144,6 +145,31 @@ offset_top = -15.808014
 offset_right = 334.568
 offset_bottom = 16.191986
 max_value = 1.0
+
+[node name="Stamina" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 136.0
+offset_bottom = 40.0
+script = ExtResource("21_yb677")
+
+[node name="StaminaLabel" type="Label" parent="CanvasLayer/Stamina"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.41900003
+anchor_top = 0.2
+anchor_right = 1.9710001
+anchor_bottom = 0.70000005
+offset_left = 0.015995026
+offset_top = -3.0
+offset_right = -0.055999756
+horizontal_alignment = 1
+
+[node name="StaminaProgressBar" type="ProgressBar" parent="CanvasLayer/Stamina"]
+layout_mode = 0
+offset_right = 309.0
+offset_bottom = 35.0
+show_percentage = false
 
 [node name="PlayerInput" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_1e6p3")
