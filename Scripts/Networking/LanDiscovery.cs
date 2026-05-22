@@ -1,5 +1,7 @@
 using Godot;
 using System;
+using System.Linq;
+
 using System.Collections.Generic;
 using Scripts.Networking.LANComponents;
 
@@ -73,8 +75,8 @@ namespace Scripts.Networking
 					$"[LAN] Registered server: {info.Name}");
 			}
 
-			//ServersUpdated?.Invoke(
-				//_servers.Values.ToList());
+			ServersUpdated?.Invoke(
+				_servers.Values.ToList());
 		}
 	}
 }

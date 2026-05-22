@@ -9,10 +9,12 @@ namespace Scripts.UI
 		public event Action<string> JoinRequested;
 		public event Action ExitRequested;
 		private LineEdit _ipInput;
+		[Export] public ServerListUI ServerList;
 
 		public override void _Ready()
 		{
 			_ipInput = GetNode<LineEdit>("IPLineEdit");
+			ServerList.ServerSelected += ip => JoinRequested?.Invoke(ip);
 
 		}
 		private void OnHostButtonPressed()

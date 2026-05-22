@@ -94,6 +94,10 @@ _spawnable_scenes = PackedStringArray("uid://blw3xgniwfe0f")
 spawn_path = NodePath("../Players")
 spawn_limit = 1
 
+[node name="BossSpawner" type="MultiplayerSpawner" parent="."]
+_spawnable_scenes = PackedStringArray("uid://cigabv5wg6iuw")
+spawn_path = NodePath("../Enemies")
+
 [node name="EnemySpawner" type="MultiplayerSpawner" parent="."]
 _spawnable_scenes = PackedStringArray("uid://wju1adqciolp")
 spawn_path = NodePath("../Enemies")

@@ -3,19 +3,16 @@ using Scripts.Enemy.Components;
 using Scripts.Enemy.States;
 using Scripts.Enemy.Strategies;
 using Scripts.Game;
+using Scripts.Enemy.Components;
+using Scripts.Game;
 using Scripts.Game.GenericComponents;
-using Scripts.Player.Components;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Scripts.Enemy.Bosses.EvilRamsy
 {
     public partial class EvilRamsy : CharacterBody3D
     {
-        private AttackComponent _attackComponent;
+        private GenericAttackComponent _attackComponent;
         private GenericHealthComponent _healthComponent;
         
 

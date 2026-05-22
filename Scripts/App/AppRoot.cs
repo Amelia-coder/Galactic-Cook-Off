@@ -1,7 +1,9 @@
 using Godot;
 using Scripts.Networking;
+using Scripts.Networking.LANComponents;
 using Scripts.UI;
 using System;
+using System.Collections.Generic;
 
 // AppRoot.cs — simplified
 public partial class AppRoot : Node
@@ -39,7 +41,15 @@ public partial class AppRoot : Node
 		NetworkManager.PlayerJoined += OnPlayerJoined;
 		NetworkManager.PlayerLeft += OnPlayerLeft;
 
+		LanDiscovery.ServersUpdated += OnServersUpdated;
+		
 		ShowMenu();
+	}
+
+	private void OnServersUpdated(List<ServerInfo> servers)
+	{
+		if (MenuScene.Visible)
+			MenuScene.ServerList.UpdateList(servers);
 	}
 
 	// --------------------------------------------------
