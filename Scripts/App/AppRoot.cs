@@ -60,6 +60,7 @@ public partial class AppRoot : Node
 	{
 		MenuScene.Show();
 		LobbyUI.Hide();
+		MenuScene.ServerList.Clear();
 		LanDiscovery.StartClientDiscovery();
 	}
 
