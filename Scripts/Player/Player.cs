@@ -192,7 +192,7 @@ namespace Scripts.Player
 			RegisterComponent(_cameraComponent);
 
 			_cameraControllerComponent = GetNode<CameraControllerComponent>("ComponentRegistry/CameraControllerComponent");
-			_cameraControllerComponent.Initialize(this, _camera, GetNode<Node3D>("CameraPivot"), GetNode<SpringArm3D>("CameraPivot/SpringArm3D"), true);
+			_cameraControllerComponent.Initialize(this, _camera, GetNode<Node3D>("CameraPivot"), GetNode<SpringArm3D>("CameraPivot/SpringArm3D"), IsLocalPlayer);
 			RegisterComponent(_cameraControllerComponent);
 
 			_playerInteractionCompenent = GetNode<PlayerInteractionComponent>("ComponentRegistry/PlayerInteractionComponent");

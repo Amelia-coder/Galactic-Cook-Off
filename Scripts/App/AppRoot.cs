@@ -9,6 +9,7 @@ using System.Collections.Generic;
 public partial class AppRoot : Node
 {
 	private const int GamePort = 65000;
+	private const int DiscoveryPort = 65001;
 
 	[Export] public Menu MenuScene;
 	[Export] public PackedScene ArenaScene;
@@ -211,11 +212,24 @@ public partial class AppRoot : Node
 	// --------------------------------------------------
 	private string GetLocalIp()
 	{
+		string fallback = "unknown";
+
 		foreach (var ip in IP.GetLocalAddresses())
 		{
-			if (ip.Contains('.') && !ip.StartsWith("127."))
+			if (!ip.Contains('.') || ip.StartsWith("127.")) continue;
+
+			// Skip common virtual adapter ranges
+			if (ip.StartsWith("169.254.")) continue;  // APIPA (no DHCP)
+			if (ip.StartsWith("172.17.")) continue;    // Docker
+			if (ip.StartsWith("172.18.")) continue;    // Docker
+
+			// Prefer typical LAN ranges
+			if (ip.StartsWith("192.168.") || ip.StartsWith("10."))
 				return ip;
+
+			fallback = ip;
 		}
-		return "unknown";
+
+		return fallback;
 	}
 }

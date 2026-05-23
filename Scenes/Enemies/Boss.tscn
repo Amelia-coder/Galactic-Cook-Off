@@ -1,11 +1,35 @@
-[gd_scene load_steps=5 format=3 uid="uid://cigabv5wg6iuw"]
+[gd_scene load_steps=15 format=3 uid="uid://cigabv5wg6iuw"]
 
 [ext_resource type="Script" uid="uid://tk55i0vkt6cv" path="res://Scripts/Enemy/Bosses/EvilRamsy/EvilRamsy.cs" id="1_l82wv"]
 [ext_resource type="Script" uid="uid://tptg73743g1a" path="res://Scripts/Enemy/Components/EnemyAttackComponent.cs" id="2_wetjm"]
+[ext_resource type="Script" uid="uid://be0dwrte8sqnw" path="res://Scripts/Enemy/Components/TargetSelectorComponent.cs" id="3_ycikm"]
+[ext_resource type="Script" uid="uid://d042fhp6j1jh2" path="res://Scripts/Game/GenericComponents/GenericMovementComponent.cs" id="4_oh6af"]
+[ext_resource type="Script" uid="uid://ctjmscttxn5p4" path="res://Scripts/Enemy/Components/TargetDetectorComponent.cs" id="5_awoao"]
+[ext_resource type="Script" uid="uid://b0ndsrqvqgyx7" path="res://Scripts/Game/GenericComponents/GenericHealthComponent.cs" id="6_ha1q6"]
+[ext_resource type="Script" uid="uid://dkg8gl6sr7s0x" path="res://Scripts/Enemy/Components/PathFindingComponent.cs" id="7_oh6af"]
+[ext_resource type="Script" uid="uid://vyqbph3u4h28" path="res://Scripts/Enemy/States/EnemyStateMachine.cs" id="8_awoao"]
+[ext_resource type="Script" uid="uid://dcsepk4j0hgne" path="res://Scripts/Enemy/States/ChaseState.cs" id="9_ha1q6"]
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_4pntv"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_4pntv"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_wetjm"]
+radius = 1.1127774
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_b1s5r"]
+radius = 25.770876
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_wetjm"]
+properties/0/path = NodePath(".:rotation")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+properties/1/path = NodePath(".:position")
+properties/1/spawn = true
+properties/1/replication_mode = 1
+properties/2/path = NodePath("ComponentRegistry/HealthComponent:MaxHealth")
+properties/2/spawn = true
+properties/2/replication_mode = 1
 
 [node name="EvilRamsy" type="CharacterBody3D"]
 script = ExtResource("1_l82wv")
@@ -16,8 +40,25 @@ script = ExtResource("1_l82wv")
 script = ExtResource("2_wetjm")
 
 [node name="TargetSelectorComponent" type="Node" parent="ComponentRegistry"]
+script = ExtResource("3_ycikm")
+
+[node name="MovementComponent" type="Node" parent="ComponentRegistry"]
+script = ExtResource("4_oh6af")
+
+[node name="TargetDetectorComponent" type="Node" parent="ComponentRegistry"]
+script = ExtResource("5_awoao")
+
+[node name="HealthComponent" type="Node" parent="ComponentRegistry"]
+script = ExtResource("6_ha1q6")
+
+[node name="NavigationComponent" type="Node" parent="ComponentRegistry"]
+script = ExtResource("7_oh6af")
 
 [node name="StateMachine" type="Node" parent="."]
+script = ExtResource("8_awoao")
+
+[node name="ChaseState" type="Node" parent="StateMachine"]
+script = ExtResource("9_ha1q6")
 
 [node name="Normal" type="Node" parent="StateMachine"]
 
@@ -28,3 +69,20 @@ mesh = SubResource("CylinderMesh_4pntv")
 
 [node name="Hitbox" type="CollisionShape3D" parent="."]
 shape = SubResource("BoxShape3D_4pntv")
+
+[node name="HurtArea" type="Area3D" parent="."]
+collision_layer = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="HurtArea"]
+shape = SubResource("SphereShape3D_wetjm")
+
+[node name="DetectionArea" type="Area3D" parent="."]
+collision_layer = 256
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="DetectionArea"]
+shape = SubResource("SphereShape3D_b1s5r")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_wetjm")
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]

@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://bhectq67qt4t5"]
 
-[ext_resource type="Script" uid="uid://cwmfbd0kigvoe" path="res://Scripts/Networking/LANComponents/LanBroadcaster.cs" id="1_5f42e"]
+[ext_resource type="Script" uid="uid://btxvrytbqxst6" path="res://Scripts/Networking/LANComponents/LanBroadcaster.cs" id="1_5f42e"]
 
 [node name="LanBroadcaster" type="Node"]
 script = ExtResource("1_5f42e")

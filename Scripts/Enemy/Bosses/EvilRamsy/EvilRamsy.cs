@@ -1,4 +1,4 @@
-﻿using Godot;
+using Godot;
 using Scripts.Enemy.Components;
 using Scripts.Enemy.States;
 using Scripts.Enemy.Strategies;
@@ -6,57 +6,89 @@ using Scripts.Game;
 using Scripts.Enemy.Components;
 using Scripts.Game;
 using Scripts.Game.GenericComponents;
-
+using System.Collections.Generic;
+using System;
 
 namespace Scripts.Enemy.Bosses.EvilRamsy
 {
-    public partial class EvilRamsy : CharacterBody3D
-    {
-        private GenericAttackComponent _attackComponent;
-        private GenericHealthComponent _healthComponent;
-        
+	public partial class EvilRamsy : CharacterBody3D, IEntity
+	{
+		private Dictionary<Type, Component> _components = new();
 
+		private GenericMovementComponent _movementComponent;
+		private GenericHealthComponent _healthComponent;
+		private TargetDetectorComponent _targetDetectorComponent;
+		private TargetSelectorComponent _targetSelectorComponent;
+		private PathFindingComponent _pathfindingComponent;
+		private EnemyAttackComponent _attackComponent;
+		private LootDropComponent _lootDropComponent;
 
+		public override void _Ready()
+		{
+			// Components init on ALL peers (RPCs need them)
+			_movementComponent = GetNode<GenericMovementComponent>("ComponentRegistry/MovementComponent");
+			_movementComponent.Initialize(this);
+			RegisterComponent(_movementComponent);
 
+			_healthComponent = GetNode<GenericHealthComponent>("ComponentRegistry/HealthComponent");
+			_healthComponent.Died += OnDied;
+			RegisterComponent(_healthComponent);
 
-        public override void _Ready()
-        {
-            //_movementComponent = GetNode<GenericMovementComponent>("ComponentRegistry/MovementComponent");
-            //_movementComponent.Initialize(this);
-            //RegisterComponent(_movementComponent);
-            //GD.Print("Movement component is null: ", _movementComponent == null);
+			var targetDetector = GetNode<Area3D>("DetectionArea");
+			_targetDetectorComponent = GetNode<TargetDetectorComponent>("ComponentRegistry/TargetDetectorComponent");
+			_targetDetectorComponent.Initialize(targetDetector);
+			RegisterComponent(_targetDetectorComponent);
 
-            ////_cameraControllerComponent = GetNode<CameraControllerComponent>("ComponentRegistry/CameraControllerComponent");
-            ////_cameraControllerComponent.Initialize(this, _camera, GetNode<Node3D>("CameraPivot"), GetNode<SpringArm3D>("CameraPivot/SpringArm3D"), true);
-            ////RegisterComponent(_cameraControllerComponent);
-            //_healthComponent = GetNode<GenericHealthComponent>("ComponentRegistry/HealthComponent");
-            //_healthComponent.Died += OnDied;
-            //RegisterComponent(_healthComponent);
+			_pathfindingComponent = GetNode<PathFindingComponent>("ComponentRegistry/NavigationComponent");
+			_pathfindingComponent.Initialize(this);
+			RegisterComponent(_pathfindingComponent);
 
-            //var targetDetector = GetNode<Area3D>("DetectionArea");
-            //_targetDetectorComponent = GetNode<TargetDetectorComponent>("ComponentRegistry/TargetDetectorComponent");
-            //_targetDetectorComponent.Initialize(targetDetector);
-            //RegisterComponent(_targetDetectorComponent);
+			_targetSelectorComponent = GetNode<TargetSelectorComponent>("ComponentRegistry/TargetSelectorComponent");
+			RegisterComponent(_targetSelectorComponent);
 
-            //_pathfindingComponent = GetNode<PathFindingComponent>("ComponentRegistry/NavigationComponent");
-            //_pathfindingComponent.Initialize(this);
-            //RegisterComponent(_pathfindingComponent);
+			_attackComponent = GetNode<EnemyAttackComponent>("ComponentRegistry/AttackComponent");
+			_attackComponent.RegisterStrategy(new MeleeAttackStrategy());
+			RegisterComponent(_attackComponent);
+//
+			//_lootDropComponent = GetNode<LootDropComponent>("ComponentRegistry/LootDropComponent");
+			//var itemsContainer = GetTree().Root.GetNode<Node>("AppRoot/Level/Arena/Items");
+			//_lootDropComponent.Initilaize(this, itemsContainer);
+			//RegisterComponent(_lootDropComponent);
 
-            //_targetSelectorComponent = GetNode<TargetSelectorComponent>("ComponentRegistry/TargetSelectorComponent");
-            //RegisterComponent(_targetSelectorComponent);
+			// Only server runs AI and physics
+			if (!Multiplayer.IsServer())
+			{
+				SetPhysicsProcess(false);
+				return;
+			}
 
+			var fsm = GetNode<EnemyStateMachine>("StateMachine");
+			fsm.InitialState = GetNode<ChaseState>("StateMachine/ChaseState");
+			fsm.ManualInitialize();
+		}
 
-            //_attackComponent = GetNode<EnemyAttackComponent>("ComponentRegistry/AttackComponent");
-            //_attackComponent.RegisterStrategy(new MeleeAttackStrategy());
-            //RegisterComponent(_attackComponent);
+		private void OnDied()
+		{
+			if (!Multiplayer.IsServer()) return;
+			_lootDropComponent.Drop();
+			QueueFree();
+		}
 
-            //_lootDropComponent = GetNode<LootDropComponent>("ComponentRegistry/LootDropComponent");
-            //_lootDropComponent.Initilaize(this);
-            //RegisterComponent(_lootDropComponent);
-            //var fsm = GetNode<EnemyStateMachine>("StateMachine");
-            //fsm.InitialState = GetNode<ChaseState>("StateMachine/ChaseState");
-            //GD.Print($"Initial emy state is: {fsm.InitialState}, fsm is null: {fsm == null}");
+		public override void _PhysicsProcess(double delta)
+		{
+			_movementComponent.Update((float)delta);
+		}
 
-        }
-    }
-}
+		public void RegisterComponent(Component component)
+		{
+			_components[component.GetType()] = component;
+		}
+
+		public T GetComponent<T>() where T : Component
+		{
+			if (_components.TryGetValue(typeof(T), out Component component))
+				return component as T;
+			return null;
+		}
+		}
+	}

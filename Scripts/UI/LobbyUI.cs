@@ -16,7 +16,8 @@ namespace Scripts.UI
 		[Export] public Button StartButton;
 		[Export] public Button LeaveButton;
 
-		[Export] public int MaxPlayers = 8;
+		[Export] public int MaxPlayers = 4;
+		[Export] public int MinPlayers = 2;
 
 		public event Action StartPressed;
 		public event Action LeavePressed;
@@ -73,7 +74,7 @@ namespace Scripts.UI
 		{
 			int count = _playerRows.Count;
 			PlayerCountLabel.Text = $"Players ({count}/{MaxPlayers}):";
-			StartButton.Disabled = count < 2;
+			StartButton.Disabled = count < MinPlayers;
 		}
 
 		private void ClearPlayerList()
