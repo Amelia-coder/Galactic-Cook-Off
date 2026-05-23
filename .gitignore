@@ -1,8 +1,10 @@
 # Godot 4+ specific ignores
 .godot/
+*.pck
 /android/
 .vs/
 logs/
 .import/
 *.uid
 *.old*
+*.exe
