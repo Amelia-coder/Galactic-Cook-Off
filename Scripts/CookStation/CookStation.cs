@@ -1,12 +1,12 @@
+using Godot;
+using Scripts.Game.RecipeSystem.Dishes;
+using Scripts.Game.RecipeSystem.Ingredients;
+using Scripts.Game.RecipeSystem.Recipes;
+using Scripts.Player.Components;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Godot;
-
-using Scripts.Player.Components;
-using Scripts.Game.RecipeSystem.Ingredients;
-using Scripts.Game.RecipeSystem.Recipes;
 
 namespace Scripts.Game
 {
@@ -203,10 +203,21 @@ namespace Scripts.Game
 			DishCooked?.Invoke(recipe);
 		}
 
-		// =========================================================
-		// Minigame
-		// =========================================================
-		private async void StartMinigame()
+        // At the end of Cook(), replace the placeholder SpawnResult:
+        private void SpawnResult(string resultId)
+        {
+            var scene = DishRegistry.GetScene(resultId);
+            if (scene == null) return;
+
+            var dish = scene.Instantiate<CookedDish>();
+            dish.GlobalPosition = GlobalPosition + Vector3.Up * 1.2f;
+            GetTree().Root.AddChild(dish, true); // true for multiplayer authority
+        }
+
+        // =========================================================
+        // Minigame
+        // =========================================================
+        private async void StartMinigame()
 		{
 			if (!Multiplayer.IsServer()) return;
 
