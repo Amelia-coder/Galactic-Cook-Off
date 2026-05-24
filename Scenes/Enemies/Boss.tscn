@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://cigabv5wg6iuw"]
+[gd_scene load_steps=20 format=3 uid="uid://cigabv5wg6iuw"]
 
 [ext_resource type="Script" uid="uid://tk55i0vkt6cv" path="res://Scripts/Enemy/Bosses/EvilRamsy/EvilRamsy.cs" id="1_l82wv"]
 [ext_resource type="Script" uid="uid://tptg73743g1a" path="res://Scripts/Enemy/Components/EnemyAttackComponent.cs" id="2_wetjm"]
@@ -8,7 +8,12 @@
 [ext_resource type="Script" uid="uid://b0ndsrqvqgyx7" path="res://Scripts/Game/GenericComponents/GenericHealthComponent.cs" id="6_ha1q6"]
 [ext_resource type="Script" uid="uid://dkg8gl6sr7s0x" path="res://Scripts/Enemy/Components/PathFindingComponent.cs" id="7_oh6af"]
 [ext_resource type="Script" uid="uid://vyqbph3u4h28" path="res://Scripts/Enemy/States/EnemyStateMachine.cs" id="8_awoao"]
-[ext_resource type="Script" uid="uid://dcsepk4j0hgne" path="res://Scripts/Enemy/States/ChaseState.cs" id="9_ha1q6"]
+[ext_resource type="Script" uid="uid://dcvv32jxnjygf" path="res://Scripts/Enemy/Components/LootDropComponent.cs" id="8_tpyyq"]
+[ext_resource type="PackedScene" uid="uid://bpu84pqtndpww" path="res://Scenes/Dough/Dough.tscn" id="9_60rhp"]
+[ext_resource type="PackedScene" uid="uid://bi6vhy73cuqrr" path="res://Scenes/Ingredients/Сheese.tscn" id="10_nn51h"]
+[ext_resource type="Script" uid="uid://co4m5x6gpuux2" path="res://Scripts/Enemy/States/BossChaseState.cs" id="12_nn51h"]
+[ext_resource type="Script" uid="uid://dr3ona0i77v0v" path="res://Scripts/Enemy/States/BossAttackState.cs" id="13_p48vb"]
+[ext_resource type="Script" uid="uid://cd1qw57o0tewa" path="res://Scripts/Enemy/States/BossRageState.cs" id="14_tdoqu"]
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_4pntv"]
 
@@ -54,15 +59,27 @@ script = ExtResource("6_ha1q6")
 [node name="NavigationComponent" type="Node" parent="ComponentRegistry"]
 script = ExtResource("7_oh6af")
 
+[node name="LootDropComponent" type="Node" parent="ComponentRegistry"]
+script = ExtResource("8_tpyyq")
+PossibleDrops = Array[PackedScene]([ExtResource("9_60rhp"), ExtResource("10_nn51h")])
+
 [node name="StateMachine" type="Node" parent="."]
 script = ExtResource("8_awoao")
 
-[node name="ChaseState" type="Node" parent="StateMachine"]
-script = ExtResource("9_ha1q6")
+[node name="BossChaseState" type="Node" parent="StateMachine"]
+script = ExtResource("12_nn51h")
 
-[node name="Normal" type="Node" parent="StateMachine"]
+[node name="BossAttackState" type="Node" parent="StateMachine"]
+script = ExtResource("13_p48vb")
 
-[node name="Rage" type="Node" parent="StateMachine"]
+[node name="BossRageState" type="Node" parent="StateMachine"]
+script = ExtResource("14_tdoqu")
+
+[node name="BossRageChaseState" type="Node" parent="StateMachine"]
+script = ExtResource("12_nn51h")
+
+[node name="BossRageAttackState" type="Node" parent="StateMachine"]
+script = ExtResource("13_p48vb")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 mesh = SubResource("CylinderMesh_4pntv")

@@ -3,8 +3,6 @@ using Scripts.Enemy.Components;
 using Scripts.Enemy.States;
 using Scripts.Enemy.Strategies;
 using Scripts.Game;
-using Scripts.Enemy.Components;
-using Scripts.Game;
 using Scripts.Game.GenericComponents;
 using System.Collections.Generic;
 using System;
@@ -14,7 +12,6 @@ namespace Scripts.Enemy.Bosses.EvilRamsy
 	public partial class EvilRamsy : CharacterBody3D, IEntity
 	{
 		private Dictionary<Type, Component> _components = new();
-
 		private GenericMovementComponent _movementComponent;
 		private GenericHealthComponent _healthComponent;
 		private TargetDetectorComponent _targetDetectorComponent;
@@ -25,7 +22,6 @@ namespace Scripts.Enemy.Bosses.EvilRamsy
 
 		public override void _Ready()
 		{
-			// Components init on ALL peers (RPCs need them)
 			_movementComponent = GetNode<GenericMovementComponent>("ComponentRegistry/MovementComponent");
 			_movementComponent.Initialize(this);
 			RegisterComponent(_movementComponent);
@@ -47,23 +43,25 @@ namespace Scripts.Enemy.Bosses.EvilRamsy
 			RegisterComponent(_targetSelectorComponent);
 
 			_attackComponent = GetNode<EnemyAttackComponent>("ComponentRegistry/AttackComponent");
-			_attackComponent.RegisterStrategy(new MeleeAttackStrategy());
 			RegisterComponent(_attackComponent);
-//
-			//_lootDropComponent = GetNode<LootDropComponent>("ComponentRegistry/LootDropComponent");
-			//var itemsContainer = GetTree().Root.GetNode<Node>("AppRoot/Level/Arena/Items");
-			//_lootDropComponent.Initilaize(this, itemsContainer);
-			//RegisterComponent(_lootDropComponent);
 
-			// Only server runs AI and physics
+			_lootDropComponent = GetNode<LootDropComponent>("ComponentRegistry/LootDropComponent");
+			var itemsContainer = GetTree().Root.GetNode<Node>("AppRoot/Level/Arena/Items");
+			_lootDropComponent.Initilaize(this, itemsContainer);
+			RegisterComponent(_lootDropComponent);
+
 			if (!Multiplayer.IsServer())
 			{
 				SetPhysicsProcess(false);
 				return;
 			}
 
+			// Register normal phase attack (rage attack added by BossRageState)
+			_attackComponent.RegisterStrategy(new MeleeAttackStrategy());
+
+			// Use boss states, not regular ChaseState
 			var fsm = GetNode<EnemyStateMachine>("StateMachine");
-			fsm.InitialState = GetNode<ChaseState>("StateMachine/ChaseState");
+			fsm.InitialState = GetNode<BossChaseState>("StateMachine/BossChaseState");
 			fsm.ManualInitialize();
 		}
 
@@ -90,5 +88,5 @@ namespace Scripts.Enemy.Bosses.EvilRamsy
 				return component as T;
 			return null;
 		}
-		}
 	}
+}

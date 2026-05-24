@@ -1,0 +1,60 @@
+﻿using Godot;
+using Scripts.Enemy.Bosses.EvilRamsy;
+using Scripts.Enemy.Components;
+using Scripts.Game;
+using Scripts.Game.GenericComponents;
+
+namespace Scripts.Enemy.States
+{
+    public partial class BossChaseState : State<IEntity>
+    {
+        private TargetDetectorComponent _detector;
+        private TargetSelectorComponent _selector;
+        private PathFindingComponent _pathfinding;
+        private GenericMovementComponent _movement;
+        private GenericHealthComponent _health;
+        private EnemyAttackComponent _attack;
+
+        [Export] public float RageHealthPercent = 0.5f;
+        private bool _isRaging = false;
+
+        public override void Initialize(IEntity entity)
+        {
+            base.Initialize(entity);
+            _detector = entity.GetComponent<TargetDetectorComponent>();
+            _selector = entity.GetComponent<TargetSelectorComponent>();
+            _pathfinding = entity.GetComponent<PathFindingComponent>();
+            _movement = entity.GetComponent<GenericMovementComponent>();
+            _health = entity.GetComponent<GenericHealthComponent>();
+            _attack = entity.GetComponent<EnemyAttackComponent>();
+        }
+
+        public override void PhysicsUpdate(double delta)
+        {
+            if (!_detector.HasTargets())
+                return;
+
+            // Check rage transition
+            if (!_isRaging && _health.CurrentHealth <= _health.MaxHealth * RageHealthPercent)
+            {
+                EmitSignal(State<EvilRamsy>.SignalName.Finished, "BossRageState");
+                return;
+            }
+
+            var target = _selector.SelectTarget(_detector.Targets, (Node3D)Entity);
+            if (target == null) return;
+
+            // Can attack? → switch to attack state
+            if (_attack.CanAttack((Node3D)Entity, target))
+            {
+                EmitSignal(State<EvilRamsy>.SignalName.Finished, "BossAttackState");
+                return;
+            }
+
+            // Chase
+            _pathfinding.Target = target.GlobalPosition;
+            var dir = _pathfinding.GetNextDirection();
+            _movement.SetHorizontalVelocity(dir);
+        }
+    }
+}

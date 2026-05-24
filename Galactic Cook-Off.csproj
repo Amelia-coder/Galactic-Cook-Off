@@ -11,5 +11,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Scenes\Player\" />
+    <Folder Include="Scripts\Game\RecipeSystem\Ingredients\NewFolder\" />
   </ItemGroup>
 </Project>

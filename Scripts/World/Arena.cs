@@ -15,6 +15,7 @@ public partial class Arena : Node3D
 
 	[Export] public PackedScene MeleeEnemyScene;
 	[Export] public Node EnemiesContainer;
+	[Export] public PackedScene BossScene;
 
 	private int _dishesCooked = 0;
 
@@ -41,9 +42,9 @@ public partial class Arena : Node3D
 
 		GD.Print("[Arena] Server game logic initialized");
 
-        SpawnEnemy(new Vector3(5, 0, 5));
-        SpawnEnemy(new Vector3(-5, 0, 3));
-    }
+		SpawnEnemy(new Vector3(5, 0, 5));
+		SpawnEnemy(new Vector3(-5, 0, 3));
+	}
 
 	private void OnDishCooked(Recipe recipe)
 	{
@@ -61,24 +62,29 @@ public partial class Arena : Node3D
 	{
 		switch (_dishesCooked)
 		{
+			//case 1:
+			//	GD.Print("Wave 1 starting");
+			//	break;
+
+			//case 3:
+			//	GD.Print("Wave 2 starting");
+			//	break;
+
 			case 1:
-				GD.Print("Wave 1 starting");
-				break;
-
-			case 3:
-				GD.Print("Wave 2 starting");
-				break;
-
-			case 5:
-				SummonBoss();
-				break;
+				{
+					GD.Print("Summoned boss!");
+					SummonBoss();
+				}
+			break;
 		}
 	}
 
 	private void SummonBoss()
 	{
+		var boss = BossScene.Instantiate<Node3D>();
+		boss.Position = new Vector3(0, 0.7f, 0.6f);
+		EnemiesContainer.AddChild(boss, true);
 		GD.Print("Boss spawn trigger");
-		// actual spawn handled by EnemySpawner system later
 	}
 
 
@@ -112,22 +118,22 @@ public partial class Arena : Node3D
 	private void DelPlayer(long id)
 	{
 		var node = PlayersContainer.GetNodeOrNull(id.ToString());
-        if (node == null) return;
+		if (node == null) return;
 
-        // Disable syncs before removal to avoid "node not found" errors
-        var input = node.GetNodeOrNull<MultiplayerSynchronizer>("PlayerInput");
-        if (input != null) input.PublicVisibility = false;
+		// Disable syncs before removal to avoid "node not found" errors
+		var input = node.GetNodeOrNull<MultiplayerSynchronizer>("PlayerInput");
+		if (input != null) input.PublicVisibility = false;
 
-        var sync = node.GetNodeOrNull<MultiplayerSynchronizer>("ServerSync");
-        if (sync != null) sync.PublicVisibility = false;
-        node?.QueueFree();
+		var sync = node.GetNodeOrNull<MultiplayerSynchronizer>("ServerSync");
+		if (sync != null) sync.PublicVisibility = false;
+		node?.QueueFree();
 	}
 
 
-    private void SpawnEnemy(Vector3 position)
-    {
-        var enemy = MeleeEnemyScene.Instantiate<Node3D>();
-        enemy.Position = position;
-        EnemiesContainer.AddChild(enemy, true);
-    }
+	private void SpawnEnemy(Vector3 position)
+	{
+		var enemy = MeleeEnemyScene.Instantiate<Node3D>();
+		enemy.Position = position;
+		EnemiesContainer.AddChild(enemy, true);
+	}
 }

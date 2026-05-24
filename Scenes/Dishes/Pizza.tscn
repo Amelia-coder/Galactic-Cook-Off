@@ -1,0 +1,49 @@
+[gd_scene load_steps=7 format=3 uid="uid://d3qwi5dpdeklj"]
+
+[ext_resource type="Script" uid="uid://iduefdc5ge8c" path="res://Scripts/Game/RecipeSystem/Dishes/Pizza.cs" id="1_ya2f4"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_ya2f4"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_qqbhc"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_ya2f4"]
+radius = 0.7932522
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_hsjrb"]
+radius = 0.6243079
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_ya2f4"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+properties/1/path = NodePath(".:rotation")
+properties/1/spawn = true
+properties/1/replication_mode = 1
+properties/2/path = NodePath(".:freeze")
+properties/2/spawn = true
+properties/2/replication_mode = 1
+properties/3/path = NodePath(".:Damage")
+properties/3/spawn = true
+properties/3/replication_mode = 1
+
+[node name="Pizza" type="RigidBody3D"]
+script = ExtResource("1_ya2f4")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("SphereMesh_ya2f4")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("SphereShape3D_qqbhc")
+
+[node name="PickupZone" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PickupZone"]
+shape = SubResource("SphereShape3D_ya2f4")
+
+[node name="Hurtbox" type="Area3D" parent="."]
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="Hurtbox"]
+shape = SubResource("SphereShape3D_hsjrb")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_ya2f4")
