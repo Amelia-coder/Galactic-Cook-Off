@@ -25,7 +25,21 @@ namespace Scripts.Game.RecipeSystem.Ingredients
 				Freeze = true;
 		}
 
-		public override void _PhysicsProcess(double delta)
+        public override void _Process(double delta)
+        {
+            if (_carrier == null) return;
+
+            if (!GodotObject.IsInstanceValid(_carrier))
+            {
+                _carrier = null;
+                Freeze = false;
+                return;
+            }
+
+            GlobalPosition = _carrier.GlobalPosition + Vector3.Up * 1.5f;
+        }
+
+        public override void _PhysicsProcess(double delta)
 		{
 			// Follow the carrier instead of reparenting
 			if (_carrier != null)
@@ -54,6 +68,12 @@ namespace Scripts.Game.RecipeSystem.Ingredients
         [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
         private void ConsumeRpc()
         {
+            _carrier = null;
+            Visible = false;
+            SetProcess(false);
+            SetPhysicsProcess(false);
+            SetPickupZoneActive(false);
+
             if (!Multiplayer.IsServer()) return;
             QueueFree();
         }

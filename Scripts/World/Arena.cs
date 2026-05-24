@@ -98,6 +98,7 @@ public partial class Arena : Node3D
 
 		var player = PlayerScene.Instantiate<Player>();
 		player.Name = id.ToString();
+		player.Position = new Vector3(0, 0, id);
 
 		// Set the player ID BEFORE adding to tree.
 		// This export is synced as a "Spawn" property by the
