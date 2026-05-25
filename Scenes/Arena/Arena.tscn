@@ -1,10 +1,11 @@
-[gd_scene load_steps=17 format=3 uid="uid://bb3oahwy7pgdk"]
+[gd_scene load_steps=18 format=3 uid="uid://bb3oahwy7pgdk"]
 
 [ext_resource type="Script" uid="uid://mn38m5x8mqwm" path="res://Scripts/World/Arena.cs" id="1_csujq"]
 [ext_resource type="PackedScene" uid="uid://blw3xgniwfe0f" path="res://Scenes/Player/Player.tscn" id="1_lh3uc"]
 [ext_resource type="PackedScene" uid="uid://bpu84pqtndpww" path="res://Scenes/Dough/Dough.tscn" id="2_mugxw"]
 [ext_resource type="PackedScene" uid="uid://wju1adqciolp" path="res://Scenes/Enemies/MelleEnemy.tscn" id="3_ek0gv"]
 [ext_resource type="PackedScene" uid="uid://cigabv5wg6iuw" path="res://Scenes/Enemies/Boss.tscn" id="4_csujq"]
+[ext_resource type="PackedScene" uid="uid://djgm7y4w0fa5g" path="res://Scenes/Arena/ItemDispenser.tscn" id="5_bga1v"]
 [ext_resource type="Script" uid="uid://djefjxdnjr880" path="res://Scripts/World/KillZone.cs" id="5_wcn2d"]
 [ext_resource type="PackedScene" uid="uid://cufniptvrwvfn" path="res://Scenes/CookStation.tscn" id="6_ner4r"]
 
@@ -45,6 +46,8 @@ PlayersContainer = NodePath("Players")
 MeleeEnemyScene = ExtResource("3_ek0gv")
 EnemiesContainer = NodePath("Enemies")
 BossScene = ExtResource("4_csujq")
+
+[node name="ItemDispenser" parent="." instance=ExtResource("5_bga1v")]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_csujq")

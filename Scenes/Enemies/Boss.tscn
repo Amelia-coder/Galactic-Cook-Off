@@ -18,6 +18,7 @@
 [sub_resource type="CylinderMesh" id="CylinderMesh_4pntv"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_4pntv"]
+size = Vector3(0.9370117, 2.050171, 0.8861084)
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_wetjm"]
 radius = 1.1127774
@@ -85,6 +86,7 @@ script = ExtResource("13_p48vb")
 mesh = SubResource("CylinderMesh_4pntv")
 
 [node name="Hitbox" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.03149414, 0.011716783, 0.0569458)
 shape = SubResource("BoxShape3D_4pntv")
 
 [node name="HurtArea" type="Area3D" parent="."]
