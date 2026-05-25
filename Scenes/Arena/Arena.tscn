@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://bb3oahwy7pgdk"]
+[gd_scene load_steps=23 format=3 uid="uid://bb3oahwy7pgdk"]
 
 [ext_resource type="Script" uid="uid://mn38m5x8mqwm" path="res://Scripts/World/Arena.cs" id="1_csujq"]
 [ext_resource type="PackedScene" uid="uid://blw3xgniwfe0f" path="res://Scenes/Player/Player.tscn" id="1_lh3uc"]
@@ -8,6 +8,8 @@
 [ext_resource type="PackedScene" uid="uid://djgm7y4w0fa5g" path="res://Scenes/Arena/ItemDispenser.tscn" id="5_bga1v"]
 [ext_resource type="Script" uid="uid://djefjxdnjr880" path="res://Scripts/World/KillZone.cs" id="5_wcn2d"]
 [ext_resource type="PackedScene" uid="uid://cufniptvrwvfn" path="res://Scenes/CookStation.tscn" id="6_ner4r"]
+[ext_resource type="Script" uid="uid://8ksnooelg2yg" path="res://Scripts/Game/EnemyWavesController.cs" id="8_ramf0"]
+[ext_resource type="Script" uid="uid://bfrcxxq3dsric" path="res://Scripts/Game/WaveDefinition.cs" id="9_8qqbc"]
 [ext_resource type="Script" uid="uid://mev8ic7h7bd8" path="res://Scripts/World/RespawnManager.cs" id="9_bga1v"]
 
 [sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_ek0gv"]
@@ -39,7 +41,15 @@ size = Vector3(500, 1, 500)
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_ek0gv"]
 
-[node name="Arena" type="Node3D" node_paths=PackedStringArray("PlayersContainer", "EnemiesContainer", "SpawnPoints")]
+[sub_resource type="Resource" id="Resource_vjiyp"]
+script = ExtResource("9_8qqbc")
+metadata/_custom_type_script = "uid://bfrcxxq3dsric"
+
+[sub_resource type="Resource" id="Resource_4r4ii"]
+script = ExtResource("9_8qqbc")
+metadata/_custom_type_script = "uid://bfrcxxq3dsric"
+
+[node name="Arena" type="Node3D" node_paths=PackedStringArray("PlayersContainer", "EnemiesContainer")]
 transform = Transform3D(0.99952984, 0.03066063, 0, -0.03066063, 0.99952984, 0, 0, 0, 1, 0, 0, 0)
 script = ExtResource("1_csujq")
 PlayerScene = ExtResource("1_lh3uc")
@@ -47,9 +57,9 @@ PlayersContainer = NodePath("Players")
 MeleeEnemyScene = ExtResource("3_ek0gv")
 EnemiesContainer = NodePath("Enemies")
 BossScene = ExtResource("4_csujq")
-SpawnPoints = [NodePath("SpawnPos1"), NodePath("SpawnPos2")]
 
-[node name="ItemDispenser" parent="." instance=ExtResource("5_bga1v")]
+[node name="ItemDispenser2" parent="." instance=ExtResource("5_bga1v")]
+transform = Transform3D(0.9981619, -5.6378543e-05, -0.06060193, -5.638227e-05, 0.9999983, -0.0018589674, 0.06060193, 0.0018589674, 0.9981603, -2.058825, -0.17611986, 0)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_csujq")
@@ -94,7 +104,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.009, -1.14076, -0.016)
 [node name="CookStation" parent="." instance=ExtResource("6_ner4r")]
 transform = Transform3D(0.99952984, -0.03066063, 0, 0.03066063, 0.99952984, 0, 0, 0, 1, 10.934, 0, 9)
 
-[node name="WaveController" type="Node" parent="."]
+[node name="EnemyWavesController" type="Node" parent="." node_paths=PackedStringArray("SpawnPoints", "EnemiesContainer")]
+script = ExtResource("8_ramf0")
+Waves = Array[Object]([SubResource("Resource_vjiyp"), SubResource("Resource_4r4ii")])
+SpawnPoints = [NodePath("../SpawnPos1"), NodePath("../SpawnPos2")]
+EnemiesContainer = NodePath("../Enemies")
 
 [node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
 _spawnable_scenes = PackedStringArray("uid://blw3xgniwfe0f")

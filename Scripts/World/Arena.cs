@@ -1,6 +1,4 @@
 using Godot;
-using System.Collections.Generic;
-using Scripts.Player;
 using Scripts.Game;
 using Scripts.Game.RecipeSystem.Recipes;
 using Scripts.World.WorldObjects;
@@ -18,9 +16,8 @@ namespace Scripts.World
 		[Export] public Node EnemiesContainer;
 		[Export] public PackedScene BossScene;
 
-		[Export] public Node3D[] SpawnPoints;
-
 		private RespawnManager _respawnManager;
+		private EnemyWavesController _wavesController;
 		private int _dishesCooked = 0;
 
 
@@ -28,19 +25,23 @@ namespace Scripts.World
 		{
 			_respawnManager = GetNode<RespawnManager>("RespawnManager");
 			_respawnManager.GameOver += OnGameOver;
+
+			_wavesController = GetNode<EnemyWavesController>("EnemyWavesController");
+			_wavesController.WaveStarted += i => GD.Print($"[Arena] Wave {i} started!");
+			_wavesController.WaveCleared += OnWaveCleared;
+			_wavesController.AllWavesCleared += () => GD.Print("[Arena] All waves done!");
+
 			if (!Multiplayer.IsServer())
 				return;
 
 			Multiplayer.PeerConnected += AddPlayer;
 			Multiplayer.PeerDisconnected += DelPlayer;
 
-			// Spawn already connected peers
+
 			foreach (int id in Multiplayer.GetPeers())
 				AddPlayer(id);
 
-			// Spawn the host's own player
 			AddPlayer(Multiplayer.GetUniqueId());
-			// CLIENTS do nothing gameplay-related here
 			if (!Multiplayer.IsServer())
 				return;
 
@@ -49,8 +50,6 @@ namespace Scripts.World
 
 			GD.Print("[Arena] Server game logic initialized");
 
-			SpawnEnemy(new Vector3(5, 0, 5));
-			SpawnEnemy(new Vector3(-5, 0, 3));
 		}
 
 		private void OnDishCooked(Recipe recipe)
@@ -69,15 +68,21 @@ namespace Scripts.World
 		{
 			switch (_dishesCooked)
 			{
-				//case 1:
-				//	GD.Print("Wave 1 starting");
-				//	break;
-
-				//case 3:
-				//	GD.Print("Wave 2 starting");
-				//	break;
-
 				case 1:
+					{
+						GD.Print("Wave 1 starting");
+						_wavesController.StartWave(0);
+					}
+					break;
+
+				case 3:
+					{ 
+						GD.Print("Wave 2 starting");
+						_wavesController.StartWave(1);
+					}
+					break;
+
+				case 5:
 					{
 						GD.Print("Summoned boss!");
 						SummonBoss();
@@ -145,27 +150,9 @@ namespace Scripts.World
 			GD.Print("[Arena] GAME OVER");
 		}
 
-
-		private void SpawnEnemy(Vector3 position)
+		private void OnWaveCleared(int waveIndex)
 		{
-			var enemy = MeleeEnemyScene.Instantiate<Node3D>();
-			enemy.Position = position;
-			EnemiesContainer.AddChild(enemy, true);
-		}
-
-
-		private Player.Player GetPlayerNode(int playerId)
-		{
-			return PlayersContainer.GetNodeOrNull<Player.Player>(playerId.ToString());
-		}
-
-		private Vector3 GetSpawnPosition()
-		{
-			if (SpawnPoints == null || SpawnPoints.Length == 0)
-				return new Vector3(0, 2, 0);
-			var rng = new RandomNumberGenerator();
-			rng.Randomize();
-			return SpawnPoints[rng.RandiRange(0, SpawnPoints.Length - 1)].GlobalPosition;
+			GD.Print($"[Arena] Wave {waveIndex} cleared!");
 		}
 	}
 }
