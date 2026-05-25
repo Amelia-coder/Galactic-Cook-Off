@@ -43,5 +43,13 @@ namespace Scripts.Game
 		{
 			Rpc(MethodName.TakeDamageRpc, damage);
 		}
+
+		public void ResetHealth()
+		{
+			CurrentHealth = MaxHealth;
+			// If you track an "isDead" flag, reset it too:
+			// _isDead = false;
+			GD.Print($"[Health] Reset to {CurrentHealth}/{MaxHealth}");
+		}
 	}
 }

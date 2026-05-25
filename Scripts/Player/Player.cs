@@ -15,9 +15,16 @@ namespace Scripts.Player
 
 		private MultiplayerSynchronizer _playerInput;
 
+		private SpectatorCameraController _spectatorController;
+		private bool _isDead = false;
+
 		// Является ли этот игрок локальным (управляемым с этого компьютера)
 		[Export] public bool IsLocalPlayer;
 
+
+		private uint _originalCollisionLayer;
+		private uint _originalCollisionMask;
+		
 		private int _playerId = 1;
 		[Export]
 		public int PlayerId
@@ -70,7 +77,9 @@ namespace Scripts.Player
 			if (int.TryParse(Name, out int id))
 				_playerId = id;
 
-			IsLocalPlayer = (_playerId == Multiplayer.GetUniqueId());
+			IsLocalPlayer = _playerId == Multiplayer.GetUniqueId();
+			_originalCollisionLayer = CollisionLayer;
+			_originalCollisionMask = CollisionMask;
 
 			GD.Print($"[Player] layer: {CollisionLayer}, mask: {CollisionMask}");
 
@@ -124,6 +133,9 @@ namespace Scripts.Player
 			{
 				staminaUI.Visible = false;
 			}
+
+			_spectatorController = new SpectatorCameraController();
+			AddChild(_spectatorController);
 
 			SetupCamera();
 			GD.Print($"[Player] Name={Name}, PlayerId={PlayerId}, MyId={Multiplayer.GetUniqueId()}, IsLocal={IsLocalPlayer}");
@@ -199,6 +211,7 @@ namespace Scripts.Player
 			_playerInteractionComponent.Initialize(this, _itemHolderComponent);
 			RegisterComponent(_playerInteractionComponent);
 
+
 			//_animationComponent = GetNode<GenericAnimationComponent>("ComponentRegistry/AnimationComponent");
 			//var animPlayer = GetNode<AnimationPlayer>("3DGodotRobot/AnimationPlayer");
 			//GD.Print("Weill dianple animations");
@@ -221,7 +234,6 @@ namespace Scripts.Player
 			//	}
 			//);
 			//RegisterComponent(_animationComponent);
-
 		}
 
 
@@ -246,15 +258,103 @@ namespace Scripts.Player
 		{
 			if (!IsLocalPlayer) return;
 			//GD.Print("[Player] _UnhandledInput fired"); // Add this
+			if (_isDead)
+			{
+				// Forward input to spectator camera when dead
+				_spectatorController.HandleInput(@event);
+				return;
+			}
 			_cameraControllerComponent.HandleInput(@event);
 		}
+
+
+		[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+		public void RpcDisablePlayer()
+		{
+			_isDead = true;
+			_chargeBar.Visible = false;
+			Visible = false;
+			CollisionLayer = 0;
+			CollisionMask = 0;
+			SetPhysicsProcess(false);
+
+			_abilitySystem.SetPhysicsProcess(false);
+
+			if (IsLocalPlayer)
+			{
+				_inputComponent.SetProcess(false);
+				_inputComponent.SetPhysicsProcess(false);
+			}
+
+			GD.Print($"[Player {PlayerId}] Disabled (dead).");
+		}
+
+		/// <summary>
+		/// Restores the player at a new position with full health.
+		/// </summary>
+		[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+		public void RpcRespawn(Vector3 spawnPos)
+		{
+			GlobalPosition = spawnPos;
+			Velocity = Vector3.Zero;
+
+			_healthComponent.ResetHealth();
+			_isDead = false;
+
+			Visible = true;
+			CollisionLayer = _originalCollisionLayer;
+			CollisionMask = _originalCollisionMask;
+			SetPhysicsProcess(true);
+
+			_abilitySystem.SetPhysicsProcess(IsLocalPlayer);
+
+			if (IsLocalPlayer)
+			{
+				_inputComponent.SetProcess(true);
+				_inputComponent.SetPhysicsProcess(true);
+				_cameraControllerComponent.SetProcess(true);
+				_cameraControllerComponent.SetPhysicsProcess(true);
+
+				// Make sure our own camera is current again
+				_camera.TopLevel = false;
+				_camera.MakeCurrent();
+				Input.MouseMode = Input.MouseModeEnum.Captured;
+			}
+
+			GD.Print($"[Player {PlayerId}] Respawned at {spawnPos}.");
+		}
+
+		/// <summary>
+		/// Permanent death — disable body, enter spectator camera on local client.
+		/// </summary>
+		[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+		public void RpcEnterSpectator()
+		{
+			// Reuse disable logic
+			RpcDisablePlayer();
+
+			_cameraControllerComponent.SetProcess(false);
+			_cameraControllerComponent.SetPhysicsProcess(false);
+
+			if (IsLocalPlayer)
+			{
+				// Detach camera from the player's spring arm
+				_camera.TopLevel = true;
+				_spectatorController.Activate(_camera);
+				GD.Print($"[Player {PlayerId}] Entered spectator mode.");
+			}
+		}
+
 
 		private void OnDied()
 		{
 			if (!Multiplayer.IsServer()) return;
-			_chargeBar.Visible = false;
-			//temporary; emit signals taht will increase counter and if it reaches limit, game finishes
-			QueueFree();
+			// Don't QueueFree! Let Arena handle respawn vs permanent death.
+			Arena.Instance.HandlePlayerDeath(PlayerId);
+			//if (!Multiplayer.IsServer()) return;
+			//_chargeBar.Visible = false;
+			////temporary; emit signals taht will increase counter and if it reaches limit, game finishes
+			//QueueFree();
 		}
 
 		public override void _PhysicsProcess(double delta)
@@ -326,7 +426,5 @@ namespace Scripts.Player
 		{
 			throw new NotImplementedException();
 		}
-
-
 	}
 }
