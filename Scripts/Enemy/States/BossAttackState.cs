@@ -2,12 +2,13 @@
 using Scripts.Enemy.Bosses.EvilRamsy;
 using Scripts.Enemy.Components;
 using Scripts.Game;
+using Scripts.Enemy.Bosses.Components;
 
 namespace Scripts.Enemy.States
 {
     public partial class BossAttackState : State<IEntity>
     {
-        private EnemyAttackComponent _attack;
+        private BossAttackComponent _attack;
         private TargetDetectorComponent _detector;
         private TargetSelectorComponent _selector;
         private double _attackDuration = 0.8;
@@ -16,7 +17,7 @@ namespace Scripts.Enemy.States
         public override void Initialize(IEntity entity)
         {
             base.Initialize(entity);
-            _attack = entity.GetComponent<EnemyAttackComponent>();
+            _attack = entity.GetComponent<BossAttackComponent>();
             _detector = entity.GetComponent<TargetDetectorComponent>();
             _selector = entity.GetComponent<TargetSelectorComponent>();
         }

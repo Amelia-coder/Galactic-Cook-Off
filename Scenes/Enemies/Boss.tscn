@@ -1,7 +1,7 @@
 [gd_scene load_steps=20 format=3 uid="uid://cigabv5wg6iuw"]
 
 [ext_resource type="Script" uid="uid://tk55i0vkt6cv" path="res://Scripts/Enemy/Bosses/EvilRamsy/EvilRamsy.cs" id="1_l82wv"]
-[ext_resource type="Script" uid="uid://tptg73743g1a" path="res://Scripts/Enemy/Components/EnemyAttackComponent.cs" id="2_wetjm"]
+[ext_resource type="Script" uid="uid://b1gel7il11x7v" path="res://Scripts/Enemy/Bosses/Components/BossAttackComponent.cs" id="2_nn51h"]
 [ext_resource type="Script" uid="uid://be0dwrte8sqnw" path="res://Scripts/Enemy/Components/TargetSelectorComponent.cs" id="3_ycikm"]
 [ext_resource type="Script" uid="uid://d042fhp6j1jh2" path="res://Scripts/Game/GenericComponents/GenericMovementComponent.cs" id="4_oh6af"]
 [ext_resource type="Script" uid="uid://ctjmscttxn5p4" path="res://Scripts/Enemy/Components/TargetDetectorComponent.cs" id="5_awoao"]
@@ -41,8 +41,8 @@ script = ExtResource("1_l82wv")
 
 [node name="ComponentRegistry" type="Node" parent="."]
 
-[node name="AttackComponent" type="Node" parent="ComponentRegistry"]
-script = ExtResource("2_wetjm")
+[node name="BossAttackComponent" type="Node" parent="ComponentRegistry"]
+script = ExtResource("2_nn51h")
 
 [node name="TargetSelectorComponent" type="Node" parent="ComponentRegistry"]
 script = ExtResource("3_ycikm")

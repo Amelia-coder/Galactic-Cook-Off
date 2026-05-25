@@ -6,7 +6,7 @@ namespace Scripts.Enemy.Components
 {
 	public partial class EnemyAttackComponent : GenericAttackComponent
 	{
-		private readonly List<AttackStrategy> _strategies = new();
+		protected readonly List<AttackStrategy> _strategies = new();
 
 		public void RegisterStrategy(AttackStrategy strategy)
 		{

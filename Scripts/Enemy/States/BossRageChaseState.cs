@@ -1,4 +1,5 @@
 ﻿using Godot;
+using Scripts.Enemy.Bosses.Components;
 using Scripts.Enemy.Bosses.EvilRamsy;
 using Scripts.Enemy.Components;
 using Scripts.Game;
@@ -12,7 +13,7 @@ namespace Scripts.Enemy.States
         private TargetSelectorComponent _selector;
         private PathFindingComponent _pathfinding;
         private GenericMovementComponent _movement;
-        private EnemyAttackComponent _attack;
+        private BossAttackComponent _attack;
 
         [Export] public float RageSpeedMultiplier = 1.5f;
 
@@ -23,7 +24,7 @@ namespace Scripts.Enemy.States
             _selector = entity.GetComponent<TargetSelectorComponent>();
             _pathfinding = entity.GetComponent<PathFindingComponent>();
             _movement = entity.GetComponent<GenericMovementComponent>();
-            _attack = entity.GetComponent<EnemyAttackComponent>();
+            _attack = entity.GetComponent<BossAttackComponent>();
         }
 
         public override void PhysicsUpdate(double delta)

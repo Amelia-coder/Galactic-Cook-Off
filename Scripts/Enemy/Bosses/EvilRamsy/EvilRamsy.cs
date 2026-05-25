@@ -4,8 +4,9 @@ using Scripts.Enemy.States;
 using Scripts.Enemy.Strategies;
 using Scripts.Game;
 using Scripts.Game.GenericComponents;
-using System.Collections.Generic;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Scripts.Enemy.Bosses.EvilRamsy
 {
@@ -42,7 +43,7 @@ namespace Scripts.Enemy.Bosses.EvilRamsy
 			_targetSelectorComponent = GetNode<TargetSelectorComponent>("ComponentRegistry/TargetSelectorComponent");
 			RegisterComponent(_targetSelectorComponent);
 
-			_attackComponent = GetNode<EnemyAttackComponent>("ComponentRegistry/AttackComponent");
+			_attackComponent = GetNode<EnemyAttackComponent>("ComponentRegistry/BossAttackComponent");
 			RegisterComponent(_attackComponent);
 
 			_lootDropComponent = GetNode<LootDropComponent>("ComponentRegistry/LootDropComponent");
@@ -58,6 +59,15 @@ namespace Scripts.Enemy.Bosses.EvilRamsy
 
 			// Register normal phase attack (rage attack added by BossRageState)
 			_attackComponent.RegisterStrategy(new MeleeAttackStrategy());
+			_attackComponent.RegisterStrategy(new MeleeAttackStrategy());
+
+			_attackComponent.RegisterStrategy(new AoEAttackStrategy(
+			 radius: 7f, damage: 20f, cooldown: 8f));
+
+			//_attackComponent.RegisterStrategy(new RangedAttackStrategy(
+			//    projectile: ProjectileScene,
+			//    minRange: 6f, maxRange: 20f,
+			//    damage: 25f, cooldown: 4f));
 
 			// Use boss states, not regular ChaseState
 			var fsm = GetNode<EnemyStateMachine>("StateMachine");

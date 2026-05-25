@@ -29,6 +29,10 @@ namespace Scripts.Player.Components
 				_currentInteractable = null;
 		}
 
+		public bool IsCarrying()
+		{
+			return _currentInteractable != null;
+		}
 		public void Update(InputComponent input)
 		{
 			if (!input.InteractPressed)
@@ -39,7 +43,7 @@ namespace Scripts.Player.Components
 
 		private void TryInteract()
 		{
-			if (_currentInteractable == null)
+			if (!IsCarrying())
 				return;
 
 			if (_currentInteractable is IItemReceiver receiver)

@@ -199,13 +199,13 @@ namespace Scripts.Player
 			_playerInteractionComponent.Initialize(this, _itemHolderComponent);
 			RegisterComponent(_playerInteractionComponent);
 
-			_animationComponent = GetNode<GenericAnimationComponent>("ComponentRegistry/AnimationComponent");
-			var animPlayer = GetNode<AnimationPlayer>("3DGodotRobot/AnimationPlayer");
-			GD.Print("Weill dianple animations");
-			foreach (var anim in animPlayer.GetAnimationList())
-			{
-				GD.Print(anim);
-			}
+			//_animationComponent = GetNode<GenericAnimationComponent>("ComponentRegistry/AnimationComponent");
+			//var animPlayer = GetNode<AnimationPlayer>("3DGodotRobot/AnimationPlayer");
+			//GD.Print("Weill dianple animations");
+			//foreach (var anim in animPlayer.GetAnimationList())
+			//{
+			//	GD.Print(anim);
+			//}
 			//_animationComponent.Init(
 			//	animPlayer,
 			//	new Dictionary<EntityAnimation, string>
