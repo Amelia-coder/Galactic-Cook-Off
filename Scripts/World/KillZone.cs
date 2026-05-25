@@ -1,27 +1,28 @@
 using Godot;
-using System;
 using Scripts.Game;
 
-public partial class KillZone : Area3D
+namespace Scripts.World
 {
-	// Called when the node enters the scene tree for the first time.
-	public override void _Ready()
+	public partial class KillZone : Area3D
 	{
-
-	}
-
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta)
-	{
-	}
-
-	private void OnPlayerEntered(Node3D body)
-	{
-		if (body.IsInGroup("Player") && body is IEntity entity)
+		// Called when the node enters the scene tree for the first time.
+		public override void _Ready()
 		{
-			var health = entity.GetComponent<GenericHealthComponent>();
-			if (health != null)
-				health.DealDamage(10000f);
+
+		}
+
+		public override void _Process(double delta)
+		{
+		}
+
+		private void OnPlayerEntered(Node3D body)
+		{
+			if (body.IsInGroup("Player") && body is IEntity entity)
+			{
+				var health = entity.GetComponent<GenericHealthComponent>();
+				if (health != null)
+					health.DealDamage(10000f);
+			}
 		}
 	}
 }

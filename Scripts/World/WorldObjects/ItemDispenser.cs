@@ -1,11 +1,6 @@
 using Godot;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Scripts.World
+namespace Scripts.World.WorldObjects
 {
 	public partial class ItemDispenser : Node3D
 	{

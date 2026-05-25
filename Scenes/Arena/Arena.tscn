@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://bb3oahwy7pgdk"]
+[gd_scene load_steps=19 format=3 uid="uid://bb3oahwy7pgdk"]
 
 [ext_resource type="Script" uid="uid://mn38m5x8mqwm" path="res://Scripts/World/Arena.cs" id="1_csujq"]
 [ext_resource type="PackedScene" uid="uid://blw3xgniwfe0f" path="res://Scenes/Player/Player.tscn" id="1_lh3uc"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://djgm7y4w0fa5g" path="res://Scenes/Arena/ItemDispenser.tscn" id="5_bga1v"]
 [ext_resource type="Script" uid="uid://djefjxdnjr880" path="res://Scripts/World/KillZone.cs" id="5_wcn2d"]
 [ext_resource type="PackedScene" uid="uid://cufniptvrwvfn" path="res://Scenes/CookStation.tscn" id="6_ner4r"]
+[ext_resource type="Script" uid="uid://mev8ic7h7bd8" path="res://Scripts/World/RespawnManager.cs" id="9_bga1v"]
 
 [sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_ek0gv"]
 
@@ -38,7 +39,7 @@ size = Vector3(500, 1, 500)
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_ek0gv"]
 
-[node name="Arena" type="Node3D" node_paths=PackedStringArray("PlayersContainer", "EnemiesContainer")]
+[node name="Arena" type="Node3D" node_paths=PackedStringArray("PlayersContainer", "EnemiesContainer", "SpawnPoints")]
 transform = Transform3D(0.99952984, 0.03066063, 0, -0.03066063, 0.99952984, 0, 0, 0, 1, 0, 0, 0)
 script = ExtResource("1_csujq")
 PlayerScene = ExtResource("1_lh3uc")
@@ -46,6 +47,7 @@ PlayersContainer = NodePath("Players")
 MeleeEnemyScene = ExtResource("3_ek0gv")
 EnemiesContainer = NodePath("Enemies")
 BossScene = ExtResource("4_csujq")
+SpawnPoints = [NodePath("SpawnPos1"), NodePath("SpawnPos2")]
 
 [node name="ItemDispenser" parent="." instance=ExtResource("5_bga1v")]
 
@@ -124,5 +126,15 @@ transform = Transform3D(0.99952984, 0.03066063, 0, -0.03066063, 0.99952984, 0, 0
 
 [node name="Dough" parent="Items" instance=ExtResource("2_mugxw")]
 transform = Transform3D(0.99952984, 0.030660644, 9.313226e-10, 0.03061883, -0.99816686, -0.052196495, -0.0016003783, 0.052171983, -0.99863684, 1.0468591, 4.490696, 3.2817426)
+
+[node name="SpawnPos1" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 1, 3)
+
+[node name="SpawnPos2" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 2, 1)
+
+[node name="RespawnManager" type="Node" parent="." node_paths=PackedStringArray("SpawnPoints")]
+script = ExtResource("9_bga1v")
+SpawnPoints = []
 
 [connection signal="body_entered" from="KillZone" to="KillZone" method="OnPlayerEntered"]

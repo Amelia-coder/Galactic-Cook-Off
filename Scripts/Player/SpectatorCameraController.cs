@@ -1,23 +1,19 @@
 using Godot;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Scripts.World;
 
-namespace Scripts.Player.Components
+
+namespace Scripts.Player
 {
-    using Godot;
-    using System.Collections.Generic;
-
+    
     /// <summary>
     /// Smooth follow-cam that cycles through alive players.
     /// Created as a child of Player in code — no scene node required.
     /// Activated only on permanent death, only on the local client.
     /// 
     /// Required Input Map actions:
-    ///   spectate_next  (e.g. E or Right Arrow)
-    ///   spectate_prev  (e.g. Q or Left Arrow)
+    ///   spectate_next
+    ///   spectate_prev 
     /// </summary>
     public partial class SpectatorCameraController : Node
     {
@@ -28,14 +24,16 @@ namespace Scripts.Player.Components
 
         private Vector3 _offset = new(0, 5, 7);
         private float _smoothSpeed = 5f;
+        private RespawnManager _respawnManager;
 
         // How often to refresh the target list (seconds)
         private float _refreshTimer = 0f;
         private const float RefreshInterval = 0.5f;
 
-        public void Activate(Camera3D camera)
+        public void Activate(Camera3D camera, RespawnManager respawnManager)
         {
             _camera = camera;
+            _respawnManager = respawnManager;
             _active = true;
             _currentIndex = 0;
             _camera.MakeCurrent();
@@ -105,8 +103,14 @@ namespace Scripts.Player.Components
 
         private void RefreshTargets()
         {
-            if (Arena.Instance == null) return;
-            _targets = Arena.Instance.GetAlivePlayers();
+            if (_respawnManager == null) return;
+            var alive = _respawnManager.GetAlivePlayers();
+            _targets.Clear();
+            foreach (var p in alive)
+            {
+                if (p is Node3D node && IsInstanceValid(node))
+                    _targets.Add((Player)node);
+            }
         }
     }
 }

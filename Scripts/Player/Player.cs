@@ -2,14 +2,14 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using Scripts.Game;
-using Scripts.Game.GenericComponents;
 using Scripts.Player.Components;
 using Scripts.Player.Abilities;
 using Scripts.Player.States;
+using Scripts.World;
 
 namespace Scripts.Player
 {
-	public partial class Player : CharacterBody3D, IEntity, IThrowable
+	public partial class Player : CharacterBody3D, IEntity, IThrowable, IPlayerLifecycle
 	{
 
 
@@ -17,6 +17,7 @@ namespace Scripts.Player
 
 		private SpectatorCameraController _spectatorController;
 		private bool _isDead = false;
+		public event Action<int> PlayerDied;
 
 		// Является ли этот игрок локальным (управляемым с этого компьютера)
 		[Export] public bool IsLocalPlayer;
@@ -254,6 +255,7 @@ namespace Scripts.Player
 			return null;
 		}
 
+
 		public override void _UnhandledInput(InputEvent @event)
 		{
 			if (!IsLocalPlayer) return;
@@ -265,6 +267,21 @@ namespace Scripts.Player
 				return;
 			}
 			_cameraControllerComponent.HandleInput(@event);
+		}
+
+		public void Disable()
+		{
+			Rpc(MethodName.RpcDisablePlayer);
+		}
+
+		public void Respawn(Vector3 position)
+		{
+			Rpc(MethodName.RpcRespawn, position);
+		}
+
+		public void EnterSpectator()
+		{
+			Rpc(MethodName.RpcEnterSpectator);
 		}
 
 
@@ -340,22 +357,18 @@ namespace Scripts.Player
 			{
 				// Detach camera from the player's spring arm
 				_camera.TopLevel = true;
-				_spectatorController.Activate(_camera);
+				var respawnManager = GetTree().Root.FindChild("RespawnManager", true, false) as RespawnManager;
+				_spectatorController.Activate(_camera, respawnManager);
 				GD.Print($"[Player {PlayerId}] Entered spectator mode.");
 			}
 		}
 
 
 		private void OnDied()
-		{
-			if (!Multiplayer.IsServer()) return;
-			// Don't QueueFree! Let Arena handle respawn vs permanent death.
-			Arena.Instance.HandlePlayerDeath(PlayerId);
-			//if (!Multiplayer.IsServer()) return;
-			//_chargeBar.Visible = false;
-			////temporary; emit signals taht will increase counter and if it reaches limit, game finishes
-			//QueueFree();
-		}
+	{
+		if (!Multiplayer.IsServer()) return;
+		PlayerDied?.Invoke(PlayerId);  // ← no Arena.Instance anywhere
+	}
 
 		public override void _PhysicsProcess(double delta)
 		{
@@ -390,9 +403,7 @@ namespace Scripts.Player
 		}
 
 
-		// =========================================================
 		// IThrowable — этого игрока можно подобрать
-		// =========================================================
 		private void OnPickupAreaBodyEntered(Node3D body)
 		{
 			if (body is not Player otherPlayer || otherPlayer == this) return;
@@ -415,7 +426,6 @@ namespace Scripts.Player
 		
 		public void Consume(){}
 
-		public void PlayAnimation(string name) { } //уйдет в AnmationComponent
 		public void Throw(Vector3 impulse) // TODO: rename, bacues ethis actually describes
 										   //jow player is THROWN, not how they themslves throw
 		{

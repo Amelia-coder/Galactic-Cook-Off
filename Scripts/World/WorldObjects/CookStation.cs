@@ -1,14 +1,16 @@
 using Godot;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
 using Scripts.Game.RecipeSystem.Dishes;
 using Scripts.Game.RecipeSystem.Ingredients;
 using Scripts.Game.RecipeSystem.Recipes;
 using Scripts.Player.Components;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Scripts.Game;
 
-namespace Scripts.Game
+
+namespace Scripts.World.WorldObjects
 {
 	public partial class CookStation : StaticBody3D, IInteractable, IItemReceiver
 	{

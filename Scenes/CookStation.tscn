@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://cufniptvrwvfn"]
 
-[ext_resource type="Script" uid="uid://bpnhdpfk5ey5d" path="res://Scripts/CookStation/CookStation.cs" id="1_puvr8"]
+[ext_resource type="Script" uid="uid://bf0kgg5pfbkj1" path="res://Scripts/World/WorldObjects/CookStation.cs" id="1_puvr8"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_puvr8"]
 size = Vector3(2.0718994, 0.852829, 1.5434723)
