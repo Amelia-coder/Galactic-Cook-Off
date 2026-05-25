@@ -2,6 +2,7 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using Scripts.Game;
+using Scripts.Game.GenericComponents;
 using Scripts.Player.Components;
 using Scripts.Player.Abilities;
 using Scripts.Player.States;
@@ -49,7 +50,8 @@ namespace Scripts.Player
 		private CameraControllerComponent _cameraControllerComponent;
 		private ItemHolderComponent _itemHolderComponent;
 		private StaminaComponent _staminaComponent;
-		private PlayerInteractionComponent _playerInteractionCompenent;
+		private PlayerInteractionComponent _playerInteractionComponent;
+		//private GenericAnimationComponent _animationComponent;
 
 		private Camera3D _camera;
 		private Area3D _bodyDetector;
@@ -65,8 +67,6 @@ namespace Scripts.Player
 
 		public override void _Ready()
 		{
-			//_playerInput = GetNode<MultiplayerSynchronizer>("PlayerInput");
-			//_playerInput.SetMultiplayerAuthority(PlayerId);
 			if (int.TryParse(Name, out int id))
 				_playerId = id;
 
@@ -195,9 +195,32 @@ namespace Scripts.Player
 			_cameraControllerComponent.Initialize(this, _camera, GetNode<Node3D>("CameraPivot"), GetNode<SpringArm3D>("CameraPivot/SpringArm3D"), IsLocalPlayer);
 			RegisterComponent(_cameraControllerComponent);
 
-			_playerInteractionCompenent = GetNode<PlayerInteractionComponent>("ComponentRegistry/PlayerInteractionComponent");
-			_playerInteractionCompenent.Initialize(this, _itemHolderComponent);
-			RegisterComponent(_playerInteractionCompenent);
+			_playerInteractionComponent = GetNode<PlayerInteractionComponent>("ComponentRegistry/PlayerInteractionComponent");
+			_playerInteractionComponent.Initialize(this, _itemHolderComponent);
+			RegisterComponent(_playerInteractionComponent);
+
+			_animationComponent = GetNode<GenericAnimationComponent>("ComponentRegistry/AnimationComponent");
+			var animPlayer = GetNode<AnimationPlayer>("3DGodotRobot/AnimationPlayer");
+			GD.Print("Weill dianple animations");
+			foreach (var anim in animPlayer.GetAnimationList())
+			{
+				GD.Print(anim);
+			}
+			//_animationComponent.Init(
+			//	animPlayer,
+			//	new Dictionary<EntityAnimation, string>
+			//	{
+			//		[EntityAnimation.Idle] = "Idle",
+			//		[EntityAnimation.Walk] = "Run",
+			//		[EntityAnimation.Run] = "Sprint",
+			//		[EntityAnimation.Jump] = "Jump",
+			////		[EntityAnimation.Fall] = "fall",
+			//		[EntityAnimation.Attack] = "Attack1",
+			//		[EntityAnimation.Hurt] = "Hurt",
+			////		[EntityAnimation.Death] = "death",
+			//	}
+			//);
+			//RegisterComponent(_animationComponent);
 
 		}
 
@@ -241,7 +264,9 @@ namespace Scripts.Player
 			_inputComponent.Update();
 			_cameraControllerComponent.Update((float)delta);
 			_movementComponent.Update((float)delta);
-			_playerInteractionCompenent.Update(_inputComponent);
+			//_animationComponent.Update();
+			_playerInteractionComponent.Update(_inputComponent);
+
 		}
 
 		public override void _Process(double delta)
@@ -251,10 +276,7 @@ namespace Scripts.Player
 
 
 
-		// =========================================================
-		// Подбор и бросок
-		// =========================================================
-
+		// Подбор и бросок(самого игрока)
 		private void ShowPickupLabel(bool visible) //должны быть сигналом в рамкх UI
 		{
 			// TODO: показать/скрыть UI-подсказку "Нажми <клавиша для подбора> для подбора"

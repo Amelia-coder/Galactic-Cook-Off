@@ -1,6 +1,7 @@
 using Godot;
-using Scripts.Player.Components;
 using Scripts.Game;
+using Scripts.Game.GenericComponents;
+using Scripts.Player.Components;
 
 namespace Scripts.Player.States
 {
@@ -15,6 +16,8 @@ namespace Scripts.Player.States
 
 		public override void Enter()
 		{
+			//Entity.GetComponent<GenericAnimationComponent>()
+			//.SetCurrent(EntityAnimation.Jump);
 			GD.Print("Entered Airborne State");
 			_jumpReleased = false;
 		}

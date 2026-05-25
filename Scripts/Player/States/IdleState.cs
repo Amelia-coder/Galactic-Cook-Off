@@ -1,4 +1,5 @@
 using Godot;
+using Scripts.Game.GenericComponents;
 using Scripts.Player.Components;
 
 namespace Scripts.Player.States
@@ -9,6 +10,8 @@ namespace Scripts.Player.States
 		[Export] public float Speed { get; set; } = 0.0f;
 		public override void Enter()
 		{
+			//Entity.GetComponent<GenericAnimationComponent>()
+			//.SetCurrent(EntityAnimation.Idle);
 			var movementComponent = Entity.GetComponent<PlayerMovementComponent>();
 		}
 

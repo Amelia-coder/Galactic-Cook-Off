@@ -1,4 +1,5 @@
 using Godot;
+using Scripts.Game.GenericComponents;
 using Scripts.Player.Components;
 
 namespace Scripts.Player.States
@@ -9,6 +10,8 @@ namespace Scripts.Player.States
 
 		public override void Enter()
 		{
+			//Entity.GetComponent<GenericAnimationComponent>()
+			//.SetCurrent(EntityAnimation.Walk);
 			var _movement = Entity.GetComponent<PlayerMovementComponent>();
 			var _input = Entity.GetComponent<InputComponent>();
 			_movement.SetHorizontalVelocity(_input.MoveDirection * WalkSpeed);

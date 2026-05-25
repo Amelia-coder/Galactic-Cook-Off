@@ -203,21 +203,21 @@ namespace Scripts.Game
 			DishCooked?.Invoke(recipe);
 		}
 
-        // At the end of Cook(), replace the placeholder SpawnResult:
-        private void SpawnResult(string resultId)
-        {
-            var scene = DishRegistry.GetScene(resultId);
-            if (scene == null) return;
+		// At the end of Cook(), replace the placeholder SpawnResult:
+		private void SpawnResult(string resultId)
+		{
+			var scene = DishRegistry.GetScene(resultId);
+			if (scene == null) return;
 
-            var dish = scene.Instantiate<CookedDish>();
-            dish.GlobalPosition = GlobalPosition + Vector3.Up * 1.2f;
-            GetTree().Root.AddChild(dish, true); // true for multiplayer authority
-        }
+			var dish = scene.Instantiate<CookedDish>();
+			dish.GlobalPosition = GlobalPosition + Vector3.Up * 1.2f;
+			GetTree().Root.AddChild(dish, true); // true for multiplayer authority
+		}
 
-        // =========================================================
-        // Minigame
-        // =========================================================
-        private async void StartMinigame()
+		// =========================================================
+		// Minigame
+		// =========================================================
+		private async void StartMinigame()
 		{
 			if (!Multiplayer.IsServer()) return;
 
