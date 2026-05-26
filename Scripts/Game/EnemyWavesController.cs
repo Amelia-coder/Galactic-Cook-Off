@@ -108,6 +108,7 @@ namespace Scripts.Game
 
 		private async void RunWaveAsync(WaveDefinition wave)
 		{
+			if (!Multiplayer.IsServer()) return;
 			_waveInProgress = true;
 			_aliveEnemies.Clear();
 
@@ -167,29 +168,32 @@ namespace Scripts.Game
 		// Spawning
 		private void SpawnEnemy(WaveDefinition wave)
 		{
-			if (wave.EnemyScene == null)
+			var enemy = wave.EnemyScene.Instantiate<Node3D>();
+
+			_spawnCounter++;
+			enemy.Name = $"WaveEnemy_{_currentWaveIndex}_{_spawnCounter}";
+
+			// Debug: check if name already exists
+			if (EnemiesContainer.HasNode($"Enemies:/{enemy.Name}"))
 			{
-				GD.PrintErr("[WavesController] EnemyScene is null in wave definition!");
+				GD.PrintErr($"[WavesController] DUPLICATE NAME: {enemy.Name} already in container!");
+				GD.PrintErr($"[WavesController] Existing children:");
+				foreach (var child in EnemiesContainer.GetChildren())
+					GD.PrintErr($"  - {child.Name}");
 				return;
 			}
 
-			var enemy = wave.EnemyScene.Instantiate<Node3D>();
 
-			// ── THIS IS THE FIX ──
-			// Each enemy needs a unique name for multiplayer replication.
-			// Without this, the second "MeleeEnemy" collides with the first.
-			_spawnCounter++;
-			enemy.Name = $"Enemy_{_spawnCounter}";
-
-			enemy.GlobalPosition = GetRandomSpawnPoint();
 			ApplyWaveModifiers(enemy, wave);
 			EnemiesContainer.AddChild(enemy, true);
+			enemy.GetNode<MultiplayerSynchronizer>("MultiplayerSynchronizer").SetMultiplayerAuthority(1);
+			enemy.GlobalPosition = GetRandomSpawnPoint();
 			_aliveEnemies.Add(enemy);
-
 			enemy.TreeExited += () => OnEnemyRemoved(enemy);
 
-			GD.Print($"[WavesController] Spawned {enemy.Name} at {enemy.GlobalPosition}");
+			GD.Print($"[WavesController] Spawned {enemy.Name}");
 		}
+
 
 		private void ApplyWaveModifiers(Node3D enemy, WaveDefinition wave)
 		{
