@@ -171,6 +171,20 @@ offset_right = 309.0
 offset_bottom = 35.0
 show_percentage = false
 
+[node name="PickupHint" type="Label" parent="CanvasLayer"]
+anchors_preset = -1
+anchor_left = 0.40300003
+anchor_top = 0.52000004
+anchor_right = 0.64000005
+anchor_bottom = 0.74700004
+offset_left = -0.25604248
+offset_top = 0.039978027
+offset_right = -0.2800293
+offset_bottom = -0.056030273
+text = "Press E to pick up"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="PlayerInput" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_1e6p3")
 

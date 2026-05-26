@@ -5,40 +5,78 @@
 
 [node name="Menu" type="Control" node_paths=PackedStringArray("ServerList")]
 layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
+anchor_left = 0.001
+anchor_top = 0.003
+anchor_right = 0.998
+anchor_bottom = 1.003
+offset_left = -0.15200007
+offset_top = 0.055999994
+offset_right = 0.30395508
+offset_bottom = 0.05596924
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_tij55")
-ServerList = NodePath("VBoxContainer/ServerList")
+ServerList = NodePath("CenterContainer/VBoxContainer/ServerList")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.004
+anchor_top = 0.003
+anchor_right = 0.99700004
+anchor_bottom = 0.998
+offset_left = 0.39199972
+offset_top = 0.055999994
+offset_right = -7.5440674
+offset_bottom = -8.704041
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+text = "Galactic Cook-Off"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TabBar" type="TabBar" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="LanTab" type="Button" parent="CenterContainer/VBoxContainer/TabBar"]
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+offset_right = 8.0
+offset_bottom = 8.0
 
-[node name="HostButton" type="Button" parent="VBoxContainer"]
+[node name="SteamTab" type="Button" parent="CenterContainer/VBoxContainer/TabBar"]
+layout_mode = 0
+offset_right = 8.0
+offset_bottom = 8.0
+
+[node name="Label" type="Label" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="ServerList" type="VBoxContainer" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+script = ExtResource("2_353f8")
+
+[node name="HSeparator" type="HSeparator" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="ExitButton" type="Button" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+text = "Exit"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HostButton" type="Button" parent="CenterContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 text = "Host
 "
 
-[node name="JoinButton" type="Button" parent="VBoxContainer"]
+[node name="JoinButton" type="Button" parent="CenterContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 text = "Join"
 
-[node name="Label" type="Label" parent="VBoxContainer"]
-layout_mode = 2
-
-[node name="ServerList" type="VBoxContainer" parent="VBoxContainer"]
-layout_mode = 2
-script = ExtResource("2_353f8")
-
-[node name="HSeparator" type="HSeparator" parent="VBoxContainer"]
-layout_mode = 2
-
-[node name="ExitButton" type="Button" parent="VBoxContainer"]
-layout_mode = 2
-
-[connection signal="pressed" from="VBoxContainer/HostButton" to="." method="OnHostButtonPressed"]
-[connection signal="pressed" from="VBoxContainer/JoinButton" to="." method="OnJoinButtonPressed"]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/HBoxContainer/HostButton" to="." method="OnHostButtonPressed"]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/HBoxContainer/JoinButton" to="." method="OnJoinButtonPressed"]

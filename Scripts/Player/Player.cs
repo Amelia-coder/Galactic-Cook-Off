@@ -1,11 +1,12 @@
 using Godot;
-using System;
-using System.Collections.Generic;
 using Scripts.Game;
-using Scripts.Player.Components;
+using Scripts.Game.RecipeSystem.Ingredients;
 using Scripts.Player.Abilities;
+using Scripts.Player.Components;
 using Scripts.Player.States;
 using Scripts.World;
+using System;
+using System.Collections.Generic;
 
 namespace Scripts.Player
 {
@@ -25,7 +26,9 @@ namespace Scripts.Player
 
 		private uint _originalCollisionLayer;
 		private uint _originalCollisionMask;
-		
+
+		private Label _pickupHint;
+
 		private int _playerId = 1;
 		[Export]
 		public int PlayerId
@@ -82,6 +85,9 @@ namespace Scripts.Player
 			_originalCollisionLayer = CollisionLayer;
 			_originalCollisionMask = CollisionMask;
 
+
+			_pickupHint = GetNode<Label>("CanvasLayer/PickupHint");
+			_pickupHint.Visible = false;
 			GD.Print($"[Player] layer: {CollisionLayer}, mask: {CollisionMask}");
 
 			InitAndRegisterComponents();
@@ -109,6 +115,13 @@ namespace Scripts.Player
 				_abilitySystem.SetPhysicsProcess(false);
 			}
 
+			if (IsLocalPlayer)
+			{
+				_detectionComponent.ThrowableEntered += OnThrowableNearby;
+				_detectionComponent.ThrowableExited += OnThrowableLeft;
+
+			}
+			
 			_movementStateMachine = GetNode<MovementStateMachine>("MovementStateMachine"); // or whatever path
 			_movementStateMachine.ManualInitialize();
 
@@ -290,6 +303,7 @@ namespace Scripts.Player
 		{
 			_isDead = true;
 			_chargeBar.Visible = false;
+			_pickupHint.Visible = false;
 			Visible = false;
 			CollisionLayer = 0;
 			CollisionMask = 0;
@@ -387,7 +401,27 @@ namespace Scripts.Player
 			if (!IsLocalPlayer || _isHeld) return;
 		}
 
+		private void OnThrowableNearby(IThrowable throwable)
+		{
+			if (!IsLocalPlayer || _isDead) return;
 
+			// Show hint with context-appropriate text
+			if (throwable is IIngredient ingredient)
+				_pickupHint.Text = $"Press E to pick up {ingredient.getIngredientIdentData?.Id ?? "item"}";
+			else
+				_pickupHint.Text = "Press E to pick up";
+
+			_pickupHint.Visible = true;
+		}
+
+		private void OnThrowableLeft(IThrowable throwable)
+		{
+			if (!IsLocalPlayer) return;
+
+			// Only hide if nothing else is in range
+			if (!_detectionComponent.HasNearbyThrowables())
+				_pickupHint.Visible = false;
+		}
 
 		// Подбор и бросок(самого игрока)
 		private void ShowPickupLabel(bool visible) //должны быть сигналом в рамкх UI

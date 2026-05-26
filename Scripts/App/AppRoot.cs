@@ -5,7 +5,6 @@ using Scripts.UI;
 using System;
 using System.Collections.Generic;
 
-// AppRoot.cs — simplified
 public partial class AppRoot : Node
 {
 	private const int GamePort = 65000;
@@ -13,18 +12,11 @@ public partial class AppRoot : Node
 
 	[Export] public Menu MenuScene;
 	[Export] public PackedScene ArenaScene;
-
 	[Export] public NetworkManager NetworkManager;
 	[Export] public LanDiscovery LanDiscovery;
 	[Export] public LobbyUI LobbyUI;
-	// In editor: add a Node called "Level" as child of AppRoot
 	[Export] public Node LevelContainer;
-
-	// In editor: add a MultiplayerSpawner, set SpawnPath = LevelContainer,
-	// and add ArenaScene to Auto Spawn List
-
 	private bool _isHost;
-
 
 	public override void _Ready()
 	{
@@ -53,9 +45,7 @@ public partial class AppRoot : Node
 			MenuScene.ServerList.UpdateList(servers);
 	}
 
-	// --------------------------------------------------
 	// UI state transitions
-	// --------------------------------------------------
 	private void ShowMenu()
 	{
 		MenuScene.Show();
@@ -82,9 +72,7 @@ public partial class AppRoot : Node
 		LobbyUI.Hide();
 	}
 
-	// --------------------------------------------------
 	// Host flow
-	// --------------------------------------------------
 	private void OnHostRequested()
 	{
 		var err = NetworkManager.Host(GamePort);
@@ -117,9 +105,7 @@ public partial class AppRoot : Node
 			ChangeLevel(ArenaScene);
 	}
 
-	// --------------------------------------------------
 	// Client flow
-	// --------------------------------------------------
 	private void OnJoinRequested(string ip)
 	{
 		var err = NetworkManager.Join(ip, GamePort);
@@ -173,9 +159,7 @@ public partial class AppRoot : Node
 		LobbyUI.AddPlayer(id, isHost);
 	}
 
-	// --------------------------------------------------
 	// Disconnect / Leave
-	// --------------------------------------------------
 	private void OnLeavePressed()
 	{
 		NetworkManager.Disconnect();
@@ -195,9 +179,7 @@ public partial class AppRoot : Node
 		ShowMenu();
 	}
 
-	// --------------------------------------------------
 	// Level management
-	// --------------------------------------------------
 	private void ChangeLevel(PackedScene scene)
 	{
 		foreach (Node c in LevelContainer.GetChildren())
@@ -208,9 +190,7 @@ public partial class AppRoot : Node
 		LevelContainer.AddChild(scene.Instantiate());
 	}
 
-	// --------------------------------------------------
 	// Helpers
-	// --------------------------------------------------
 	private string GetLocalIp()
 	{
 		string fallback = "unknown";

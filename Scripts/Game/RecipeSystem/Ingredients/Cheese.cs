@@ -25,25 +25,33 @@ namespace Scripts.Game.RecipeSystem.Ingredients
 				Freeze = true;
 		}
 
-        public override void _Process(double delta)
-        {
-            if (_carrier == null) return;
+		public override void _Process(double delta)
+		{
+			if (_carrier == null) return;
 
-            if (!GodotObject.IsInstanceValid(_carrier))
-            {
-                _carrier = null;
-                Freeze = false;
-                return;
-            }
+			if (!GodotObject.IsInstanceValid(_carrier))
+			{
+				_carrier = null;
+				Freeze = false;
+				return;
+			}
 
-            GlobalPosition = _carrier.GlobalPosition + Vector3.Up * 1.5f;
-        }
+			GlobalPosition = _carrier.GlobalPosition + Vector3.Up * 1.5f;
+		}
 
-        public override void _PhysicsProcess(double delta)
+		public override void _PhysicsProcess(double delta)
 		{
 			// Follow the carrier instead of reparenting
-			if (_carrier != null)
-				GlobalPosition = _carrier.GlobalPosition + Vector3.Up * 1.5f;
+			if (_carrier == null) return;
+			
+			if (!GodotObject.IsInstanceValid(_carrier))
+			{
+				_carrier = null;
+				Freeze = false;
+				return;
+			}
+			
+			GlobalPosition = _carrier.GlobalPosition + Vector3.Up * 1.5f;
 		}
 
 		public bool CanBePickedUpBy(IEntity actor) =>
@@ -51,72 +59,72 @@ namespace Scripts.Game.RecipeSystem.Ingredients
 
 		public void PickUp(IEntity actor)
 		{
-            if (actor is not Node3D actorNode) return;
-            Rpc(MethodName.PickUpRpc, actorNode.GetPath());
-        }
+			if (actor is not Node3D actorNode) return;
+			Rpc(MethodName.PickUpRpc, actorNode.GetPath());
+		}
 
 		public void Throw(Vector3 impulse)
 		{
-            Rpc(MethodName.ThrowRpc, impulse);
-        }
+			Rpc(MethodName.ThrowRpc, impulse);
+		}
 
-        public void Consume()
-        {
-            Rpc(MethodName.ConsumeRpc);
-        }
-
-        [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-        private void ConsumeRpc()
-        {
-            _carrier = null;
-            Visible = false;
-            SetProcess(false);
-            SetPhysicsProcess(false);
-            SetPickupZoneActive(false);
-
-            if (!Multiplayer.IsServer()) return;
-            QueueFree();
-        }
-
-
-        public void Drop()
+		public void Consume()
 		{
-            Rpc(MethodName.DropRpc);
-        }
+			Rpc(MethodName.ConsumeRpc);
+		}
 
-        [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-        private void PickUpRpc(string actorPath)
-        {
-            var actorNode = GetNodeOrNull<Node3D>(actorPath);
-            if (actorNode == null) return;
-            _carrier = actorNode;
-            _inFlight = false;
-            Freeze = true;
-            LinearVelocity = Vector3.Zero;
-            AngularVelocity = Vector3.Zero;
-            SetPickupZoneActive(false);
-        }
+		[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+		private void ConsumeRpc()
+		{
+			_carrier = null;
+			Visible = false;
+			SetProcess(false);
+			SetPhysicsProcess(false);
+			SetPickupZoneActive(false);
 
-        [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-        private void ThrowRpc(Vector3 impulse)
-        {
-            _carrier = null;
-            _inFlight = true;
-            Freeze = false;
-            ApplyCentralImpulse(impulse);
-        }
-
-        [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-        private void DropRpc()
-        {
-            _carrier = null;
-            _inFlight = false;
-            Freeze = false;
-        }
+			if (!Multiplayer.IsServer()) return;
+			QueueFree();
+		}
 
 
+		public void Drop()
+		{
+			Rpc(MethodName.DropRpc);
+		}
 
-        private void OnPickupZoneBodyEntered(Node3D body)
+		[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+		private void PickUpRpc(string actorPath)
+		{
+			var actorNode = GetNodeOrNull<Node3D>(actorPath);
+			if (actorNode == null) return;
+			_carrier = actorNode;
+			_inFlight = false;
+			Freeze = true;
+			LinearVelocity = Vector3.Zero;
+			AngularVelocity = Vector3.Zero;
+			SetPickupZoneActive(false);
+		}
+
+		[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+		private void ThrowRpc(Vector3 impulse)
+		{
+			_carrier = null;
+			_inFlight = true;
+			Freeze = false;
+			ApplyCentralImpulse(impulse);
+		}
+
+		[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+		private void DropRpc()
+		{
+			_carrier = null;
+			_inFlight = false;
+			Freeze = false;
+		}
+
+
+
+		private void OnPickupZoneBodyEntered(Node3D body)
 		{
 			GD.Print("Someone entred!");
 			if (body is IEntity actor && CanBePickedUpBy(actor))

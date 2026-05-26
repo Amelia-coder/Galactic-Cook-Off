@@ -9,7 +9,7 @@ radius = 0.15234375
 height = 0.5784607
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_ngisr"]
-radius = 0.8149404
+radius = 0.29428056
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_f5lsx"]
 properties/0/path = NodePath(".:position")

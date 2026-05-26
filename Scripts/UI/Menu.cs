@@ -29,7 +29,16 @@ namespace Scripts.UI
 			var ip = _ipInput?.Text;
 
 			if (string.IsNullOrWhiteSpace(ip))
-				ip = "127.0.0.1"; ///set other for ability to connect form other machines
+			{
+			#if DEBUG
+				ip = "127.0.0.1";
+				GD.Print("[Menu] DEBUG: defaulting to loopback");
+				#else
+				GD.Print("[Menu] No IP entered");
+				// Optionally show a warning label to the user here
+				return;
+				#endif
+			}
 
 			GD.Print($"[Menu] Join requested: {ip}");
 			JoinRequested?.Invoke(ip);
