@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3 uid="uid://blw3xgniwfe0f"]
+[gd_scene load_steps=25 format=3 uid="uid://blw3xgniwfe0f"]
 
 [ext_resource type="Script" uid="uid://dnvesphlqsyh3" path="res://Scripts/Player/Player.cs" id="1_s0eop"]
 [ext_resource type="Script" uid="uid://c30rv0lcu05f3" path="res://Scripts/Player/States/MovementStateMachine.cs" id="2_ft8w5"]
@@ -18,8 +18,6 @@
 [ext_resource type="Script" uid="uid://c6l6aelyid82r" path="res://Scripts/Player/Components/PlayerInteractionComponent.cs" id="10_1e6p3"]
 [ext_resource type="Script" uid="uid://dnww8y37ulu3a" path="res://Scripts/Player/Abilities/AbilitySystem.cs" id="11_epg6k"]
 [ext_resource type="Script" uid="uid://c14xqg41v0ujd" path="res://Scripts/Player/Components/InputComponent.cs" id="12_8cj01"]
-[ext_resource type="Script" uid="uid://cym0dhqdivmqw" path="res://Scripts/Player/Abilities/RunAbility.cs" id="18_w71ue"]
-[ext_resource type="Script" uid="uid://b4kksgwsngyvp" path="res://Scripts/Player/Abilities/JumpAbility.cs" id="19_1e6p3"]
 [ext_resource type="Script" uid="uid://cq6emehb6aq6a" path="res://Scripts/Game/StaminaUIComponent.cs" id="21_yb677"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_0u84n"]
@@ -126,12 +124,6 @@ script = ExtResource("9_ji083")
 [node name="ThrowAbility" type="Node" parent="AbilitySystem"]
 script = ExtResource("10_0kmp4")
 
-[node name="RunAbility" type="Node" parent="AbilitySystem"]
-script = ExtResource("18_w71ue")
-
-[node name="JumpAbility" type="Node" parent="AbilitySystem" groups=["Player"]]
-script = ExtResource("19_1e6p3")
-
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="ChargeBar" type="ProgressBar" parent="CanvasLayer"]
@@ -184,6 +176,13 @@ offset_bottom = -0.056030273
 text = "Press E to pick up"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="InteractHint" type="Label" parent="CanvasLayer"]
+offset_left = 535.0
+offset_top = 368.0
+offset_right = 660.0
+offset_bottom = 391.0
+text = "Predd F to cook!"
 
 [node name="PlayerInput" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_1e6p3")

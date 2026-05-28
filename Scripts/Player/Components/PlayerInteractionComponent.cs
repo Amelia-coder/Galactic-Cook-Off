@@ -1,6 +1,7 @@
 using Godot;
 using Scripts.Game;
 using Scripts.Game.RecipeSystem.Ingredients;
+using System;
 
 
 namespace Scripts.Player.Components
@@ -12,6 +13,9 @@ namespace Scripts.Player.Components
 
 		private IInteractable _currentInteractable;
 
+		public event Action<IInteractable> InteractableAvailable;
+		public event Action InteractableCleared;
+
 		public void Initialize(IEntity entity, ItemHolderComponent itemHolderComponent)
 		{
 			_entity = entity;
@@ -21,12 +25,16 @@ namespace Scripts.Player.Components
 		public void SetCurrentInteractable(IInteractable interactable)
 		{
 			_currentInteractable = interactable;
+			InteractableAvailable?.Invoke(interactable);
 		}
 
 		public void ClearCurrentInteractable(IInteractable interactable)
 		{
 			if (_currentInteractable == interactable)
+			{
 				_currentInteractable = null;
+				InteractableCleared?.Invoke();
+			}
 		}
 
 		public bool IsCarrying()

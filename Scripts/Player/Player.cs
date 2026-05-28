@@ -29,6 +29,8 @@ namespace Scripts.Player
 
 		private Label _pickupHint;
 
+		private Label _interactHint;
+
 		private int _playerId = 1;
 		[Export]
 		public int PlayerId
@@ -92,6 +94,18 @@ namespace Scripts.Player
 
 			InitAndRegisterComponents();
 
+			_interactHint = GetNode<Label>("CanvasLayer/InteractHint");
+			_interactHint.Visible = false;
+
+			if (IsLocalPlayer)
+			{
+				_detectionComponent.ThrowableEntered += OnThrowableNearby;
+				_detectionComponent.ThrowableExited += OnThrowableLeft;
+				_playerInteractionComponent.InteractableAvailable += OnInteractableNearby;
+				_playerInteractionComponent.InteractableCleared += OnInteractableLeft;
+
+			}
+
 
 			List<Ability> abilities = new List<Ability>();
 			PickupAbility pickupAbility = GetNode<PickupAbility>("AbilitySystem/PickupAbility");
@@ -115,13 +129,7 @@ namespace Scripts.Player
 				_abilitySystem.SetPhysicsProcess(false);
 			}
 
-			if (IsLocalPlayer)
-			{
-				_detectionComponent.ThrowableEntered += OnThrowableNearby;
-				_detectionComponent.ThrowableExited += OnThrowableLeft;
-
-			}
-			
+		
 			_movementStateMachine = GetNode<MovementStateMachine>("MovementStateMachine"); // or whatever path
 			_movementStateMachine.ManualInitialize();
 
@@ -421,6 +429,25 @@ namespace Scripts.Player
 			// Only hide if nothing else is in range
 			if (!_detectionComponent.HasNearbyThrowables())
 				_pickupHint.Visible = false;
+		}
+
+        private void OnInteractableNearby(IInteractable interactable)
+        {
+            if (_isDead) return;
+            _interactHint.Text = "Press E to interact";
+            _interactHint.Visible = true;
+
+			// Hide the pickup hint so they don't overlap
+			_pickupHint.Visible = false;
+		}
+
+		private void OnInteractableLeft()
+		{
+			_interactHint.Visible = false;
+
+			// Restore pickup hint if something throwable is still nearby
+			if (_detectionComponent.HasNearbyThrowables())
+				_pickupHint.Visible = true;
 		}
 
 		// Подбор и бросок(самого игрока)
