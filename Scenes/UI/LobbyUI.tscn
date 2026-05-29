@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bhhemo1pvuop3" path="res://Scripts/UI/LobbyUI.cs" id="1_d21lq"]
 
-[node name="LobbyUI" type="Control" node_paths=PackedStringArray("TitleLabel", "IpLabel", "PlayerCountLabel", "PlayerList", "StartButton", "LeaveButton")]
+[node name="LobbyUI" type="Control" node_paths=PackedStringArray("BroadcastIpLabel", "TitleLabel", "IpLabel", "PlayerCountLabel", "PlayerList", "StartButton", "LeaveButton")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -10,6 +10,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_d21lq")
+BroadcastIpLabel = NodePath("CenterContainer/PanelContainer/MarginContainer/VBoxContainer/BroadcastIpLabel")
 TitleLabel = NodePath("CenterContainer/PanelContainer/MarginContainer/VBoxContainer/TitleLabel")
 IpLabel = NodePath("CenterContainer/PanelContainer/MarginContainer/VBoxContainer/IpLabel")
 PlayerCountLabel = NodePath("CenterContainer/PanelContainer/MarginContainer/VBoxContainer/PlayerCountLabel")
@@ -66,3 +67,6 @@ text = "Start"
 custom_minimum_size = Vector2(24, 0)
 layout_mode = 2
 text = "Leave"
+
+[node name="BroadcastIpLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2

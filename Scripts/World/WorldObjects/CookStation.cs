@@ -14,6 +14,7 @@ namespace Scripts.World.WorldObjects
 {
 	public partial class CookStation : StaticBody3D, IInteractable, IItemReceiver
 	{
+		//[SignalS] public delegate void DishCookedEventHandler();
 		[Signal] public delegate void GoodsChangedEventHandler(int lol, int required);
 		[Signal] public delegate void WaveStartedEventHandler(int wave);
 		[Signal] public delegate void GoalChangedEventHandler(int newGoal);
@@ -246,3 +247,98 @@ namespace Scripts.World.WorldObjects
 		}
 	}
 }
+// sgahl be reodne later - bwecise reuqired goods is rendant amd wehave reewcipe system 
+
+//public partial class CookStation : Node3D
+//{
+//    [Signal] public delegate void DishCookedEventHandler(string recipeId);
+//    [Signal] public delegate void InventoryChangedEventHandler();
+
+//    // Ingredient inventory: "meat" -> 2, "bread" -> 1, etc.
+//    private readonly Dictionary<string, int> _inventory = new();
+
+//    // Queue of recipe IDs to cook, in order
+//    private readonly Queue<string> _recipeQueue = new();
+
+//    private bool _isCooking = false;
+
+//    // ─── Queuing ───
+
+//    public void EnqueueRecipe(string recipeId)
+//    {
+//        if (!RecipeRegistry.Contains(recipeId))
+//        {
+//            GD.PrintErr($"[CookStation] Unknown recipe: {recipeId}");
+//            return;
+//        }
+//        _recipeQueue.Enqueue(recipeId);
+//        GD.Print($"[CookStation] Queued recipe: {recipeId} (queue size: {_recipeQueue.Count})");
+//    }
+
+//    public IReadOnlyCollection<string> GetQueue() => _recipeQueue.ToArray();
+
+//    // ─── Ingredient deposit ───
+
+//    public void DepositIngredient(string ingredientId, int amount = 1)
+//    {
+//        if (!Multiplayer.IsServer()) return;
+
+//        if (!_inventory.ContainsKey(ingredientId))
+//            _inventory[ingredientId] = 0;
+
+//        _inventory[ingredientId] += amount;
+//        GD.Print($"[CookStation] Deposited {amount}x {ingredientId} (total: {_inventory[ingredientId]})");
+//        EmitSignal(SignalName.InventoryChanged);
+//    }
+
+//    public IReadOnlyDictionary<string, int> GetInventory() => _inventory;
+
+//    // ─── Cooking ───
+
+//    public bool CanCookNext()
+//    {
+//        if (_isCooking || _recipeQueue.Count == 0) return false;
+//        var recipe = RecipeRegistry.Get(_recipeQueue.Peek());
+//        return HasIngredients(recipe);
+//    }
+
+//    public void CookNext()
+//    {
+//        if (!Multiplayer.IsServer()) return;
+//        if (!CanCookNext()) return;
+
+//        _isCooking = true;
+//        var recipeId = _recipeQueue.Dequeue();
+//        var recipe = RecipeRegistry.Get(recipeId);
+
+//        ConsumeIngredients(recipe);
+
+//        // Later: await minigame using recipe.CookTime
+//        GD.Print($"[CookStation] Cooked: {recipeId}");
+//        EmitSignal(SignalName.InventoryChanged);
+//        EmitSignal(SignalName.DishCooked, recipeId);
+//        _isCooking = false;
+//    }
+
+//    // ─── Helpers ───
+
+//    private bool HasIngredients(Recipe recipe)
+//    {
+//        foreach (var req in recipe.Ingredients)
+//        {
+//            if (!_inventory.TryGetValue(req.Id, out int have) || have < req.Amount)
+//                return false;
+//        }
+//        return true;
+//    }
+
+//    private void ConsumeIngredients(Recipe recipe)
+//    {
+//        foreach (var req in recipe.Ingredients)
+//        {
+//            _inventory[req.Id] -= req.Amount;
+//            if (_inventory[req.Id] <= 0)
+//                _inventory.Remove(req.Id);
+//        }
+//    }
+//}

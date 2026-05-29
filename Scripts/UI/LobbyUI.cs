@@ -1,14 +1,12 @@
 using Godot;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Scripts.UI
 {
 	public partial class LobbyUI : Control
 	{
+		[Export] public Label BroadcastIpLabel;
 		[Export] public Label TitleLabel;
 		[Export] public Label IpLabel;
 		[Export] public Label PlayerCountLabel;
@@ -30,10 +28,22 @@ namespace Scripts.UI
 			LeaveButton.Pressed += () => LeavePressed?.Invoke();
 		}
 
-		public void Setup(bool isHost, string ip, string gameName)
+		public void Setup(bool isHost, string localIp, string broadcastIp, string gameName)
 		{
 			TitleLabel.Text = $"{gameName} — Lobby";
-			IpLabel.Text = $"IP: {ip}";
+			IpLabel.Text = $"IP: {localIp}";
+
+			if (isHost && broadcastIp != localIp)
+			{
+				BroadcastIpLabel.Text = $"Join IP: {broadcastIp}";
+				BroadcastIpLabel.Visible = true;
+			}
+			else
+			{
+				BroadcastIpLabel.Visible = false;
+			}
+
+
 			StartButton.Visible = isHost;
 			StartButton.Disabled = true; // enable when 2+ players
 			ClearPlayerList();

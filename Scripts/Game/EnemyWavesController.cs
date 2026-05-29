@@ -7,13 +7,6 @@ using System.Threading.Tasks;
 namespace Scripts.Game
 {
 
-	/// <summary>
-	/// Owns all enemy spawning. Arena tells it "start wave X" and listens to signals.
-	/// Knows nothing about Arena, Player, or game flow.
-	///
-	/// Scene tree: Arena/EnemyWavesController  (add as child node)
-	/// Also needs spawn points as child Node3Ds, or assign via export.
-	/// </summary>
 	public partial class EnemyWavesController : Node
 	{
 		private int _spawnCounter = 0;
@@ -85,9 +78,6 @@ namespace Scripts.Game
 			StartWave(_currentWaveIndex + 1);
 		}
 
-		/// <summary>
-		/// Kill all alive enemies immediately (e.g. for skip/reset).
-		/// </summary>
 		public void ClearAllEnemies()
 		{
 			foreach (var enemy in _aliveEnemies.ToArray())
@@ -102,9 +92,7 @@ namespace Scripts.Game
 		public int GetCurrentWaveIndex() => _currentWaveIndex;
 		public bool IsWaveInProgress() => _waveInProgress;
 
-		// =========================================================
 		// Wave execution
-		// =========================================================
 
 		private async void RunWaveAsync(WaveDefinition wave)
 		{

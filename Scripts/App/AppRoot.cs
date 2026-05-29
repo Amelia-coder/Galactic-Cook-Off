@@ -59,8 +59,10 @@ public partial class AppRoot : Node
 		MenuScene.Hide();
 		LobbyUI.Show();
 
-		string ip = GetLocalIp();
-		LobbyUI.Setup(_isHost, ip, "Cooking Chaos");
+		string localIp = GetLocalIp();
+		string broadcastIp = LanDiscovery.Broadcaster.GetBroadcastSourceIp();
+
+		LobbyUI.Setup(_isHost, localIp, broadcastIp, "Cooking Chaos");
 
 		// Add self
 		LobbyUI.AddPlayer(NetworkManager.MyId, _isHost);

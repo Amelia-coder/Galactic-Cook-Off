@@ -13,7 +13,7 @@ namespace Scripts.UI
 
 		public override void _Ready()
 		{
-			_ipInput = GetNode<LineEdit>("IPLineEdit");
+			_ipInput = GetNode<LineEdit>("CenterContainer/VBoxContainer/VBoxContainer/IPLineEdit");
 			ServerList.ServerSelected += ip => JoinRequested?.Invoke(ip);
 
 		}

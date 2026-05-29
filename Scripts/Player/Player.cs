@@ -431,11 +431,11 @@ namespace Scripts.Player
 				_pickupHint.Visible = false;
 		}
 
-        private void OnInteractableNearby(IInteractable interactable)
-        {
-            if (_isDead) return;
-            _interactHint.Text = "Press E to interact";
-            _interactHint.Visible = true;
+		private void OnInteractableNearby(IInteractable interactable)
+		{
+			if (_isDead) return;
+			_interactHint.Text = "Press E to interact";
+			_interactHint.Visible = true;
 
 			// Hide the pickup hint so they don't overlap
 			_pickupHint.Visible = false;

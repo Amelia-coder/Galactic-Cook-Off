@@ -133,4 +133,12 @@ public partial class CameraControllerComponent : Component
 		GD.Print($"[Camera] TriggerShake: intensity={intensity}, duration={duration}");
 		// TODO: implement shake
 	}
+
+	public override void _ExitTree()
+	{
+		if (_isActive)
+		{
+			Input.MouseMode = Input.MouseModeEnum.Visible;
+		}
+	}
 }

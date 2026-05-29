@@ -54,7 +54,7 @@ namespace Scripts.Networking.LANComponents
 			}
 		}
 
-		private void ParsePacket(string message, string ip)
+		private void ParsePacket(string message, string sourceIp)
 		{
 			// Example:
 			// GAME_SERVER|KitchenWar|65000
@@ -72,15 +72,14 @@ namespace Scripts.Networking.LANComponents
 			if (!int.TryParse(split[2], out int port))
 				return;
 
-			var info = new ServerInfo
-			(
-				serverName,
-				ip,
-				port     
-			);
+			string reportedIp = split[3];
 
-			GD.Print(
-				$"[LAN] Found server {info.Name} at {info.Ip}:{info.Port}");
+			// Prefer the source IP (what the network actually sees),
+			// fall back to self-reported if they differ
+			var info = new ServerInfo(serverName, sourceIp, port);
+
+			GD.Print($"[LAN] Found server {info.Name} at {info.Ip}:{info.Port}" +
+					 (sourceIp != reportedIp ? $" (host reports {reportedIp})" : ""));
 
 			ServerDiscovered?.Invoke(info);
 		}
