@@ -56,26 +56,17 @@ namespace Scripts.Networking.LANComponents
 
 		private void ParsePacket(string message, string sourceIp)
 		{
-			// Example:
-			// GAME_SERVER|KitchenWar|65000
-
 			var split = message.Split('|');
-
-			if (split.Length < 3)
-				return;
-
-			if (split[0] != "GAME_SERVER")
+			if (split.Length < 3 || split[0] != "GAME_SERVER")
 				return;
 
 			string serverName = split[1];
-
 			if (!int.TryParse(split[2], out int port))
 				return;
 
-			string reportedIp = split[3];
+			// Optional 4th field
+			string reportedIp = split.Length >= 4 ? split[3] : sourceIp;
 
-			// Prefer the source IP (what the network actually sees),
-			// fall back to self-reported if they differ
 			var info = new ServerInfo(serverName, sourceIp, port);
 
 			GD.Print($"[LAN] Found server {info.Name} at {info.Ip}:{info.Port}" +
@@ -83,5 +74,35 @@ namespace Scripts.Networking.LANComponents
 
 			ServerDiscovered?.Invoke(info);
 		}
+
+  //      private void ParsePacket(string message, string sourceIp)
+		//{
+		//	// Example:
+		//	// GAME_SERVER|KitchenWar|65000
+
+		//	var split = message.Split('|');
+
+		//	if (split.Length < 3)
+		//		return;
+
+		//	if (split[0] != "GAME_SERVER")
+		//		return;
+
+		//	string serverName = split[1];
+
+		//	if (!int.TryParse(split[2], out int port))
+		//		return;
+
+		//	string reportedIp = split[3];
+
+		//	// Prefer the source IP (what the network actually sees),
+		//	// fall back to self-reported if they differ
+		//	var info = new ServerInfo(serverName, sourceIp, port);
+
+		//	GD.Print($"[LAN] Found server {info.Name} at {info.Ip}:{info.Port}" +
+		//			 (sourceIp != reportedIp ? $" (host reports {reportedIp})" : ""));
+
+		//	ServerDiscovered?.Invoke(info);
+		//}
 	}
 }

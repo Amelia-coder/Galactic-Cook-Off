@@ -1,0 +1,43 @@
+[gd_scene load_steps=2 format=3 uid="uid://b44ufyebxvb5a"]
+
+[ext_resource type="Script" uid="uid://dk0yjvimku0fb" path="res://Scripts/UI/PauseMenu.cs" id="1_eod5q"]
+
+[node name="PauseMenu" type="CanvasLayer"]
+script = ExtResource("1_eod5q")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+anchors_preset = -1
+anchor_right = 0.998
+anchor_bottom = 1.029
+offset_right = 0.30395508
+offset_bottom = 0.20794678
+
+[node name="ColorRect" type="ColorRect" parent="PanelContainer"]
+layout_mode = 2
+color = Color(0, 0, 0, 0.5019608)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/ColorRect"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.282
+anchor_top = 0.177
+anchor_right = 0.68600005
+anchor_bottom = 0.578
+offset_left = -0.21400452
+offset_top = 0.15599823
+offset_right = -0.32202148
+offset_bottom = -0.01600647
+
+[node name="Label" type="Label" parent="PanelContainer/ColorRect/VBoxContainer"]
+layout_mode = 2
+text = "Paused"
+horizontal_alignment = 1
+
+[node name="ResumeButton" type="Button" parent="PanelContainer/ColorRect/VBoxContainer"]
+layout_mode = 2
+text = "Resume
+"
+
+[node name="ExitButton" type="Button" parent="PanelContainer/ColorRect/VBoxContainer"]
+layout_mode = 2
+text = "Exit"

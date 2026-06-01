@@ -16,7 +16,11 @@ public partial class AppRoot : Node
 	[Export] public LanDiscovery LanDiscovery;
 	[Export] public LobbyUI LobbyUI;
 	[Export] public Node LevelContainer;
+	[Export] public PackedScene PauseMenuScene;
+
 	private bool _isHost;
+	private PauseMenu _pauseMenu;
+
 
 	public override void _Ready()
 	{
@@ -35,7 +39,25 @@ public partial class AppRoot : Node
 		NetworkManager.PlayerLeft += OnPlayerLeft;
 
 		LanDiscovery.ServersUpdated += OnServersUpdated;
-		
+
+		_pauseMenu = PauseMenuScene.Instantiate<PauseMenu>();
+		AddChild(_pauseMenu);
+		_pauseMenu.ExitRequested += OnPauseExit;
+		_pauseMenu.Disable();
+
+		ShowMenu();
+	}
+	
+	private void OnPauseExit()
+	{
+		_pauseMenu.Disable();
+		NetworkManager.Disconnect();
+		LanDiscovery.StopHostBroadcast();
+		_isHost = false;
+
+		foreach (Node c in LevelContainer.GetChildren())
+			c.QueueFree();
+
 		ShowMenu();
 	}
 
@@ -101,6 +123,7 @@ public partial class AppRoot : Node
 		HideAll();
 		LanDiscovery.StopClientDiscovery();
 		LanDiscovery.StopHostBroadcast();
+		_pauseMenu.Enable();
 
 		// Only server creates the level — spawner replicates
 		if (Multiplayer.IsServer())
@@ -172,6 +195,7 @@ public partial class AppRoot : Node
 
 	private void OnDisconnected()
 	{
+		_pauseMenu.Disable();
 		LanDiscovery.StopHostBroadcast();
 		_isHost = false;
 
