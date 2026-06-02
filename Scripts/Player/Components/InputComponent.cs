@@ -43,6 +43,7 @@ namespace Scripts.Player.Components
 		{
 			Vector2 inputDir = Input.GetVector("left", "right", "forward", "back");
 
+			
 			if (inputDir.LengthSquared() > 0.01f)
 			{
 				Vector3 forward = -_transform.Transform.Basis.Z;

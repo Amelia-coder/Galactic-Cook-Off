@@ -40,7 +40,8 @@ namespace Scripts.UI
 			}
 			else
 			{
-				BroadcastIpLabel.Visible = false;
+				BroadcastIpLabel.Text = $"Join IP: {localIp}";
+				BroadcastIpLabel.Visible = true;
 			}
 
 
