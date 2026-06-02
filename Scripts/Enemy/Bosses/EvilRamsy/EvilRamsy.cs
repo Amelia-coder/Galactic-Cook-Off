@@ -59,7 +59,6 @@ namespace Scripts.Enemy.Bosses.EvilRamsy
 
 			// Register normal phase attack (rage attack added by BossRageState)
 			_attackComponent.RegisterStrategy(new MeleeAttackStrategy());
-			_attackComponent.RegisterStrategy(new MeleeAttackStrategy());
 
 			_attackComponent.RegisterStrategy(new AoEAttackStrategy(
 			 radius: 7f, damage: 20f, cooldown: 8f));

@@ -1,4 +1,5 @@
 ﻿using Godot;
+using Scripts.Game;
 
 namespace Scripts.Enemy
 {
@@ -35,8 +36,6 @@ namespace Scripts.Enemy
             OnExecute(self, target);
         }
 
-        protected abstract void OnExecute(
-            Node3D self,
-            Node3D target);
+        protected abstract void OnExecute(Node3D self, Node3D target);
     }
 }

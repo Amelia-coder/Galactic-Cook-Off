@@ -31,7 +31,6 @@ namespace Scripts.Game
 			CurrentState.Enter();
 			SetProcess(true);
 			SetPhysicsProcess(true);
-			GD.Print($"[SM] Started with {CurrentState}");
 		}
 
 		private void OnStateFinished(string nextStatePath)
