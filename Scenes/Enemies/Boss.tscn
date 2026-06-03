@@ -21,7 +21,7 @@
 size = Vector3(0.9370117, 2.050171, 0.8861084)
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_wetjm"]
-radius = 1.1127774
+radius = 1.3989352
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_b1s5r"]
 radius = 25.770876
@@ -38,6 +38,7 @@ properties/2/spawn = true
 properties/2/replication_mode = 1
 
 [node name="EvilRamsy" type="CharacterBody3D"]
+collision_layer = 2
 script = ExtResource("1_l82wv")
 
 [node name="ComponentRegistry" type="Node" parent="."]
@@ -56,6 +57,7 @@ script = ExtResource("5_awoao")
 
 [node name="HealthComponent" type="Node" parent="ComponentRegistry"]
 script = ExtResource("6_ha1q6")
+MaxHealth = 1.0
 
 [node name="NavigationComponent" type="Node" parent="ComponentRegistry"]
 script = ExtResource("7_oh6af")
@@ -89,7 +91,7 @@ mesh = SubResource("CylinderMesh_4pntv")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.03149414, 0.011716783, 0.0569458)
 shape = SubResource("BoxShape3D_4pntv")
 
-[node name="HurtArea" type="Area3D" parent="."]
+[node name="HurtArea" type="Area3D" parent="." groups=["Enemy"]]
 collision_layer = 2
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="HurtArea"]

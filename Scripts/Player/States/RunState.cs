@@ -21,7 +21,7 @@ namespace Scripts.Player.States
 				TransitionTo("WalkState");
 				return;
 			}
-			GD.Print("Entered RunState");
+			//GD.Print("Entered RunState");
 		}
 
 		public override void PhysicsUpdate(double delta)

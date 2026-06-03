@@ -43,21 +43,18 @@ namespace Scripts.Enemy.Components
 			if (_owner == null)
 				return Vector3.Zero;
 
-			if (_path == null || _path.Length == 0)
+			if (_path == null || _path.Length == 0 || _currentIndex >= _path.Length)
 				return (Target - _owner.GlobalPosition).NormalizedSafe();
 
 			Vector3 currentWaypoint = _path[_currentIndex];
 
-			// Advance waypoint if close enough
 			if (_owner.GlobalPosition.DistanceTo(currentWaypoint) < ArrivalDistance)
 			{
 				_currentIndex++;
-
 				if (_currentIndex >= _path.Length)
 				{
 					return Vector3.Zero;
 				}
-
 				currentWaypoint = _path[_currentIndex];
 			}
 

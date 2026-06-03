@@ -78,7 +78,7 @@ namespace Scripts.World.WorldObjects
 			item.Freeze = false;
 			item.ApplyCentralImpulse(impulse);
 
-			GD.Print($"[Dispenser] Launched {item.Name} with impulse {impulse}");
+			//GD.Print($"[Dispenser] Launched {item.Name} with impulse {impulse}");
 		}
 	}
 }

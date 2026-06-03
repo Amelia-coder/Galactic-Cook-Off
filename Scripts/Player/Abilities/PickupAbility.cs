@@ -33,12 +33,12 @@ namespace Scripts.Player.Abilities
             if (_itemHolder.IsHoldingItem)
             {
                 TryDrop();
-                GD.Print("Dropped");
+                //GD.Print("Dropped");
             }
             else
             {
                 TryPickUp();
-                GD.Print("PICKED");
+                //GD.Print("PICKED");
             }
         }
 

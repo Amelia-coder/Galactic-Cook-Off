@@ -7,13 +7,15 @@ namespace Scripts.Enemy.Bosses.Components
 {
     public partial class BossAttackComponent : EnemyAttackComponent
     {
+        private float _aoeActivationRadius = 5f;
+
         // Override to pick the BEST strategy, not just first available
         public AttackStrategy GetBestAttack(Node3D self, Node3D target)
         {
             float dist = self.GlobalPosition.DistanceTo(target.GlobalPosition);
 
             // Close range — prefer AoE if multiple players nearby
-            if (dist < 5f && CountNearbyPlayers(self, 5f) >= 2)
+            if (dist < _aoeActivationRadius && CountNearbyPlayers(self, _aoeActivationRadius) >= 2)
             {
                 var aoe = GetStrategyOfType<AoEAttackStrategy>();
                 if (aoe != null && aoe.CanAttack(self, target))

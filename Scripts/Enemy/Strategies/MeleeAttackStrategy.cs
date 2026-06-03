@@ -7,7 +7,7 @@ namespace Scripts.Enemy.Strategies
 {
     public class MeleeAttackStrategy : AttackStrategy
     {
-        private float damage = 90.0f;
+        private float damage = 0.10f;
         public MeleeAttackStrategy()
         {
             Range = 2.5f;
@@ -16,6 +16,7 @@ namespace Scripts.Enemy.Strategies
 
         protected override void OnExecute(Node3D self, Node3D target)
         {
+            GD.Print("[Boss] We are doing Mellee attack!");
             IEntity entity = (IEntity)target;
             var targetHealthComponent = entity.GetComponent<GenericHealthComponent>();
             if (targetHealthComponent != null)

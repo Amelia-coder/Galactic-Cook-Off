@@ -30,6 +30,7 @@ namespace Scripts.Enemy.Strategies
 
         protected override void OnExecute(Node3D self, Node3D target)
         {
+            GD.Print("[Boss] We are doing AOE!");
             _timer = _cooldown;
 
             // Hit ALL players in radius

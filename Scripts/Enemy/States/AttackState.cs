@@ -2,9 +2,6 @@ using Godot;
 using Scripts.Enemy.Components;
 using Scripts.Game;
 using Scripts.Player.Components; //remove this and intorice genrilzed component is Scripts.Game namespace!
-using Scripts.Enemy.Strategies;
-using Scripts.Enemy;
-
 namespace Scripts.Enemy.States
 {
 	public partial class AttackState : State<IEntity>

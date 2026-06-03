@@ -44,6 +44,11 @@ namespace Scripts.Enemy.Bosses.EvilRamsy
 			RegisterComponent(_targetSelectorComponent);
 
 			_attackComponent = GetNode<EnemyAttackComponent>("ComponentRegistry/BossAttackComponent");
+			// Register normal phase attack (rage attack added by BossRageState)
+			//_attackComponent.RegisterStrategy(new RangedAttackStrategy()); // come up with projectile that will be launched
+			_attackComponent.RegisterStrategy(new MeleeAttackStrategy());
+			_attackComponent.RegisterStrategy(new AoEAttackStrategy(
+			 radius: 30f, damage: 20f, cooldown: 8f));
 			RegisterComponent(_attackComponent);
 
 			_lootDropComponent = GetNode<LootDropComponent>("ComponentRegistry/LootDropComponent");
@@ -56,12 +61,6 @@ namespace Scripts.Enemy.Bosses.EvilRamsy
 				SetPhysicsProcess(false);
 				return;
 			}
-
-			// Register normal phase attack (rage attack added by BossRageState)
-			_attackComponent.RegisterStrategy(new MeleeAttackStrategy());
-
-			_attackComponent.RegisterStrategy(new AoEAttackStrategy(
-			 radius: 7f, damage: 20f, cooldown: 8f));
 
 			//_attackComponent.RegisterStrategy(new RangedAttackStrategy(
 			//    projectile: ProjectileScene,
@@ -83,6 +82,7 @@ namespace Scripts.Enemy.Bosses.EvilRamsy
 
 		public override void _PhysicsProcess(double delta)
 		{
+			_attackComponent.UpdateStrategies(delta);
 			_movementComponent.Update((float)delta);
 		}
 

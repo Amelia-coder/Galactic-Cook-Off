@@ -32,23 +32,23 @@ namespace Scripts.Enemy.States
 
 		public override void PhysicsUpdate(double delta)
 		{
+			GD.Print("[Boss] We are doing chase state!");
 			if (!_detector.HasTargets())
 				return;
-
+			
 			// Check rage transition
 			if (!_isRaging && _health.CurrentHealth <= _health.MaxHealth * RageHealthPercent)
 			{
-				EmitSignal(State<EvilRamsy>.SignalName.Finished, "BossRageState");
+				TransitionTo("BossRageState");
 				return;
 			}
 
 			var target = _selector.SelectTarget(_detector.Targets, (Node3D)Entity);
 			if (target == null) return;
 
-			GD.Print($"[Boss] Is traget null? {target == null}; is enetity null? {Entity == null}" );
 			if (_attack.CanAttack((Node3D)Entity, target))
 			{
-				EmitSignal(State<EvilRamsy>.SignalName.Finished, "BossAttackState");
+				TransitionTo("BossAttackState");
 				return;
 			}
 

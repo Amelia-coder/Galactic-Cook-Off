@@ -69,8 +69,8 @@ namespace Scripts.Networking.LANComponents
 
 			var info = new ServerInfo(serverName, sourceIp, port);
 
-			GD.Print($"[LAN] Found server {info.Name} at {info.Ip}:{info.Port}" +
-					 (sourceIp != reportedIp ? $" (host reports {reportedIp})" : ""));
+			//GD.Print($"[LAN] Found server {info.Name} at {info.Ip}:{info.Port}" +
+					 //(sourceIp != reportedIp ? $" (host reports {reportedIp})" : ""));
 
 			ServerDiscovered?.Invoke(info);
 		}

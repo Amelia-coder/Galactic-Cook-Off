@@ -16,7 +16,7 @@ namespace Scripts.Player.States
 			var _input = Entity.GetComponent<InputComponent>();
 			_movement.SetHorizontalVelocity(_input.MoveDirection * WalkSpeed);
 
-			GD.Print("Entered WalkState");
+			//GD.Print("Entered WalkState");
 		}
 
 		public override void PhysicsUpdate(double delta)

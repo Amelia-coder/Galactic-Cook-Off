@@ -53,7 +53,7 @@ namespace Scripts.Enemy.Components
 			if (_targets.Add(body))
 			{
 				TargetEntered?.Invoke(body);
-				GD.Print($"[Detector] Entered: {body.Name}");
+				//GD.Print($"[Detector] Entered: {body.Name}");
 			}
 		}
 
@@ -70,7 +70,7 @@ namespace Scripts.Enemy.Components
 			if (_targets.Remove(body))
 			{
 				TargetExited?.Invoke(body);
-				GD.Print($"[Detector] Exited: {body.Name}");
+				//GD.Print($"[Detector] Exited: {body.Name}");
 			}
 		}
 

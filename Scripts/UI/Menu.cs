@@ -75,9 +75,9 @@ namespace Scripts.UI
 		//helper function for ip validation
 		bool IsValidIPv4(string input)
 		{
-			GD.Print($"{input}");
-			GD.Print($"is {input} valid ", IPAddress.TryParse(input, out var addr));
-			GD.Print($"is 127.0.0.1 valid ", IPAddress.TryParse("127.0.0.1", out var add));
+			//GD.Print($"{input}");
+			//GD.Print($"is {input} valid ", IPAddress.TryParse(input, out var addr));
+			//GD.Print($"is 127.0.0.1 valid ", IPAddress.TryParse("127.0.0.1", out var add));
 
 			if (string.IsNullOrWhiteSpace(input))
 				return false;

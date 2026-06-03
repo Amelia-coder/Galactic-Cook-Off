@@ -33,17 +33,9 @@ namespace Scripts.UI
 			TitleLabel.Text = $"{gameName} — Lobby";
 			IpLabel.Text = $"IP: {localIp}";
 
-			if (isHost && broadcastIp != localIp)
-			{
-				BroadcastIpLabel.Text = $"Join IP: {broadcastIp}";
-				BroadcastIpLabel.Visible = true;
-			}
-			else
-			{
-				BroadcastIpLabel.Text = $"Join IP: {localIp}";
-				BroadcastIpLabel.Visible = true;
-			}
-
+			BroadcastIpLabel.Text = $"Join IP: {broadcastIp}";
+			BroadcastIpLabel.Visible = true;
+			
 
 			StartButton.Visible = isHost;
 			StartButton.Disabled = true; // enable when 2+ players

@@ -126,7 +126,7 @@ namespace Scripts.Game.RecipeSystem.Ingredients
 
 		private void OnPickupZoneBodyEntered(Node3D body)
 		{
-			GD.Print("Someone entred!");
+			//GD.Print("Someone entred!");
 			if (body is IEntity actor && CanBePickedUpBy(actor))
 				PickupAvailabilityChanged?.Invoke(true);
 		}

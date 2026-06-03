@@ -1,5 +1,4 @@
 ﻿using Godot;
-using Scripts.Enemy.Bosses.EvilRamsy;
 using Scripts.Enemy.Components;
 using Scripts.Game;
 using Scripts.Enemy.Bosses.Components;
@@ -34,11 +33,38 @@ namespace Scripts.Enemy.States
 
         public override void PhysicsUpdate(double delta)
         {
-            _timer -= delta;
-            if (_timer <= 0)
+            //_timer -= delta;
+            //if (_timer <= 0)
+            //{
+            //    TransitionTo("BossChaseState");
+            //}
+
+            _attack.UpdateStrategies(delta);
+
+            if (!_detector.HasTargets())
             {
-                EmitSignal(State<EvilRamsy>.SignalName.Finished, "BossChaseState");
+                TransitionTo("BossChaseState");
+                return;
             }
+
+            Node3D target = _selector.SelectTarget(
+                _detector.Targets, (Node3D)Entity);
+
+            if (target == null)
+            {
+                TransitionTo("BossChaseState");
+                return;
+            }
+
+            AttackStrategy strategy = _attack.GetBestAttack((Node3D)Entity, target);
+
+            if (strategy == null)
+            {
+                TransitionTo("BossChaseState");
+                return;
+            }
+
+            strategy.Execute((Node3D)Entity, target);
         }
     }
 }

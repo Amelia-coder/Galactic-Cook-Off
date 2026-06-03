@@ -49,7 +49,7 @@ namespace Scripts.Player.Components
 
 			_itemsInRange.Add(throwable);
 			ThrowableEntered?.Invoke(throwable);
-			GD.Print($"Throwable entered: {throwable}");
+			//GD.Print($"Throwable entered: {throwable}");
 		}
 
 		private void OnAreaExited(Area3D area)
@@ -58,7 +58,7 @@ namespace Scripts.Player.Components
 
 			_itemsInRange.Remove(throwable);
 			ThrowableExited?.Invoke(throwable);
-			GD.Print($"Throwable exited: {throwable}");
+			//GD.Print($"Throwable exited: {throwable}");
 		}
 
 		/// <summary>
