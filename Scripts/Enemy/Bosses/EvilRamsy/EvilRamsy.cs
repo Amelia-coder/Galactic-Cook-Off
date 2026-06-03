@@ -12,6 +12,9 @@ namespace Scripts.Enemy.Bosses.EvilRamsy
 {
 	public partial class EvilRamsy : CharacterBody3D, IEntity
 	{
+		[Signal]
+		public delegate void BossDefeatedEventHandler();
+		
 		private Dictionary<Type, Component> _components = new();
 		private GenericMovementComponent _movementComponent;
 		private GenericHealthComponent _healthComponent;
@@ -76,6 +79,7 @@ namespace Scripts.Enemy.Bosses.EvilRamsy
 		private void OnDied()
 		{
 			if (!Multiplayer.IsServer()) return;
+			EmitSignal(SignalName.BossDefeated);
 			_lootDropComponent.Drop();
 			QueueFree();
 		}

@@ -2,8 +2,10 @@ using Godot;
 using Scripts.Networking;
 using Scripts.Networking.LANComponents;
 using Scripts.UI;
+using Scripts.World;
 using System;
 using System.Collections.Generic;
+using System.Reflection.Emit;
 
 public partial class AppRoot : Node
 {
@@ -213,7 +215,35 @@ public partial class AppRoot : Node
 			LevelContainer.RemoveChild(c);
 			c.QueueFree();
 		}
-		LevelContainer.AddChild(scene.Instantiate());
+		var level = scene.Instantiate();
+
+		LevelContainer.AddChild(level);
+
+		if (level is Arena arena)
+		{
+			arena.Victory += OnVictory;
+		}
+	}
+
+	private void OnVictory()
+	{
+		GD.Print("[AppRoot] Boss defeated — disconnecting everyone");
+		Rpc(MethodName.OnVictoryRpc);
+	}
+
+	[Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true,
+	 TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+	private void OnVictoryRpc()
+	{
+		_pauseMenu.Disable();
+		NetworkManager.Disconnect();
+		LanDiscovery.StopHostBroadcast();
+		_isHost = false;
+
+		foreach (Node c in LevelContainer.GetChildren())
+			c.QueueFree();
+
+		ShowMenu();
 	}
 
 	// Helpers

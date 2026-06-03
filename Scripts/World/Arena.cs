@@ -1,4 +1,5 @@
 using Godot;
+using Scripts.Enemy.Bosses.EvilRamsy;
 using Scripts.Game;
 using Scripts.Game.RecipeSystem.Recipes;
 using Scripts.World.WorldObjects;
@@ -8,6 +9,8 @@ namespace Scripts.World
 {
 	public partial class Arena : Node3D
 	{
+		[Signal]
+		public delegate void VictoryEventHandler();
 
 		[Export] public PackedScene PlayerScene;
 		[Export] public Node PlayersContainer;
@@ -93,10 +96,19 @@ namespace Scripts.World
 
 		private void SummonBoss()
 		{
-			var boss = BossScene.Instantiate<Node3D>();
+			var boss = BossScene.Instantiate<EvilRamsy>();
 			boss.Position = new Vector3(0, 0.7f, 0.6f);
 			EnemiesContainer.AddChild(boss, true);
+			boss.BossDefeated += OnBossDefeated;
+
 			GD.Print("Boss spawn trigger");
+		}
+
+		
+		private void OnBossDefeated()
+		{
+			GD.Print("Victory!");
+			EmitSignal(SignalName.Victory);
 		}
 
 

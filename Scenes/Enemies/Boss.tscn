@@ -57,6 +57,7 @@ script = ExtResource("5_awoao")
 
 [node name="HealthComponent" type="Node" parent="ComponentRegistry"]
 script = ExtResource("6_ha1q6")
+MaxHealth = 1.0
 
 [node name="NavigationComponent" type="Node" parent="ComponentRegistry"]
 script = ExtResource("7_oh6af")
