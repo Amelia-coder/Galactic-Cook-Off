@@ -1,16 +1,12 @@
 using Godot;
-using Scripts.Enemy;
 using Scripts.Enemy.Components;
 using Scripts.Enemy.States;
 using Scripts.Enemy.Strategies;
 using Scripts.Game;
 using Scripts.Game.GenericComponents;
 using Scripts.Player;
-using Scripts.Player.Components;
-using Scripts.Player.States;
 using System;
 using System.Collections.Generic;
-using Scripts.Player;
 
 public partial class MelleEnemy : CharacterBody3D, IEntity
 {
@@ -21,7 +17,6 @@ public partial class MelleEnemy : CharacterBody3D, IEntity
 	[Export] public float StoppingDistance = 1.5f;
 	private Dictionary<Type, Component> _components = new();
 	
-	public Node3D CurrentTarget; // TODD: wtore implnention
 	private GenericMovementComponent _movementComponent;
 	private EnemyStateMachine _enemyStateMachine;
 	private GenericHealthComponent _healthComponent;
@@ -66,6 +61,7 @@ public partial class MelleEnemy : CharacterBody3D, IEntity
 		var itemsContainer = GetTree().Root.GetNode<Node>("AppRoot/Level/Arena/Items");
 		_lootDropComponent.Initilaize(this, itemsContainer);
 		RegisterComponent(_lootDropComponent);
+		
 		if (!Multiplayer.IsServer())
 		{
 			SetPhysicsProcess(false);

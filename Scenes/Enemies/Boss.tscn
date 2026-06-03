@@ -37,7 +37,7 @@ properties/2/path = NodePath("ComponentRegistry/HealthComponent:MaxHealth")
 properties/2/spawn = true
 properties/2/replication_mode = 1
 
-[node name="EvilRamsy" type="CharacterBody3D"]
+[node name="EvilRamsy" type="CharacterBody3D" groups=["Enemy"]]
 collision_layer = 2
 script = ExtResource("1_l82wv")
 
@@ -57,7 +57,6 @@ script = ExtResource("5_awoao")
 
 [node name="HealthComponent" type="Node" parent="ComponentRegistry"]
 script = ExtResource("6_ha1q6")
-MaxHealth = 1.0
 
 [node name="NavigationComponent" type="Node" parent="ComponentRegistry"]
 script = ExtResource("7_oh6af")
@@ -91,7 +90,7 @@ mesh = SubResource("CylinderMesh_4pntv")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.03149414, 0.011716783, 0.0569458)
 shape = SubResource("BoxShape3D_4pntv")
 
-[node name="HurtArea" type="Area3D" parent="." groups=["Enemy"]]
+[node name="HurtArea" type="Area3D" parent="."]
 collision_layer = 2
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="HurtArea"]

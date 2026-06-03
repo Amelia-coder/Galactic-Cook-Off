@@ -16,6 +16,7 @@ namespace Scripts.Enemy.States
 		{
 			base.Initialize(entity);
 			_attack = entity.GetComponent<EnemyAttackComponent>();
+			GD.Print("IS Attack nuLL? ", _attack == null);
 		}
 
 		public override void Enter()

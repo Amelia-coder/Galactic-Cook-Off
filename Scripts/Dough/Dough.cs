@@ -186,11 +186,11 @@ public partial class Dough : RigidBody3D, IThrowable, IIngredient
 			GD.Print("Hit enemy");
 		}
 
-		if (entity.IsInGroup("Boss")) //только готовое блюдо может наносить урон боссу
-		{
-			health.DealDamage(Damage);
-			GD.Print("Hit enemy");
-		}
+		//if (entity.IsInGroup("Boss")) //только готовое блюдо может наносить урон боссу
+		//{
+		//	health.DealDamage(Damage);
+		//	GD.Print("Hit enemy");
+		//}
 	}
 
 	// =========================================================
