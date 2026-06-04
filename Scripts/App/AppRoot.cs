@@ -17,6 +17,7 @@ public partial class AppRoot : Node
 	[Export] public NetworkManager NetworkManager;
 	[Export] public LanDiscovery LanDiscovery;
 	[Export] public LobbyUI LobbyUI;
+	[Export] public VictoryScreen VictoryScreen;
 	[Export] public Node LevelContainer;
 	[Export] public PackedScene PauseMenuScene;
 
@@ -40,12 +41,14 @@ public partial class AppRoot : Node
 		NetworkManager.PlayerJoined += OnPlayerJoined;
 		NetworkManager.PlayerLeft += OnPlayerLeft;
 
+		
 		LanDiscovery.ServersUpdated += OnServersUpdated;
 
 		_pauseMenu = PauseMenuScene.Instantiate<PauseMenu>();
 		AddChild(_pauseMenu);
 		_pauseMenu.ExitRequested += OnPauseExit;
 		_pauseMenu.Disable();
+				
 
 		ShowMenu();
 	}
@@ -74,6 +77,7 @@ public partial class AppRoot : Node
 	{
 		MenuScene.Show();
 		LobbyUI.Hide();
+		VictoryScreen.Hide();
 		MenuScene.ServerList.Clear();
 		LanDiscovery.StartClientDiscovery();
 	}
@@ -235,13 +239,14 @@ public partial class AppRoot : Node
 	 TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
 	private void OnVictoryRpc()
 	{
-		_pauseMenu.Disable();
-		NetworkManager.Disconnect();
-		LanDiscovery.StopHostBroadcast();
-		_isHost = false;
-
-		foreach (Node c in LevelContainer.GetChildren())
-			c.QueueFree();
+		ShowVicotryScreen();
+		//_pauseMenu.Disable();
+		//NetworkManager.Disconnect();
+		//LanDiscovery.StopHostBroadcast();
+		//_isHost = false;
+//
+		//foreach (Node c in LevelContainer.GetChildren())
+			//c.QueueFree();
 
 		ShowMenu();
 	}
@@ -268,5 +273,10 @@ public partial class AppRoot : Node
 		}
 
 		return fallback;
+	}
+	
+	private void ShowVicotryScreen()
+	{
+		VictoryScreen.Show(); 
 	}
 }
