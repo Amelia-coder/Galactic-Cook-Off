@@ -56,3 +56,5 @@ script = ExtResource("8_0k6t6")
 [node name="SceneContainer" type="Node" parent="."]
 
 [node name="Level" type="Node" parent="."]
+
+[connection signal="ExitPressed" from="VictoryScreen" to="." method="OnVictoryExit"]

@@ -209,6 +209,16 @@ public partial class AppRoot : Node
 			c.QueueFree();
 
 		ShowMenu();
+
+	}
+
+	private void OnVictoryExit()
+	{
+		VictoryScreen.Hide();
+		NetworkManager.Disconnect();
+		LanDiscovery.StopHostBroadcast();
+		_isHost = false;
+		ShowMenu();
 	}
 
 	// Level management
