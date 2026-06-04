@@ -12,7 +12,7 @@
 [ext_resource type="Script" uid="uid://btxvrytbqxst6" path="res://Scripts/Networking/LANComponents/LanBroadcaster.cs" id="7_agabq"]
 [ext_resource type="Script" uid="uid://due0ygle1x0wa" path="res://Scripts/Networking/LANComponents/LanListener.cs" id="8_0k6t6"]
 
-[node name="AppRoot" type="Node" node_paths=PackedStringArray("MenuScene", "NetworkManager", "LanDiscovery", "LobbyUI", "VictoryScreen", "LevelContainer")]
+[node name="AppRoot" type="Node" node_paths=PackedStringArray("MenuScene", "NetworkManager", "LanDiscovery", "LobbyUI", "VictoryScreen", "LevelContainer", "SceneManager")]
 script = ExtResource("1_im132")
 MenuScene = NodePath("Menu")
 ArenaScene = ExtResource("2_22rva")
@@ -22,6 +22,7 @@ LobbyUI = NodePath("LobbyUI")
 VictoryScreen = NodePath("VictoryScreen")
 LevelContainer = NodePath("Level")
 PauseMenuScene = ExtResource("3_4k4y5")
+SceneManager = NodePath("SceneManager")
 
 [node name="VictoryScreen" parent="." instance=ExtResource("4_ln8qb")]
 
@@ -35,7 +36,7 @@ spawn_path = NodePath("../Level")
 
 [node name="SceneManager" type="Node" parent="." node_paths=PackedStringArray("SceneContainer")]
 script = ExtResource("4_mts0o")
-SceneContainer = NodePath("../SceneContainer")
+SceneContainer = NodePath("../Level")
 
 [node name="NetworkManager" type="Node" parent="."]
 script = ExtResource("5_y7k8n")

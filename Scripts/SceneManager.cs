@@ -64,13 +64,17 @@ namespace Scripts
 			}
 		}
 
-		private void SwitchScene(Node instance, Action onAdded)
+		public void SwitchScene(Node instance = null, Action onAdded = null)
 		{
 			foreach (Node child in SceneContainer.GetChildren())
+			{
+				SceneContainer.RemoveChild(child);
 				child.QueueFree();
-
-			SceneContainer.CallDeferred(Node.MethodName.AddChild, instance);
-			Callable.From(onAdded).CallDeferred();
+			}
+			if (instance != null)
+				SceneContainer.CallDeferred(Node.MethodName.AddChild, instance);
+			if (onAdded != null)
+				Callable.From(onAdded).CallDeferred();
 		}
 	}
 }

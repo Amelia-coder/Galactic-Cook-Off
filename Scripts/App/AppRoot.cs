@@ -1,12 +1,10 @@
 using Godot;
+using Scripts;
 using Scripts.Networking;
 using Scripts.Networking.LANComponents;
 using Scripts.UI;
 using Scripts.World;
-using System;
 using System.Collections.Generic;
-using System.Reflection.Emit;
-
 public partial class AppRoot : Node
 {
 	private const int GamePort = 65000;
@@ -20,7 +18,9 @@ public partial class AppRoot : Node
 	[Export] public VictoryScreen VictoryScreen;
 	[Export] public Node LevelContainer;
 	[Export] public PackedScene PauseMenuScene;
-
+	[Export] public SceneManager SceneManager;
+	
+	
 	private bool _isHost;
 	private PauseMenu _pauseMenu;
 
@@ -214,43 +214,32 @@ public partial class AppRoot : Node
 	// Level management
 	private void ChangeLevel(PackedScene scene)
 	{
-		foreach (Node c in LevelContainer.GetChildren())
-		{
-			LevelContainer.RemoveChild(c);
-			c.QueueFree();
-		}
 		var level = scene.Instantiate();
-
-		LevelContainer.AddChild(level);
-
-		if (level is Arena arena)
+		SceneManager.SwitchScene(level, () =>
 		{
-			arena.Victory += OnVictory;
-		}
+			if (level is Arena arena)
+				arena.Victory += OnVictory;
+		});
 	}
 
 	private void OnVictory()
 	{
-		GD.Print("[AppRoot] Boss defeated — disconnecting everyone");
 		Rpc(MethodName.OnVictoryRpc);
 	}
 
 	[Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true,
-	 TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+		 TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
 	private void OnVictoryRpc()
 	{
-		ShowVicotryScreen();
-		//_pauseMenu.Disable();
-		//NetworkManager.Disconnect();
-		//LanDiscovery.StopHostBroadcast();
-		//_isHost = false;
-//
-		//foreach (Node c in LevelContainer.GetChildren())
-			//c.QueueFree();
-
-		ShowMenu();
+		CallDeferred(MethodName.DeferredVictoryCleanup);
 	}
 
+	private void DeferredVictoryCleanup()
+	{
+		_pauseMenu.Disable();
+		SceneManager.SwitchScene();
+		ShowVictoryScreen();
+	}
 	// Helpers
 	private string GetLocalIp()
 	{
@@ -275,7 +264,7 @@ public partial class AppRoot : Node
 		return fallback;
 	}
 	
-	private void ShowVicotryScreen()
+	private void ShowVictoryScreen()
 	{
 		VictoryScreen.Show(); 
 	}
