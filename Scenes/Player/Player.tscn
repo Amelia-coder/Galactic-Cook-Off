@@ -8,10 +8,10 @@
 [ext_resource type="Script" uid="uid://cpf2ncav5ovqy" path="res://Scripts/Player/States/RunState.cs" id="5_t26db"]
 [ext_resource type="Script" uid="uid://yghk8r5uqe18" path="res://Scripts/Player/Components/PlayerMovementComponent.cs" id="5_w71ue"]
 [ext_resource type="Script" uid="uid://cym00vx4fdfge" path="res://Scripts/Player/States/WalkState.cs" id="6_4wape"]
-[ext_resource type="Script" uid="uid://cxmgx0bhyf7ew" path="res://Scripts/Player/Components/ThrowableDetectorComponent.cs" id="7_0objx"]
 [ext_resource type="Script" uid="uid://cqtvht5hf1oac" path="res://Scripts/Player/Components/StaminaComponent.cs" id="7_t26db"]
 [ext_resource type="Script" uid="uid://nf1w6ym7fyis" path="res://Scripts/Player/Components/CameraComponent.cs" id="8_0objx"]
 [ext_resource type="Script" uid="uid://dgc83lfd4ndc0" path="res://Scripts/Player/Components/ItemHolderComponent.cs" id="8_w71ue"]
+[ext_resource type="Script" uid="uid://dv6josqj18l00" path="res://Scripts/Player/Components/PickableDetectorComponent.cs" id="9_1e6p3"]
 [ext_resource type="Script" uid="uid://dd0y0e7ai6bdi" path="res://Scripts/Player/Abilities/PickupAbility.cs" id="9_ji083"]
 [ext_resource type="Script" uid="uid://yopkxmxxft7h" path="res://Scripts/Player/Components/CameraControllerComponent.cs" id="9_w71ue"]
 [ext_resource type="Script" uid="uid://mtk0uirvtkvc" path="res://Scripts/Player/Abilities/ThrowAbility.cs" id="10_0kmp4"]
@@ -69,8 +69,8 @@ script = ExtResource("8_0objx")
 [node name="ItemHolderComponent" type="Node" parent="ComponentRegistry"]
 script = ExtResource("8_w71ue")
 
-[node name="ThrowableDetectorComponent" type="Node" parent="ComponentRegistry"]
-script = ExtResource("7_0objx")
+[node name="PickableDetectorComponent" type="Node" parent="ComponentRegistry"]
+script = ExtResource("9_1e6p3")
 
 [node name="PlayerInteractionComponent" type="Node" parent="ComponentRegistry"]
 script = ExtResource("10_1e6p3")

@@ -35,7 +35,7 @@ namespace Scripts.Enemy.Components
 			return null;
 		}
 
-		public void UpdateStrategies(double delta)
+		public override void _PhysicsProcess(double delta)
 		{
 			foreach (var strategy in _strategies)
 			{

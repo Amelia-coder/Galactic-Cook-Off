@@ -9,11 +9,11 @@ namespace Scripts.Player.Components
 {
 	public partial class ItemHolderComponent : Component
 	{
-		public IThrowable HeldItem { get; private set; }
+		public IPickable HeldItem { get; private set; }
 
 		public bool IsHoldingItem => HeldItem != null;
 
-		public void SetHeldItem(IThrowable item)
+		public void SetHeldItem(IPickable item)
 		{
 			HeldItem = item;
 		}

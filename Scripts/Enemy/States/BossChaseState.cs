@@ -35,8 +35,7 @@ namespace Scripts.Enemy.States
 			GD.Print("[Boss] We are doing chase state!");
 			if (!_detector.HasTargets())
 				return;
-			
-			// Check rage transition
+
 			if (!_isRaging && _health.CurrentHealth <= _health.MaxHealth * RageHealthPercent)
 			{
 				TransitionTo("BossRageState");
@@ -46,16 +45,43 @@ namespace Scripts.Enemy.States
 			var target = _selector.SelectTarget(_detector.Targets, (Node3D)Entity);
 			if (target == null) return;
 
-			if (_attack.CanAttack((Node3D)Entity, target))
+			if (_attack.GetBestAttack((Node3D)Entity, target) != null)
 			{
 				TransitionTo("BossAttackState");
 				return;
 			}
 
-			// Chase
 			_pathfinding.Target = target.GlobalPosition;
 			var dir = _pathfinding.GetNextDirection();
 			_movement.SetHorizontalVelocity(dir);
 		}
+  //      public override void PhysicsUpdate(double delta)
+		//{
+		//	GD.Print("[Boss] We are doing chase state!");
+		//	if (!_detector.HasTargets())
+		//		return;
+			
+		//	// Check rage transition
+		//	if (!_isRaging && _health.CurrentHealth <= _health.MaxHealth * RageHealthPercent)
+		//	{
+		//		TransitionTo("BossRageState");
+		//		return;
+		//	}
+
+		//	var target = _selector.SelectTarget(_detector.Targets, (Node3D)Entity);
+		//	if (target == null) return;
+
+		//	if (_attack.GetBestAttack((Node3D)Entity, target) != null)
+		//	{
+		//		GD.Print("we are entring atatck state");
+		//		TransitionTo("BossAttackState");
+		//		return;
+		//	}
+
+		//	// Chase
+		//	_pathfinding.Target = target.GlobalPosition;
+		//	var dir = _pathfinding.GetNextDirection();
+		//	_movement.SetHorizontalVelocity(dir);
+		//}
 	}
 }

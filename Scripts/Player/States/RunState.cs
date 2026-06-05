@@ -30,9 +30,6 @@ namespace Scripts.Player.States
 			var _stamina = Entity.GetComponent<StaminaComponent>();
 			var _input = Entity.GetComponent<InputComponent>();
 			
-			GD.Print(_input.MoveDirection); 
-
-
 			// Try jump
 			if (_input.JumpPressed && _movement.TryJump())
 			{

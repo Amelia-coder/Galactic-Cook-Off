@@ -36,8 +36,6 @@ namespace Scripts.Enemy.States
 			if (target == null)
 				return;
 
-			_attackComponent.UpdateStrategies(delta);
-
 			// 2. Feed target into pathfinding system
 			_pathfinding.Target = target.GlobalPosition;
 

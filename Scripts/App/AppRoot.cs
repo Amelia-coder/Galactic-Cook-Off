@@ -87,7 +87,7 @@ public partial class AppRoot : Node
 		MenuScene.Hide();
 		LobbyUI.Show();
 
-		string localIp = GetLocalIp();
+		string localIp = GetLocalIp(); 
 		string broadcastIp = LanDiscovery.Broadcaster.GetBroadcastSourceIp();
 
 		LobbyUI.Setup(_isHost, localIp, broadcastIp, "Cooking Chaos");
@@ -251,7 +251,7 @@ public partial class AppRoot : Node
 		ShowVictoryScreen();
 	}
 	// Helpers
-	private string GetLocalIp()
+	private string GetLocalIp() //точно не должно быть здесь
 	{
 		string fallback = "unknown";
 

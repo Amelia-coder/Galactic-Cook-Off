@@ -1,10 +1,9 @@
 using Godot;
 using System;
-using Scripts.Game;
 
 namespace Scripts.Game.RecipeSystem.Ingredients
 {
-	public partial class Cheese : RigidBody3D, IIngredient, IThrowable
+	public partial class Cheese : RigidBody3D, IIngredient, IPickable
 	{
 		public IngredientData getIngredientIdentData => _data;
 		private IngredientData _data;
@@ -144,5 +143,4 @@ namespace Scripts.Game.RecipeSystem.Ingredients
 		}
 
 	}
-
 }

@@ -1,11 +1,10 @@
 using Godot;
 using System;
 using System.Collections.Generic;
-
 using Scripts.Game;
 using Scripts.Game.RecipeSystem.Ingredients;
 
-public partial class Dough : RigidBody3D, IThrowable, IIngredient
+public partial class Dough : RigidBody3D, IPickable,  IIngredient
 {
 	private List<IHitEffect> _effects = new();
 

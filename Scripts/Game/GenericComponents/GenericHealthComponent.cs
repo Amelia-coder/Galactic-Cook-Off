@@ -1,5 +1,4 @@
 using Godot;
-using Scripts.Game;
 
 namespace Scripts.Game
 {

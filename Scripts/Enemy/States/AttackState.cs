@@ -27,10 +27,6 @@ namespace Scripts.Enemy.States
 				return;
 			}
 
-			// IMPORTANT:
-			// update cooldowns
-			attack.UpdateStrategies(delta);
-
 			if (!detector.HasTargets())
 			{
 				TransitionTo("ChaseState");

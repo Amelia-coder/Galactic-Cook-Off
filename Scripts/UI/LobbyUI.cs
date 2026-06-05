@@ -15,7 +15,7 @@ namespace Scripts.UI
 		[Export] public Button LeaveButton;
 
 		[Export] public int MaxPlayers = 4;
-		[Export] public int MinPlayers = 2;
+		[Export] public int MinPlayers = 1;
 
 		public event Action StartPressed;
 		public event Action LeavePressed;

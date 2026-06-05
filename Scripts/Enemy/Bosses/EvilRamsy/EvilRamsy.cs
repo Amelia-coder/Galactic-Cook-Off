@@ -24,6 +24,9 @@ namespace Scripts.Enemy.Bosses.EvilRamsy
 		private EnemyAttackComponent _attackComponent;
 		private LootDropComponent _lootDropComponent;
 
+		[Export]
+		private PackedScene projectile;
+
 		public override void _Ready()
 		{
 			_movementComponent = GetNode<GenericMovementComponent>("ComponentRegistry/MovementComponent");
@@ -52,8 +55,8 @@ namespace Scripts.Enemy.Bosses.EvilRamsy
 			//    minRange: 6f, maxRange: 20f,
 			//    damage: 25f, cooldown: 4f));
 			_attackComponent.RegisterStrategy(new MeleeAttackStrategy());
-			_attackComponent.RegisterStrategy(new AoEAttackStrategy(
-			 radius: 30f, damage: 20f, cooldown: 8f));
+			_attackComponent.RegisterStrategy(new AoEAttackStrategy(radius: 30f, damage: 20f, cooldown: 8f));
+			//_attackComponent.RegisterStrategy(new RangedAttackStrategy(projectile, 8f, 1000f, cooldown: 8f));
 			RegisterComponent(_attackComponent);
 
 			_lootDropComponent = GetNode<LootDropComponent>("ComponentRegistry/LootDropComponent");
@@ -86,8 +89,7 @@ namespace Scripts.Enemy.Bosses.EvilRamsy
 
 		public override void _PhysicsProcess(double delta)
 		{
-			_attackComponent.UpdateStrategies(delta);
-			_movementComponent.Update((float)delta);
+
 		}
 
 		public void RegisterComponent(Component component)

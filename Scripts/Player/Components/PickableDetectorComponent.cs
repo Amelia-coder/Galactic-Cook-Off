@@ -5,13 +5,13 @@ using Scripts.Game;
 
 namespace Scripts.Player.Components
 {
-	public partial class ThrowableDetectorComponent : Component
+	public partial class PickableDetectorComponent : Component
 	{
 		private Area3D _detectionArea;
-		private readonly List<IThrowable> _itemsInRange = new();
+		private readonly List<IPickable> _itemsInRange = new();
 
-		public event Action<IThrowable> ThrowableEntered;
-		public event Action<IThrowable> ThrowableExited;
+		public event Action<IPickable> ThrowableEntered;
+		public event Action<IPickable> ThrowableExited;
 
 		public void Initialize(Area3D detectionArea)
 		{
@@ -20,11 +20,11 @@ namespace Scripts.Player.Components
 			_detectionArea.AreaExited += OnAreaExited;
 		}
 
-		public IEnumerable<IThrowable> GetNearby() => _itemsInRange;
+		public IEnumerable<IPickable> GetNearby() => _itemsInRange;
 
-		public IThrowable GetClosest(Vector3 fromPosition)
+		public IPickable GetClosest(Vector3 fromPosition)
 		{
-			IThrowable closest = null;
+			IPickable closest = null;
 			float best = float.MaxValue;
 
 			foreach (var item in _itemsInRange)
@@ -45,7 +45,7 @@ namespace Scripts.Player.Components
 
 		private void OnAreaEntered(Area3D area)
 		{
-			if (area.GetOwner() is not IThrowable throwable) return;
+			if (area.GetOwner() is not IPickable throwable) return;
 
 			_itemsInRange.Add(throwable);
 			ThrowableEntered?.Invoke(throwable);
@@ -54,7 +54,7 @@ namespace Scripts.Player.Components
 
 		private void OnAreaExited(Area3D area)
 		{
-			if (area.GetOwner() is not IThrowable throwable) return;
+			if (area.GetOwner() is not IPickable throwable) return;
 
 			_itemsInRange.Remove(throwable);
 			ThrowableExited?.Invoke(throwable);
@@ -64,9 +64,9 @@ namespace Scripts.Player.Components
 		/// <summary>
 		/// Gets the best throwable in a direction (based on dot product)
 		/// </summary>
-		public IThrowable GetBestInDirection(Vector3 fromPosition, Vector3 lookDirection, float minDot = 0.5f)
+		public IPickable GetBestInDirection(Vector3 fromPosition, Vector3 lookDirection, float minDot = 0.5f)
 		{
-			IThrowable best = null;
+            IPickable best = null;
 			float bestDot = minDot;
 
 			foreach (var item in _itemsInRange)
@@ -89,9 +89,9 @@ namespace Scripts.Player.Components
 		/// <summary>
 		/// Gets the best throwable combining distance and direction
 		/// </summary>
-		public IThrowable GetBestWeighted(Vector3 fromPosition, Vector3 lookDirection, float directionWeight = 0.7f)
+		public IPickable GetBestWeighted(Vector3 fromPosition, Vector3 lookDirection, float directionWeight = 0.7f)
 		{
-			IThrowable best = null;
+			IPickable best = null;
 			float bestScore = float.MinValue;
 
 			foreach (var item in _itemsInRange)

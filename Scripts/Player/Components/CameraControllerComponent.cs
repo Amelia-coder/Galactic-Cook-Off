@@ -43,12 +43,20 @@ public partial class CameraControllerComponent : Component
 		}
 	}
 
-	public void Update(float delta)
+	public override void _PhysicsProcess(double delta)
 	{
 		if (!_isActive) return;
 
 		UpdateZoom(delta);
 		ApplyShake();
+	}
+
+	public void Update(float delta)
+	{
+		//if (!_isActive) return;
+
+		//UpdateZoom(delta);
+		//ApplyShake();
 	}
 
 	public void HandleInput(InputEvent @event)
@@ -105,9 +113,9 @@ public partial class CameraControllerComponent : Component
 		_cameraPivot.RotationDegrees = rot;
 	}
 
-	private void UpdateZoom(float delta)
+	private void UpdateZoom(double delta)
 	{
-		_springArm.SpringLength = Mathf.Lerp(
+		_springArm.SpringLength = (float)Mathf.Lerp(
 			_springArm.SpringLength,
 			_targetZoom,
 			ZoomSpeed * delta

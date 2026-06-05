@@ -36,14 +36,24 @@ namespace Scripts.Player.Components
 			InteractPressed = interact;
 		}
 
+
+
+		public void Reset()
+		{
+			JumpPressed = false;
+			PickupPressed = false;
+			ThrowReleased = false;
+		}
+
 		/// <summary>
 		/// Local player calls this to read keyboard input.
 		/// </summary>
-		public void Update()
+
+		public override void _PhysicsProcess(double delta)
 		{
 			Vector2 inputDir = Input.GetVector("left", "right", "forward", "back");
 
-			
+
 			if (inputDir.LengthSquared() > 0.01f)
 			{
 				Vector3 forward = -_transform.Transform.Basis.Z;
@@ -65,13 +75,6 @@ namespace Scripts.Player.Components
 			ThrowHeld = Input.IsActionPressed("throw");
 			ThrowReleased = Input.IsActionJustReleased("throw");
 			InteractPressed = Input.IsActionJustPressed("add_piece_to_kitchen");
-		}
-
-		public void Reset()
-		{
-			JumpPressed = false;
-			PickupPressed = false;
-			ThrowReleased = false;
 		}
 	}
 }

@@ -36,7 +36,7 @@ namespace Scripts.Game.GenericComponents
             _current = anim;
         }
 
-        public void Update()
+        public override void _PhysicsProcess(double delta)
         {
             if (_animPlayer == null) return;
 

@@ -1,9 +1,4 @@
 using Godot;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Scripts.Game.GenericComponents
 {
@@ -22,7 +17,13 @@ namespace Scripts.Game.GenericComponents
 			_body = body;
 		}
 
-		public virtual void Update(float delta)
+
+		public override void _PhysicsProcess(double delta)
+		{
+			HandlePhysics(delta);
+		}
+
+		protected virtual void HandlePhysics(double delta)
 		{
 			UpdateGroundedState();
 			ApplyGravity(delta);
@@ -74,13 +75,13 @@ namespace Scripts.Game.GenericComponents
 			IsGrounded = _body.IsOnFloor();
 		}
 
-		private void ApplyGravity(float delta)
+		private void ApplyGravity(double delta)
 		{
 			if (!IsGrounded)
 			{
 				Velocity = new Vector3(
 					Velocity.X,
-					Velocity.Y - Gravity * delta,
+					(float)(Velocity.Y - Gravity * delta),
 					Velocity.Z
 				);
 			}

@@ -58,7 +58,7 @@ namespace Scripts.Player
 		private GenericHealthComponent _healthComponent;
 		private PlayerMovementComponent _movementComponent;
 		private InputComponent _inputComponent;
-		private ThrowableDetectorComponent _detectionComponent;
+		private PickableDetectorComponent _detectionComponent;
 		private CameraComponent _cameraComponent;
 		private CameraControllerComponent _cameraControllerComponent;
 		private ItemHolderComponent _itemHolderComponent;
@@ -103,7 +103,6 @@ namespace Scripts.Player
 				_detectionComponent.ThrowableExited += OnThrowableLeft;
 				_playerInteractionComponent.InteractableAvailable += OnInteractableNearby;
 				_playerInteractionComponent.InteractableCleared += OnInteractableLeft;
-
 			}
 
 
@@ -205,7 +204,7 @@ namespace Scripts.Player
 			GD.Print("Input component is null: ", _inputComponent == null);
 
 
-			_detectionComponent = GetNode<ThrowableDetectorComponent>("ComponentRegistry/ThrowableDetectorComponent");
+			_detectionComponent = GetNode<PickableDetectorComponent>("ComponentRegistry/PickableDetectorComponent");
 			// Get the Area3D child node and pass it to component
 			_bodyDetector = GetNode<Area3D>("BodyDetector");
 			_detectionComponent.Initialize(_bodyDetector);
@@ -387,21 +386,15 @@ namespace Scripts.Player
 
 
 		private void OnDied()
-	{
-		if (!Multiplayer.IsServer()) return;
-		PlayerDied?.Invoke(PlayerId);  // ← no Arena.Instance anywhere
-	}
+		{
+			if (!Multiplayer.IsServer()) return;
+			PlayerDied?.Invoke(PlayerId);  // ← no Arena.Instance anywhere
+		}
 
 		public override void _PhysicsProcess(double delta)
 		{
 			if (!IsLocalPlayer || _isHeld) return;
-
-			_inputComponent.Update();
-			_cameraControllerComponent.Update((float)delta);
-			_movementComponent.Update((float)delta);
 			//_animationComponent.Update();
-			_playerInteractionComponent.Update(_inputComponent);
-
 		}
 
 		public override void _Process(double delta)

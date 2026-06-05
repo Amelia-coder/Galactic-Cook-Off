@@ -52,8 +52,7 @@ namespace Scripts.Player.Components
 			return _stamina.CanConsume(staminaCost);
 		}
 
-		
-		public override void Update(float delta)
+		public override void _PhysicsProcess(double delta)
 		{
 			UpdateGroundedState();
 			ApplyGravity(delta);
@@ -65,11 +64,11 @@ namespace Scripts.Player.Components
 			IsGrounded = _body.IsOnFloor();
 		}
 
-		private void ApplyGravity(float delta)
+		private void ApplyGravity(double delta)
 		{
 			if (!IsGrounded)
 			{
-				Velocity = new Vector3(Velocity.X, Velocity.Y - Gravity * delta, Velocity.Z);
+				Velocity = new Vector3(Velocity.X, (float)(Velocity.Y - Gravity * delta), Velocity.Z);
 			}
 			else if (Velocity.Y < 0)
 			{

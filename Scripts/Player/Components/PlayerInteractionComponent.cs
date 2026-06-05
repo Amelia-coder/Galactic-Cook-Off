@@ -41,14 +41,16 @@ namespace Scripts.Player.Components
 		{
 			return _currentInteractable != null;
 		}
-		public void Update(InputComponent input)
+
+		public override void _PhysicsProcess(double delta)
 		{
-			if (!input.InteractPressed)
+			var inputComponent = _entity.GetComponent<InputComponent>();
+			if (!inputComponent.InteractPressed)
 				return;
 
 			TryInteract();
 		}
-
+	
 		private void TryInteract()
 		{
 			if (!IsCarrying())

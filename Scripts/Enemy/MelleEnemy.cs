@@ -95,7 +95,6 @@ public partial class MelleEnemy : CharacterBody3D, IEntity
 
 	public override void _PhysicsProcess(double delta)
 	{
-		_movementComponent.Update((float)delta);
 	}
 
 	public void RegisterComponent(Component component)
