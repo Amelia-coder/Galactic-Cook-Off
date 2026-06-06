@@ -16,7 +16,9 @@ public partial class MelleEnemy : CharacterBody3D, IEntity
 	[Export] public float Gravity = 9.8f;
 	[Export] public float StoppingDistance = 1.5f;
 	private Dictionary<Type, Component> _components = new();
-	
+	private float _meleeAttackDamage = 2.5f;
+	private float _meleeAttackRange = 1.0f;
+
 	private GenericMovementComponent _movementComponent;
 	private EnemyStateMachine _enemyStateMachine;
 	private GenericHealthComponent _healthComponent;
@@ -54,7 +56,7 @@ public partial class MelleEnemy : CharacterBody3D, IEntity
 
 
 		_attackComponent = GetNode<EnemyAttackComponent>("ComponentRegistry/AttackComponent");
-		_attackComponent.RegisterStrategy(new MeleeAttackStrategy());
+		_attackComponent.RegisterStrategy(new MeleeAttackStrategy(_meleeAttackDamage, _meleeAttackRange));
 		RegisterComponent(_attackComponent);
 
 		_lootDropComponent= GetNode<LootDropComponent>("ComponentRegistry/LootDropComponent");

@@ -113,7 +113,7 @@ EnemiesContainer = NodePath("../Enemies")
 
 [node name="RespawnManager" type="Node" parent="." node_paths=PackedStringArray("SpawnPoints")]
 script = ExtResource("9_bga1v")
-SpawnPoints = []
+SpawnPoints = [NodePath("../SpawnPos2"), NodePath("../SpawnPos2")]
 
 [node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
 _spawnable_scenes = PackedStringArray("uid://blw3xgniwfe0f")
