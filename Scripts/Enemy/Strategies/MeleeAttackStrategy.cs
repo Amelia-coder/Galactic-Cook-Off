@@ -8,10 +8,10 @@ namespace Scripts.Enemy.Strategies
     public class MeleeAttackStrategy : AttackStrategy
     {
         private float damage = 0.10f;
-        public MeleeAttackStrategy()
+        public MeleeAttackStrategy(float Range, float Cooldown)
         {
-            Range = 2.5f;
-            Cooldown = 1.0f;
+            this.Range = Range;
+            this.Cooldown = Cooldown;
         }
 
         protected override void OnExecute(Node3D self, Node3D target)

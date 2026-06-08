@@ -23,6 +23,9 @@ namespace Scripts.Enemy.Bosses.EvilRamsy
 		private PathFindingComponent _pathfindingComponent;
 		private EnemyAttackComponent _attackComponent;
 		private LootDropComponent _lootDropComponent;
+		
+		private float _meleeAttackDamage = 2.5f;
+		private float _meleeAttackRange = 1.0f;
 
 		[Export]
 		private PackedScene projectile;
@@ -54,7 +57,7 @@ namespace Scripts.Enemy.Bosses.EvilRamsy
 			//    projectile: ProjectileScene,
 			//    minRange: 6f, maxRange: 20f,
 			//    damage: 25f, cooldown: 4f));
-			_attackComponent.RegisterStrategy(new MeleeAttackStrategy());
+			_attackComponent.RegisterStrategy(new MeleeAttackStrategy(_meleeAttackDamage, _meleeAttackRange));
 			_attackComponent.RegisterStrategy(new AoEAttackStrategy(radius: 30f, damage: 20f, cooldown: 8f));
 			//_attackComponent.RegisterStrategy(new RangedAttackStrategy(projectile, 8f, 1000f, cooldown: 8f));
 			RegisterComponent(_attackComponent);
