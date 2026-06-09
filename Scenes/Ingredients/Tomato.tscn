@@ -1,0 +1,44 @@
+[gd_scene load_steps=6 format=3 uid="uid://lw2oynygm8xk"]
+
+[ext_resource type="Script" uid="uid://ubuj2dw1vl38" path="res://Scripts/Game/RecipeSystem/Ingredients/Tomato.cs" id="1_0fpu0"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_kbjkr"]
+radius = 0.125
+height = 0.25
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_0fpu0"]
+radius = 0.12942187
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_h14oy"]
+radius = 0.24581197
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_h14oy"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+properties/1/path = NodePath(".:rotation")
+properties/1/spawn = true
+properties/1/replication_mode = 1
+properties/2/path = NodePath(".:freeze")
+properties/2/spawn = true
+properties/2/replication_mode = 1
+
+[node name="Tomato" type="RigidBody3D"]
+script = ExtResource("1_0fpu0")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("SphereMesh_kbjkr")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.017944336, 0)
+shape = SubResource("SphereShape3D_0fpu0")
+
+[node name="PickupZone" type="Area3D" parent="."]
+collision_layer = 8
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PickupZone"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.022094727, 0)
+shape = SubResource("SphereShape3D_h14oy")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_h14oy")

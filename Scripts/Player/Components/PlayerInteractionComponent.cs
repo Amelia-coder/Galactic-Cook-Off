@@ -44,13 +44,16 @@ namespace Scripts.Player.Components
 
 		public override void _PhysicsProcess(double delta)
 		{
+			if (!((Node)_entity).Multiplayer.IsServer())
+				return;
+
 			var inputComponent = _entity.GetComponent<InputComponent>();
 			if (!inputComponent.InteractPressed)
 				return;
 
 			TryInteract();
 		}
-	
+
 		private void TryInteract()
 		{
 			if (!IsCarrying())
@@ -77,6 +80,5 @@ namespace Scripts.Player.Components
 				return;
 			}
 		}
-
 	}
 }

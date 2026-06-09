@@ -66,7 +66,7 @@ namespace Scripts.Player.Components
 		/// </summary>
 		public IPickable GetBestInDirection(Vector3 fromPosition, Vector3 lookDirection, float minDot = 0.5f)
 		{
-            IPickable best = null;
+			IPickable best = null;
 			float bestDot = minDot;
 
 			foreach (var item in _itemsInRange)

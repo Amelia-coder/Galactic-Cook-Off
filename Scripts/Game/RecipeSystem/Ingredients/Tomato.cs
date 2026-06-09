@@ -3,7 +3,7 @@ using System;
 
 namespace Scripts.Game.RecipeSystem.Ingredients
 {
-	public partial class Cheese : RigidBody3D, IIngredient, IPickable
+	public partial class Tomato : RigidBody3D, IIngredient, IPickable
 	{
 		public IngredientData getIngredientIdentData => _data;
 		private IngredientData _data;
@@ -18,7 +18,7 @@ namespace Scripts.Game.RecipeSystem.Ingredients
 			var pickupZone = GetNode<Area3D>("PickupZone");
 			pickupZone.BodyEntered += OnPickupZoneBodyEntered;
 			pickupZone.BodyExited += OnPickupZoneBodyExited;
-			_data = IngredientRegistry.Get("cheese");
+			_data = IngredientRegistry.Get("tomato");
 
 			if (!Multiplayer.IsServer())
 				Freeze = true;
@@ -42,14 +42,14 @@ namespace Scripts.Game.RecipeSystem.Ingredients
 		{
 			// Follow the carrier instead of reparenting
 			if (_carrier == null) return;
-			
+
 			if (!GodotObject.IsInstanceValid(_carrier))
 			{
 				_carrier = null;
 				Freeze = false;
 				return;
 			}
-			
+
 			GlobalPosition = _carrier.GlobalPosition + Vector3.Up * 1.5f;
 		}
 

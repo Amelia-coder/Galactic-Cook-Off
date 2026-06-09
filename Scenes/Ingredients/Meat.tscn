@@ -1,0 +1,33 @@
+[gd_scene load_steps=5 format=3 uid="uid://doyrnm0wiay6d"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_n46mu"]
+size = Vector3(0.125, 0.125, 0.125)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_bw1sn"]
+size = Vector3(0.125, 0.125, 0.125)
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_n46mu"]
+radius = 0.33432883
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_nv2b7"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+
+[node name="Meat" type="RigidBody3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_n46mu")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.25081635, -0.2771778, -0.45404053)
+shape = SubResource("BoxShape3D_bw1sn")
+
+[node name="PickupZone" type="Area3D" parent="."]
+collision_layer = 8
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PickupZone"]
+shape = SubResource("SphereShape3D_n46mu")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_nv2b7")
