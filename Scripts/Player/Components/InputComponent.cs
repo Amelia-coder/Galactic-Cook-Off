@@ -77,7 +77,11 @@ namespace Scripts.Player.Components
 
 			// --- one-shot input: latch into buffers so a single frame isn't missed ---
 			if (Input.IsActionJustPressed("jump")) _jumpBuffer = true;
-			if (Input.IsActionJustPressed("pickup")) _pickupBuffer = true;
+			if (Input.IsActionJustPressed("pickup"))
+			{
+				GD.Print($"LOCAL PICKUP DETECTED player={_playerId}");
+				_pickupBuffer = true;
+			}
 			if (Input.IsActionJustReleased("throw")) _throwReleasedBuffer = true;
 			if (Input.IsActionJustPressed("add_piece_to_kitchen")) _interactBuffer = true;
 
@@ -101,7 +105,7 @@ namespace Scripts.Player.Components
 		{
 			if (!Multiplayer.IsServer())
 				return;
-
+			GD.Print($"SERVER GOT pickup={pickup}");
 			// Validate that the sender actually owns this player
 			int sender = Multiplayer.GetRemoteSenderId();
 			if (sender != _playerId)

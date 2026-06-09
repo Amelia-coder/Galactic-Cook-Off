@@ -27,7 +27,7 @@ namespace Scripts.Player.Abilities
 
 		public override void Update(double delta)
 		{
-
+			//GD.Print($"Pickup pressed={_input.PickupPressed} Server={Multiplayer.IsServer()}");
 			if (!_input.PickupPressed) return;
 
 			if (_itemHolder.IsHoldingItem)
@@ -40,6 +40,7 @@ namespace Scripts.Player.Abilities
 				TryPickUp();
 				//GD.Print("PICKED");
 			}
+			//GD.Print($"Pickup pressed={_input.PickupPressed} Server={Multiplayer.IsServer()}");
 		}
 
 		private void TryPickUp()

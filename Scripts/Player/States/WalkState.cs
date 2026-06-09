@@ -6,6 +6,7 @@ namespace Scripts.Player.States
 {
 	public partial class WalkState : MovementState
 	{
+		public override float StaminaRegenPerSecond => 4f;
 		[Export] public float WalkSpeed { get; set; } = 4.0f;
 
 		public override void Enter()

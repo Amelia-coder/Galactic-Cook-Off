@@ -7,6 +7,7 @@ using Scripts.Player.States;
 using Scripts.World;
 using System;
 using System.Collections.Generic;
+using static Godot.SpringBoneSimulator3D;
 
 namespace Scripts.Player
 {
@@ -22,6 +23,7 @@ namespace Scripts.Player
 
 		// Является ли этот игрок локальным (управляемым с этого компьютера)
 		[Export] public bool IsLocalPlayer;
+		public bool IsServerAuthority { get; private set; }
 
 
 		private uint _originalCollisionLayer;
@@ -73,35 +75,35 @@ namespace Scripts.Player
 		private AbilitySystem _abilitySystem;
 
 
-        // =========================================================
-        // Lifecycle
-        // =========================================================
+		// =========================================================
+		// Lifecycle
+		// =========================================================
 
-        public void RegisterComponent(Component component)
-        {
-            _components[component.GetType()] = component;
-        }
+		public void RegisterComponent(Component component)
+		{
+			_components[component.GetType()] = component;
+		}
 
-        // --- IEntity ---
-        public T GetComponent<T>() where T : Component
-        {
-            if (_components.TryGetValue(typeof(T), out Component component))
-                return component as T;
+		// --- IEntity ---
+		public T GetComponent<T>() where T : Component
+		{
+			if (_components.TryGetValue(typeof(T), out Component component))
+				return component as T;
 
-            GD.PrintErr($"[Player] Component {typeof(T).Name} not found in dictionary!");
-            GD.PrintErr($"[Player] Call stack: {System.Environment.StackTrace}"); // Shows who called this
+			GD.PrintErr($"[Player] Component {typeof(T).Name} not found in dictionary!");
+			GD.PrintErr($"[Player] Call stack: {System.Environment.StackTrace}"); // Shows who called this
 
-            return null;
-        }
+			return null;
+		}
 
-
-
-        public override void _Ready()
+		public override void _Ready()
 		{
 			if (int.TryParse(Name, out int id))
 				_playerId = id;
 
 			IsLocalPlayer = _playerId == Multiplayer.GetUniqueId();
+			IsServerAuthority = Multiplayer.IsServer();
+
 			_originalCollisionLayer = CollisionLayer;
 			_originalCollisionMask = CollisionMask;
 
@@ -135,7 +137,6 @@ namespace Scripts.Player
 				_inputComponent.SetPhysicsProcess(false);
 				_cameraControllerComponent.SetProcess(false);
 				_cameraControllerComponent.SetPhysicsProcess(false);
-
 			}
 			
 			var staminaUI = GetNode<StaminaUIComponent>("CanvasLayer/Stamina");
@@ -144,7 +145,6 @@ namespace Scripts.Player
 				staminaUI.Bind(_staminaComponent);
 				staminaUI.Visible = true;
 			}
-
 			else
 			{
 				staminaUI.Visible = false;
@@ -168,7 +168,7 @@ namespace Scripts.Player
 
 				var serverSync = GetNodeOrNull<MultiplayerSynchronizer>("ServerSync");
 				if (serverSync != null)
-					serverSync.SetMultiplayerAuthority(id);
+					serverSync.SetMultiplayerAuthority(1);
 			}
 		}
 
@@ -190,19 +190,51 @@ namespace Scripts.Player
 
 			ThrowAbility throwAbility = GetNode<ThrowAbility>("AbilitySystem/ThrowAbility");
 			throwAbility.Initialize(this);
-			throwAbility.ChargeStarted += () => _chargeBar.Visible = true;
-			throwAbility.ChargeUpdated += ratio => _chargeBar.Value = ratio * 100f; //нужно соректировлоать, т к при дляительном заряде некорреткно ооюрадается шкала
-			throwAbility.ChargeReleased += () => _chargeBar.Visible = false;
-			throwAbility.ChargeCancelled += () => _chargeBar.Visible = false;
+			if (Multiplayer.IsServer())
+			{
+				throwAbility.ChargeStarted += () =>
+					RpcId(_playerId, MethodName.ClientOnChargeStarted);
+				throwAbility.ChargeUpdated += ratio =>
+					RpcId(_playerId, MethodName.ClientOnChargeUpdated, ratio);
+				throwAbility.ChargeReleased += () =>
+					RpcId(_playerId, MethodName.ClientOnChargeReleased);
+				throwAbility.ChargeCancelled += () =>
+					RpcId(_playerId, MethodName.ClientOnChargeCancelled);
+			}
 
 			abilities.Add(throwAbility);
 
 			_abilitySystem = GetNode<AbilitySystem>("AbilitySystem");
 			_abilitySystem.Initialize(abilities);
-			if (!IsLocalPlayer)
-			{
-				_abilitySystem.SetPhysicsProcess(false);
-			}
+		}
+
+
+		[Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true,
+	 TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+		private void ClientOnChargeStarted()
+		{
+			_chargeBar.Visible = true;
+		}
+
+		[Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true,
+			 TransferMode = MultiplayerPeer.TransferModeEnum.UnreliableOrdered)]
+		private void ClientOnChargeUpdated(float ratio)
+		{
+			_chargeBar.Value = ratio * 100f;
+		}
+
+		[Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true,
+			 TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+		private void ClientOnChargeReleased()
+		{
+			_chargeBar.Visible = false;
+		}
+
+		[Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true,
+			 TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+		private void ClientOnChargeCancelled()
+		{
+			_chargeBar.Visible = false;
 		}
 
 		private void InitAndRegisterComponents()
@@ -219,7 +251,7 @@ namespace Scripts.Player
 
 
 			_inputComponent = GetNode<InputComponent>("ComponentRegistry/InputComponent");
-			_inputComponent.Initialize(this);
+			_inputComponent.Initialize(this, _playerId);
 			RegisterComponent(_inputComponent);
 			GD.Print("Input component is null: ", _inputComponent == null);
 
@@ -400,6 +432,7 @@ namespace Scripts.Player
 		public override void _Process(double delta)
 		{
 			if (!IsLocalPlayer || _isHeld) return;
+
 		}
 
 		private void OnThrowableNearby(IThrowable throwable)
@@ -490,5 +523,6 @@ namespace Scripts.Player
 		{
 			throw new NotImplementedException();
 		}
+
 	}
 }

@@ -40,20 +40,100 @@ namespace Scripts.World
 			Multiplayer.PeerConnected += AddPlayer;
 			Multiplayer.PeerDisconnected += DelPlayer;
 
+			var station = GetNode<CookStation>("CookStation");
+			station.DishCooked += OnDishCooked;
+
+
 
 			foreach (int id in Multiplayer.GetPeers())
 				AddPlayer(id);
-
 			AddPlayer(Multiplayer.GetUniqueId());
-			if (!Multiplayer.IsServer())
-				return;
 
-			var station = GetNode<CookStation>("CookStation");
-			station.DishCooked += OnDishCooked;
 
 			GD.Print("[Arena] Server game logic initialized");
 
 		}
+
+		private void AddPlayer(long id)
+		{
+			var player = PlayerScene.Instantiate<Player.Player>();
+			player.Name = id.ToString();
+			player.PlayerId = (int)id;
+			player.Position = new Vector3(
+				(float)GD.RandRange(1, 10),
+				(float)GD.RandRange(1, 10),
+				(float)GD.RandRange(1, 10)
+			);
+
+			// Spawner captures spawn state here
+			PlayersContainer.AddChild(player, true);
+
+			// Server-side wiring
+			player.PlayerDied += _respawnManager.OnPlayerDied;
+			_respawnManager.RegisterPlayer(player);
+		}
+
+		private void OnPlayerSpawnedOnClient(Node node)
+		{
+			if (node is not Player.Player player)
+				return;
+
+			player.PlayerDied += _respawnManager.OnPlayerDied;
+			_respawnManager.RegisterPlayer(player);
+		}
+
+		private void DelPlayer(long id)
+		{
+			var node = PlayersContainer.GetNodeOrNull<Player.Player>(id.ToString());
+			if (node == null) return;
+
+			node.PlayerDied -= _respawnManager.OnPlayerDied;
+			_respawnManager.UnregisterPlayer((int)id);
+
+			var input = node.GetNodeOrNull<MultiplayerSynchronizer>("PlayerInput");
+			if (input != null) input.PublicVisibility = false;
+			var sync = node.GetNodeOrNull<MultiplayerSynchronizer>("ServerSync");
+			if (sync != null) sync.PublicVisibility = false;
+
+			node.QueueFree();
+		}
+
+		//private void AddPlayer(long id)
+		//{
+		//    int playerId = (int)id;
+
+		//    var player = PlayerScene.Instantiate<Player.Player>();
+		//    player.Name = id.ToString();
+		//    player.PlayerId = (int)id;
+		//    PlayersContainer.AddChild(player, true);
+		//    player.Position = new Vector3(0, 0, id);
+
+
+		//    // Wire signal → RespawnManager (Player doesn't know who listens)
+		//    player.PlayerDied += _respawnManager.OnPlayerDied;
+
+		//    // Register through interface
+		//    _respawnManager.RegisterPlayer(player);
+
+		//}
+
+		//private void DelPlayer(long id)
+		//{
+		//    var node = PlayersContainer.GetNodeOrNull<Player.Player>(id.ToString());
+		//    if (node == null) return;
+
+		//    // Unwire signal
+		//    node.PlayerDied -= _respawnManager.OnPlayerDied;
+		//    _respawnManager.UnregisterPlayer((int)id);
+
+		//    var input = node.GetNodeOrNull<MultiplayerSynchronizer>("PlayerInput");
+		//    if (input != null) input.PublicVisibility = false;
+		//    var sync = node.GetNodeOrNull<MultiplayerSynchronizer>("ServerSync");
+		//    if (sync != null) sync.PublicVisibility = false;
+
+		//    node.QueueFree();
+		//}
+
 
 		private void OnDishCooked(Recipe recipe)
 		{
@@ -90,6 +170,7 @@ namespace Scripts.World
 						GD.Print("Summoned boss!");
 						SummonBoss();
 					}
+
 					break;
 			}
 		}
@@ -104,7 +185,7 @@ namespace Scripts.World
 			GD.Print("Boss spawn trigger");
 		}
 
-		
+
 		private void OnBossDefeated()
 		{
 			GD.Print("Victory!");
@@ -121,41 +202,6 @@ namespace Scripts.World
 			Multiplayer.PeerDisconnected -= DelPlayer;
 		}
 
-		private void AddPlayer(long id)
-		{
-			int playerId = (int)id;
-
-			var player = PlayerScene.Instantiate<Player.Player>();
-			player.Name = id.ToString();
-			player.PlayerId = (int)id;
-			PlayersContainer.AddChild(player, true);
-			player.Position = new Vector3(0, 0, id);
-
-
-			// Wire signal → RespawnManager (Player doesn't know who listens)
-			player.PlayerDied += _respawnManager.OnPlayerDied;
-
-			// Register through interface
-			_respawnManager.RegisterPlayer(player);
-
-		}
-
-		private void DelPlayer(long id)
-		{
-			var node = PlayersContainer.GetNodeOrNull<Player.Player>(id.ToString());
-			if (node == null) return;
-
-			// Unwire signal
-			node.PlayerDied -= _respawnManager.OnPlayerDied;
-			_respawnManager.UnregisterPlayer((int)id);
-
-			var input = node.GetNodeOrNull<MultiplayerSynchronizer>("PlayerInput");
-			if (input != null) input.PublicVisibility = false;
-			var sync = node.GetNodeOrNull<MultiplayerSynchronizer>("ServerSync");
-			if (sync != null) sync.PublicVisibility = false;
-
-			node.QueueFree();
-		}
 
 		private void OnGameOver()
 		{
