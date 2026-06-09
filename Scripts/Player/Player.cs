@@ -73,12 +73,30 @@ namespace Scripts.Player
 		private AbilitySystem _abilitySystem;
 
 
-		// =========================================================
-		// Lifecycle
-		// =========================================================
+        // =========================================================
+        // Lifecycle
+        // =========================================================
+
+        public void RegisterComponent(Component component)
+        {
+            _components[component.GetType()] = component;
+        }
+
+        // --- IEntity ---
+        public T GetComponent<T>() where T : Component
+        {
+            if (_components.TryGetValue(typeof(T), out Component component))
+                return component as T;
+
+            GD.PrintErr($"[Player] Component {typeof(T).Name} not found in dictionary!");
+            GD.PrintErr($"[Player] Call stack: {System.Environment.StackTrace}"); // Shows who called this
+
+            return null;
+        }
 
 
-		public override void _Ready()
+
+        public override void _Ready()
 		{
 			if (int.TryParse(Name, out int id))
 				_playerId = id;
@@ -93,6 +111,7 @@ namespace Scripts.Player
 			GD.Print($"[Player] layer: {CollisionLayer}, mask: {CollisionMask}");
 
 			InitAndRegisterComponents();
+			InitAbilities();
 
 			_interactHint = GetNode<Label>("CanvasLayer/InteractHint");
 			_interactHint.Visible = false;
@@ -105,30 +124,6 @@ namespace Scripts.Player
 				_playerInteractionComponent.InteractableCleared += OnInteractableLeft;
 			}
 
-
-			List<Ability> abilities = new List<Ability>();
-			PickupAbility pickupAbility = GetNode<PickupAbility>("AbilitySystem/PickupAbility");
-			pickupAbility.Initialize(this);
-			abilities.Add(pickupAbility);
-
-
-			ThrowAbility throwAbility = GetNode<ThrowAbility>("AbilitySystem/ThrowAbility");
-			throwAbility.Initialize(this);
-			throwAbility.ChargeStarted += () => _chargeBar.Visible = true;
-			throwAbility.ChargeUpdated += ratio => _chargeBar.Value = ratio * 100f; //нужно соректировлоать, т к при дляительном заряде некорреткно ооюрадается шкала
-			throwAbility.ChargeReleased += () => _chargeBar.Visible = false;
-			throwAbility.ChargeCancelled += () => _chargeBar.Visible = false;
-
-			abilities.Add(throwAbility);
-
-			_abilitySystem = GetNode<AbilitySystem>("AbilitySystem");
-			_abilitySystem.Initialize(abilities);
-			if (!IsLocalPlayer)
-			{
-				_abilitySystem.SetPhysicsProcess(false);
-			}
-
-		
 			_movementStateMachine = GetNode<MovementStateMachine>("MovementStateMachine"); // or whatever path
 			_movementStateMachine.ManualInitialize();
 
@@ -183,6 +178,31 @@ namespace Scripts.Player
 				_camera = GetNode<Camera3D>("CameraPivot/SpringArm3D/Camera3D");
 
 			_camera.Current = IsLocalPlayer;
+		}
+
+		private void InitAbilities()
+		{
+			List<Ability> abilities = new List<Ability>();
+			PickupAbility pickupAbility = GetNode<PickupAbility>("AbilitySystem/PickupAbility");
+			pickupAbility.Initialize(this);
+			abilities.Add(pickupAbility);
+
+
+			ThrowAbility throwAbility = GetNode<ThrowAbility>("AbilitySystem/ThrowAbility");
+			throwAbility.Initialize(this);
+			throwAbility.ChargeStarted += () => _chargeBar.Visible = true;
+			throwAbility.ChargeUpdated += ratio => _chargeBar.Value = ratio * 100f; //нужно соректировлоать, т к при дляительном заряде некорреткно ооюрадается шкала
+			throwAbility.ChargeReleased += () => _chargeBar.Visible = false;
+			throwAbility.ChargeCancelled += () => _chargeBar.Visible = false;
+
+			abilities.Add(throwAbility);
+
+			_abilitySystem = GetNode<AbilitySystem>("AbilitySystem");
+			_abilitySystem.Initialize(abilities);
+			if (!IsLocalPlayer)
+			{
+				_abilitySystem.SetPhysicsProcess(false);
+			}
 		}
 
 		private void InitAndRegisterComponents()
@@ -256,26 +276,7 @@ namespace Scripts.Player
 			//);
 			//RegisterComponent(_animationComponent);
 		}
-
-
-		public void RegisterComponent(Component component)
-		{
-			_components[component.GetType()] = component;
-		}
-
-		// --- IEntity ---
-		public T GetComponent<T>() where T : Component
-		{
-			if (_components.TryGetValue(typeof(T), out Component component))
-				return component as T;
-
-			GD.PrintErr($"[Player] Component {typeof(T).Name} not found in dictionary!");
-			GD.PrintErr($"[Player] Call stack: {System.Environment.StackTrace}"); // Shows who called this
-
-			return null;
-		}
-
-
+						
 		public override void _UnhandledInput(InputEvent @event)
 		{
 			if (!IsLocalPlayer) return;
@@ -303,7 +304,6 @@ namespace Scripts.Player
 		{
 			Rpc(MethodName.RpcEnterSpectator);
 		}
-
 
 		[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
 		public void RpcDisablePlayer()
