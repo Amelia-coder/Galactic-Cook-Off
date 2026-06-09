@@ -61,8 +61,8 @@ namespace Scripts.World
 			player.PlayerId = (int)id;
 			player.Position = new Vector3(
 				(float)GD.RandRange(1, 10),
-				(float)GD.RandRange(1, 10),
-				(float)GD.RandRange(1, 10)
+				1f,
+				(float)GD.RandRange(1, 4)
 			);
 
 			// Spawner captures spawn state here
