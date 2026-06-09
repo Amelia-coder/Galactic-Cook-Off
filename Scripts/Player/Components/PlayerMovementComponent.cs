@@ -54,6 +54,9 @@ namespace Scripts.Player.Components
 
 		public override void _PhysicsProcess(double delta)
 		{
+			if (!Multiplayer.IsServer())
+				return;
+
 			UpdateGroundedState();
 			ApplyGravity(delta);
 			ApplyToBody();
