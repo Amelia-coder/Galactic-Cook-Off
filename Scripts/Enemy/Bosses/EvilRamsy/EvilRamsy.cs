@@ -26,6 +26,7 @@ namespace Scripts.Enemy.Bosses.EvilRamsy
 		
 		private float _meleeAttackDamage = 2.5f;
 		private float _meleeAttackRange = 1.0f;
+		private float _distanceOfRangedAttack = 4f;
 
 		[Export]
 		private PackedScene projectile;
@@ -53,13 +54,14 @@ namespace Scripts.Enemy.Bosses.EvilRamsy
 			RegisterComponent(_targetSelectorComponent);
 
 			_attackComponent = GetNode<EnemyAttackComponent>("ComponentRegistry/BossAttackComponent");
-			// Register normal phase attack (rage attack added by BossRageState)
-			//    projectile: ProjectileScene,
-			//    minRange: 6f, maxRange: 20f,
-			//    damage: 25f, cooldown: 4f));
+			//Register normal phase attack(rage attack added by BossRageState)
+
+				//projectile: ProjectileScene,
+			 //   minRange: 6f, maxRange: 20f,
+			 //   damage: 25f, cooldown: 4f));
 			_attackComponent.RegisterStrategy(new MeleeAttackStrategy(_meleeAttackDamage, _meleeAttackRange));
 			_attackComponent.RegisterStrategy(new AoEAttackStrategy(radius: 30f, damage: 20f, cooldown: 8f));
-			//_attackComponent.RegisterStrategy(new RangedAttackStrategy(projectile, 8f, 1000f, cooldown: 8f));
+			_attackComponent.RegisterStrategy(new RangedAttackStrategy(projectile, _distanceOfRangedAttack, 1000f, cooldown: 8f));
 			RegisterComponent(_attackComponent);
 
 			_lootDropComponent = GetNode<LootDropComponent>("ComponentRegistry/LootDropComponent");

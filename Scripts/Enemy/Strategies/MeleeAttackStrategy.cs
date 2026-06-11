@@ -16,7 +16,7 @@ namespace Scripts.Enemy.Strategies
 
         protected override void OnExecute(Node3D self, Node3D target)
         {
-            GD.Print("[Boss] We are doing Mellee attack!");
+            GD.Print("[Enemy] We are doing Mellee attack!");
             IEntity entity = (IEntity)target;
             var targetHealthComponent = entity.GetComponent<GenericHealthComponent>();
             if (targetHealthComponent != null)

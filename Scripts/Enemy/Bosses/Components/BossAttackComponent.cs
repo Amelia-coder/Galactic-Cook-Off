@@ -24,7 +24,7 @@ namespace Scripts.Enemy.Bosses.Components
 			}
 
 			// Far — prefer ranged
-			if (dist > 8f)
+			if (dist > 4f)
 			{
 				GD.Print("we chose ranged!");
 				var ranged = GetStrategyOfType<RangedAttackStrategy>();

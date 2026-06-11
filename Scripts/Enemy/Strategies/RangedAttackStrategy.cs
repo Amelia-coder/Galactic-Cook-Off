@@ -16,14 +16,15 @@ namespace Scripts.Enemy.Strategies
 			_minRange = minRange;
 			_maxRange = maxRange;
 			Cooldown = cooldown;
+			Range = maxRange;
 		}
 
-		public override bool CanAttack(Node3D self, Node3D target)
-		{
-			//if (CooldownRemaining > 0) return false;
-			float dist = self.GlobalPosition.DistanceTo(target.GlobalPosition);
-			return dist >= _minRange && dist <= _maxRange;
-		}
+		//public override bool CanAttack(Node3D self, Node3D target)
+		//{
+		//	//if (CooldownRemaining > 0) return false;
+		//	float dist = self.GlobalPosition.DistanceTo(target.GlobalPosition);
+		//	return dist >= _minRange && dist <= _maxRange;
+		//}
 
 		protected override void OnExecute(Node3D self, Node3D target)
 		{

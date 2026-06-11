@@ -151,21 +151,21 @@ namespace Scripts.World
 		{
 			switch (_dishesCooked)
 			{
+				//case 1:
+				//	{
+				//		GD.Print("Wave 1 starting");
+				//		_wavesController.StartWave(0);
+				//	}
+				//	break;
+
+				//case 3:
+				//	{
+				//		GD.Print("Wave 2 starting");
+				//		_wavesController.StartWave(1);
+				//	}
+				//	break;
+
 				case 1:
-					{
-						GD.Print("Wave 1 starting");
-						_wavesController.StartWave(0);
-					}
-					break;
-
-				case 3:
-					{
-						GD.Print("Wave 2 starting");
-						_wavesController.StartWave(1);
-					}
-					break;
-
-				case 5:
 					{
 						GD.Print("Summoned boss!");
 						SummonBoss();

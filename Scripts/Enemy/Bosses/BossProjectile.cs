@@ -48,6 +48,7 @@ namespace Scripts.Enemy.Bosses
 		{
 			if (!Multiplayer.IsServer()) return;
 
+			GD.Print("We will try deal ranged damge!");
 			Node entity = area;
 			while (entity != null && entity is not IEntity)
 				entity = entity.GetParent();
