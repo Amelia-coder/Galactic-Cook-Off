@@ -131,7 +131,7 @@ spawn_path = NodePath("../Enemies")
 spawn_limit = 121
 
 [node name="ItemSpawner" type="MultiplayerSpawner" parent="."]
-_spawnable_scenes = PackedStringArray("uid://bpu84pqtndpww", "uid://bi6vhy73cuqrr", "uid://d3qwi5dpdeklj")
+_spawnable_scenes = PackedStringArray("uid://bpu84pqtndpww", "uid://bi6vhy73cuqrr", "uid://d3qwi5dpdeklj", "uid://lw2oynygm8xk")
 spawn_path = NodePath("../Items")
 spawn_limit = 1000
 
